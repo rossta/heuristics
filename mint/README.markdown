@@ -23,32 +23,32 @@ Discussion
 1) 
 Assuming U.S. coin denominations, 1, 5, 10, 25, 50, the minimum exact change number is for any price M is a function f of M as follows:
 
-  f(M) = min { f(M - 1) + 1, f(M - 5) + 1, f(M - 10) + 1, f(M - 25) + 1,  f(M - 50) + 1 }
+	f(M) = min { f(M - 1) + 1, f(M - 5) + 1, f(M - 10) + 1, f(M - 25) + 1,  f(M - 50) + 1 }
 
 For any coin set of denominations {d1, d2, d3, d4, d5}, we substitute to get:
 
-  f(M) = min { f(M - d1) + 1, f(M - d2) + 1, f(M - d3) + 1, f(M - d4) + 1,  f(M - d5) + 1 }
+	f(M) = min { f(M - d1) + 1, f(M - d2) + 1, f(M - d3) + 1, f(M - d4) + 1,  f(M - d5) + 1 }
 
 Dynamic program in pseudocode:
 
-  coin_set = [1..5]
-  total_change_number = 0
-  M = [1..99]
-  N = 4 (or other arbitrary probability that price is multiple of 5)
-  for i in [1..99]
-    min = infinity
-    for j in [0..4]
-      if coin_set[j] <= i and min > M[i-coin_set[j]] + 1
-        min = M[i - coin_set[j]] + 1
-      end
-    end
-    M[i] = min
-    if i mod 5 = 0
-      total_change_number = total_change_number + M[i] * N
-    else
-      total_change_number = total_change_number + M[i]
-    end
-  end
+	coin_set = [1..5]
+	total_change_number = 0
+	M = [1..99]
+	N = 4 (or other arbitrary probability that price is multiple of 5)
+	for i in [1..99]
+	  min = infinity
+	  for j in [0..4]
+	    if coin_set[j] <= i and min > M[i-coin_set[j]] + 1
+	      min = M[i - coin_set[j]] + 1
+	    end
+	  end
+	  M[i] = min
+	  if i mod 5 = 0
+	    total_change_number = total_change_number + M[i] * N
+	  else
+	    total_change_number = total_change_number + M[i]
+	  end
+	end
 
 1 cent must be present in coin set, so we may skip one inner loop. 
 We may also abandon a coin set if total_change_number ever exceeds pre-calculated result for US denominations (as a starting point) or subsequent optimal coin_set.
