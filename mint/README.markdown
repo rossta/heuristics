@@ -32,7 +32,7 @@ For any coin set of denominations {d1, d2, d3, d4, d5}, we substitute to get:
 Dynamic program in pseudocode:
 
 	coin_set = [1..5]
-	total_change_number = 0
+	total_exact_change_number = 0
 	M = [1..99]
 	N = 4 (or other arbitrary probability that price is multiple of 5)
 	for i in [1..99]
@@ -49,11 +49,11 @@ Dynamic program in pseudocode:
 	  M[i] = min
 	  if i mod 5 = 0
 			// Use N multiplier for prices that are multiples of 5
-	    total_change_number = total_change_number + M[i] * N
+	    total_exact_change_number = total_exact_change_number + M[i] * N
 	  else
-	    total_change_number = total_change_number + M[i]
+	    total_exact_change_number = total_exact_change_number + M[i]
 	  end
 	end
 
 1 cent must be present in coin set, so we may skip one inner loop. 
-We may also abandon a coin set if total_change_number ever exceeds pre-calculated result for US denominations (as a starting point) or subsequent optimal coin_set.
+We may also abandon a coin set if total_exact_change_number ever exceeds pre-calculated result for US denominations (as a starting point) or subsequent optimal coin_set.
