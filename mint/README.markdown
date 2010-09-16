@@ -36,14 +36,19 @@ Dynamic program in pseudocode:
 	M = [1..99]
 	N = 4 (or other arbitrary probability that price is multiple of 5)
 	for i in [1..99]
-	  min = infinity
+	  min = infinity  // minimum exact change number for price i
 	  for j in [0..4]
+			// if coin is less than or equal to current price and 
+			// min is greater than exact change number of (price i - coin value) + 1
+			// then reset the min for price i
 	    if coin_set[j] <= i and min > M[i-coin_set[j]] + 1
 	      min = M[i - coin_set[j]] + 1
 	    end
 	  end
+		// set final minimum exact change number of price i when inner loop finished
 	  M[i] = min
 	  if i mod 5 = 0
+			// Use N multiplier for prices that are multiples of 5
 	    total_change_number = total_change_number + M[i] * N
 	  else
 	    total_change_number = total_change_number + M[i]
