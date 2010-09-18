@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'mint/opts_parser'
 require 'mint/base'
 
