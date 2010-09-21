@@ -1,10 +1,7 @@
-require 'rubygems'
-require 'mint/opts_parser'
-require 'mint/base'
+require 'lib/base'
+raise "Usage: mint [integer]" if ARGV.length != 1
 
-options = Mint::OptsParser.parse(ARGV)
-mint    = Mint::Base.new(options)
-
+mint    = Mint::Base.new(ARGV[0])
 mint.run!
 puts "\n"
 puts "Total exact change number   : #{mint.total_exact_change_number}"

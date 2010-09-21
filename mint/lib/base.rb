@@ -1,8 +1,8 @@
 module Mint
   class Base
 
-    def initialize(opts)
-      @five_cent_multiplier         = opts.multiplier.to_i
+    def initialize(multiplier)
+      @multiplier         = multiplier.to_i
       @coin_set = [1,5,10,25,50]
       @results = 1000000
     end
@@ -17,15 +17,20 @@ module Mint
       j = h + 2
       k = h + 3
       l = h + 4
-      while i <= half_dollar - 3
-        while j <= half_dollar - 2
-          while k <= half_dollar - 1
-            while l <= half_dollar
+      # while i <= (dollar / 8) - h
+        # while j <= (dollar / 4) - i
+          # while k <= (dollar / 2) - j
+            # while l < dollar - k
+      while i <= (dollar / 5)
+        while j <= (dollar / 4)
+          while k <= (dollar / 3)
+            while l <= (dollar / 2)
               results = exact_change_number(1, i, j, k, l)
+              # puts coin_set_to_s([1, i, j, k, l])
               if @results > results
                 @results = results
                 @coin_set = [1, i, j, k, l]
-                puts "New coin set #{coin_set_to_s}"
+                # puts "New coin set #{coin_set_to_s}"
               end
               l += 1
             end
@@ -53,7 +58,7 @@ module Mint
         end
         m[i] = min
         if i % 5 == 0
-          total_exact_change_number = total_exact_change_number + (m[i] * @five_cent_multiplier)
+          total_exact_change_number = total_exact_change_number + (m[i] * @multiplier)
         else
           total_exact_change_number = total_exact_change_number + m[i]
         end
