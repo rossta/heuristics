@@ -16,7 +16,7 @@ module Mint
       # The options specified on the command line will be collected in *options*.
       # We set default values here.
       options = OpenStruct.new
-      options.multiplier = 4
+      options.multiplier = 8
       options.verbose = false
 
       opts = OptionParser.new do |opts|
@@ -27,7 +27,7 @@ module Mint
 
         opts.on("-n", "--n-multiplier N",
                 "Enter N times more likely price is multiple of 5 than not") do |mult|
-          options.multiplier << mult.to_i
+          options.multiplier = mult.to_i
         end
         
         # # Mandatory argument.
