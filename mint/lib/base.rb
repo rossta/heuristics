@@ -6,11 +6,31 @@ module Mint
     def initialize(multiplier)
       @multiplier = multiplier.to_i
       @coin_set   = [1,5,10,25,50]
-      @results    = 1000000
+      @results    = max_integer
+    end
+    
+    def max_integer
+      @max_integer ||=
+      machine_bytes = ['foo'].pack('p').size
+      machine_bits = machine_bytes * 8
+      machine_max_signed = 2**(machine_bits-1) - 1
+      machine_max_unsigned = 2**machine_bits - 1
     end
 
   end
-
+  
+  class Exchange < Base
+    
+    def calculate_coin_set(*coin_set)
+      
+    end
+    
+    def calculate!
+      
+    end
+  end
+  
+  
   class ExactChange < Base
 
     def calculate_coin_set(*coin_set)
@@ -44,11 +64,9 @@ module Mint
           while k <= k_ceil
             while l <= l_ceil
               results = calculate_coin_set(h, i, j, k, l)
-              # puts coin_set_to_s([1, i, j, k, l])
               if @results > results
                 @results = results
                 @coin_set = [h, i, j, k, l]
-                # puts "New coin set #{coin_set_to_s}"
               end
               l += 1
             end
@@ -62,6 +80,36 @@ module Mint
         j = [i + 1, j_floor].max
       end
     end
-
+    
+    def calculate_naively!
+      h = 1
+      dollar = 100
+      half_dollar = dollar / 2
+      i = h + 1
+      j = h + 2
+      k = h + 3
+      l = h + 4
+      while i <= dollar / 8
+        while j <= dollar / 4
+          while k <= dollar / 2
+            while l < dollar
+              results = calculate_coin_set(h, i, j, k, l)
+              if @results > results
+                @results = results
+                @coin_set = [h, i, j, k, l]
+              end
+              l += 1
+            end
+            k += 1
+            l = k + 1
+          end
+          j += 1
+          k = j + 1
+        end
+        i += 1
+        j = i + 1
+      end
+    end
   end
+  
 end
