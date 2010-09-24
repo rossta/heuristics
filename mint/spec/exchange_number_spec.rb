@@ -2,16 +2,16 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe Mint::Exchange do
   
-  # describe "probability of multiple of 5 price is" do
-  #   
-  #   describe "equal" do
-  #     it "should return total exact change of 329 with coin set 1, 5, 16, 23, 33" do
-  #       exact_change = Mint::Exchange.new(1)
-  #       exact_change.calculate!
-  #       exact_change.results.should == 329
-  #       exact_change.coin_set.should == [1, 5, 16, 23, 33]
-  #     end
-  #   end
+  describe "probability of multiple of 5 price is" do
+    
+    # describe "equal" do
+    #   it "should return total exact change of 329 with coin set 1, 5, 16, 23, 33" do
+    #     exact_change = Mint::Exchange.new(1)
+    #     exact_change.calculate!
+    #     exact_change.results.should == 500
+    #     exact_change.coin_set.should == [1, 5, 16, 23, 33]
+    #   end
+    # end
   # 
   #   describe "3 times higher" do
   #     it "should return total exact change of 427 with coin set 1, 5, 19, 25, 40" do
@@ -76,5 +76,5 @@ describe Mint::Exchange do
   #     end
   #   end
   #   
-  # end
+  end
 end
