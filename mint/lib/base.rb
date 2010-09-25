@@ -8,7 +8,7 @@ module Mint
       @coin_set   = [1,5,10,25,50]
       @results    = max_integer
     end
-    
+
     def max_integer
       @max_integer ||=
       machine_bytes = ['foo'].pack('p').size
@@ -18,19 +18,74 @@ module Mint
     end
 
   end
-  
+
   class Exchange < Base
-    
+
     def calculate_coin_set(*coin_set)
-      
+      dollar  = 100
+      cost    = Array.new(100, 0)
+      results = 0
+      coin_set << dollar
+      (1..99).each do |i|
+        cost[i]       = coin_set.map { |coin|
+          cost[i - coin] + 1 if coin <= i
+        }.compact.min
+      end
+      (1..99).each do |i|
+        cost[i]       = coin_set.map { |coin|
+          if coin == dollar
+            cost[coin - i]
+          elsif coin >= i
+            cost[coin - i] + 1
+          end
+        }.compact.min
+        current_cost  = i % 5 == 0 ? cost[i] * @multiplier : cost[i]
+        results       = results + current_cost
+        break if results > @results
+      end
+
+      results
     end
-    
+
     def calculate!
-      
+      h = 1
+      dollar = 100
+      l_ceil  = dollar / 2
+      l_floor = dollar / 10
+      k_ceil  = (dollar / 2) - 1
+      k_floor = dollar / 11
+      j_ceil  = (dollar / 2) - 2
+      j_floor = dollar / 12
+      i_ceil  = (dollar / 8)
+      i = h + 1
+      j = j_floor
+      k = k_floor
+      l = l_floor
+      while i <= i_ceil
+        while j <= j_ceil
+          while k <= k_ceil
+            while l <= l_ceil
+              results = calculate_coin_set(h, i, j, k, l)
+              if @results > results
+                @results = results
+                @coin_set = [h, i, j, k, l]
+              end
+              l += 1
+            end
+            k += 1
+            l = [k + 1, l_floor].max
+          end
+          j += 1
+          k = [j + 1, k_floor].max
+        end
+        i += 1
+        j = [i + 1, j_floor].max
+      end
     end
+
   end
-  
-  
+
+
   class ExactChange < Base
 
     def calculate_coin_set(*coin_set)
@@ -80,7 +135,7 @@ module Mint
         j = [i + 1, j_floor].max
       end
     end
-    
+
     def calculate_naively!
       h = 1
       dollar = 100
@@ -111,5 +166,5 @@ module Mint
       end
     end
   end
-  
+
 end

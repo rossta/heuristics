@@ -1,0 +1,13 @@
+#! /usr/bin/env ruby
+raise "Usage: mint [integer]" if ARGV.length != 1
+$LOAD_PATH << File.dirname(__FILE__) unless $LOAD_PATH.include? File.dirname(__FILE__)
+require 'rubygems'
+require 'lib/mint'
+t_1     = Time.now
+mint    = Mint::Exchange.new(ARGV[0])
+puts "Calculating...\n"
+mint.calculate!
+t_2     = Time.now
+puts "Total exchange number   : #{mint.results}"
+puts "Coin set                : #{mint.coin_set.join(", ")}"
+puts "Running time            : #{("%.3f" % (t_2 - t_1)).to_f}"
