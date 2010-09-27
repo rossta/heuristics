@@ -6,7 +6,7 @@ module Mint
     def initialize(multiplier)
       @multiplier = multiplier.to_i
       @coin_set   = [1,5,10,25,50]
-      @results    = max_integer
+      @results    = 99999999
     end
 
     def max_integer
@@ -20,6 +20,8 @@ module Mint
   end
 
   class Exchange < Base
+
+    MAX_EXCHANGE = 200
 
     def calculate_coin_set(*coin_set)
       dollar  = 100
@@ -39,6 +41,7 @@ module Mint
             cost[coin - i] + 1
           end
         }.compact.min
+        break if cost[i] > MAX_EXCHANGE
         current_cost  = i % 5 == 0 ? cost[i] * @multiplier : cost[i]
         results       = results + current_cost
         break if results > @results
@@ -50,33 +53,38 @@ module Mint
     def calculate!
       h = 1
       dollar = 100
-      i_ceil  = dollar / 3
-      j_ceil  = dollar / 2 - 2
-      k_ceil  = dollar / 2 - 1
+      h_ceil  = 2
+      i_ceil  = dollar / 6
+      j_ceil  = dollar / 2 - 8
+      k_ceil  = dollar / 2 - 4
       l_ceil  = dollar / 2
       i       = h + 1
-      j_floor = j = i + 1
-      k_floor = k = i + 2
-      l_floor = l = i + 3
-      while i <= i_ceil
-        while j <= j_ceil
-          while k <= k_ceil
-            while l <= l_ceil
-              results = calculate_coin_set(h, i, j, k, l)
-              if @results > results
-                @results = results
-                @coin_set = [h, i, j, k, l]
+      j_floor = j = 20
+      k_floor = k = 30
+      l_floor = l = 40
+      while h < h_ceil
+        while i <= i_ceil
+          while j <= j_ceil
+            while k <= k_ceil
+              while l <= l_ceil
+                results = calculate_coin_set(h, i, j, k, l)
+                if @results > results
+                  @results = results
+                  @coin_set = [h, i, j, k, l]
+                end
+                l += 1
               end
-              l += 1
+              k += 1
+              l = [k + 1, l_floor].max
             end
-            k += 1
-            l = [k + 1, l_floor].max
+            j += 1
+            k = [j + 1, k_floor].max
           end
-          j += 1
-          k = [j + 1, k_floor].max
+          i += 1
+          j = [i + 1, j_floor].max
         end
-        i += 1
-        j = [i + 1, j_floor].max
+        h += 1
+        i = h + 1
       end
     end
 
