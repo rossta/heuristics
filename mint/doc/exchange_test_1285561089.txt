@@ -1,0 +1,5 @@
+Calculating for N = 4 ...
+Total  number   : 344
+Coin set                    : 1, 25, 40, 45, 48
+Running time                : 178.854
+

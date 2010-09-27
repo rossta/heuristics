@@ -1,0 +1,50 @@
+Calculating 0.001...
+Total exact change number   : 261
+Coin set                    : 1, 4, 9, 29, 44
+Running time                : 175.456
+
+Calculating 0.05...
+Total exact change number   : 261
+Coin set                    : 1, 4, 9, 29, 44
+Running time                : 175.546
+
+Calculating 0.1...
+Total exact change number   : 261
+Coin set                    : 1, 4, 9, 29, 44
+Running time                : 175.647
+
+Calculating 0.5...
+Total exact change number   : 261
+Coin set                    : 1, 4, 9, 29, 44
+Running time                : 175.547
+
+Calculating 1...
+Total exact change number   : 329
+Coin set                    : 1, 5, 16, 23, 33
+Running time                : 177.708
+
+Calculating 5...
+Total exact change number   : 520
+Coin set                    : 1, 5, 19, 25, 40
+Running time                : 157.764
+
+Calculating 10...
+Total exact change number   : 745
+Coin set                    : 1, 5, 19, 25, 40
+Running time                : 146.092
+
+Calculating 100...
+Total exact change number   : 4360
+Coin set                    : 1, 5, 10, 30, 45
+Running time                : 121.01
+
+Calculating 500...
+Total exact change number   : 20360
+Coin set                    : 1, 5, 10, 30, 45
+Running time                : 118.038
+
+Calculating 10000...
+Total exact change number   : 400360
+Coin set                    : 1, 5, 10, 30, 45
+Running time                : 117.895
+

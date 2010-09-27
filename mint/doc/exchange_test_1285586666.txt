@@ -1,0 +1,70 @@
+Calculating for N = 0.25 ...
+Total  number    : 186
+Coin set                     : 1, 23, 27, 29, 34
+Running time                 : 155.977
+
+Calculating for N = 0.75 ...
+Total  number    : 186
+Coin set                     : 1, 23, 27, 29, 34
+Running time                 : 163.386
+
+Calculating for N = 1.3 ...
+Total  number    : 236
+Coin set                     : 1, 27, 41, 44, 49
+Running time                 : 159.504
+
+Calculating for N = 2 ...
+Total  number    : 278
+Coin set                     : 1, 25, 27, 31, 40
+Running time                 : 156.061
+
+Calculating for N = 3 ...
+Total  number    : 312
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 161.273
+
+Calculating for N = 4 ...
+Total  number    : 344
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 154.528
+
+Calculating for N = 5 ...
+Total  number    : 376
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 152.135
+
+Calculating for N = 7 ...
+Total  number    : 440
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 151.833
+
+Calculating for N = 8 ...
+Total  number    : 472
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 144.938
+
+Calculating for N = 9 ...
+Total  number    : 504
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 143.93
+
+Calculating for N = 17 ...
+Total  number    : 760
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 140.256
+
+Calculating for N = 25 ...
+Total  number    : 1016
+Coin set                     : 1, 25, 40, 45, 48
+Running time                 : 139.345
+
+Calculating for N = 100 ...
+Total  number    : 3308
+Coin set                     : 1, 10, 20, 35, 40
+Running time                 : 134.1
+
+Calculating for N = 500 ...
+Total  number    : 15308
+Coin set                     : 1, 10, 20, 35, 40
+Running time                 : 132.787
+

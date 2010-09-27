@@ -2,11 +2,15 @@
 raise "Usage: mint [integer]" if ARGV.length != 1
 $LOAD_PATH << File.dirname(__FILE__) unless $LOAD_PATH.include? File.dirname(__FILE__)
 require 'lib/mint'
-t_1     = Time.now
-mint    = Mint::Exchange.new(ARGV[0])
-puts "Calculating...\n"
-mint.calculate!
-t_2     = Time.now
-puts "Total exchange number   : #{mint.results}"
-puts "Coin set                : #{mint.coin_set.join(", ")}"
-puts "Running time            : #{("%.3f" % (t_2 - t_1)).to_f}"
+if ARGV[0] == 'test'
+  filename = "exchange_test_#{Time.now.to_i}.txt"
+  file    = File.open(filename, "w")
+  # [0.25, 0.33, 0.75, 1.3, 1.8, 2, 3, 4, 5, 6, 7, 8, 9, 11, 17, 48].each do |i|
+  [0.25, 0.75, 1.3, 2, 3, 4, 5, 7, 8, 9, 17, 25, 100, 500].each do |i|
+    Mint::Runner.run!(:exchange, i, file)
+  end
+  file.close
+  system "open", filename
+else
+  Mint::Runner.run!(:exchange, ARGV[0])
+end

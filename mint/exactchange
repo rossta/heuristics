@@ -2,12 +2,15 @@
 raise "Usage: mint [integer]" if ARGV.length != 1
 $LOAD_PATH << File.dirname(__FILE__) unless $LOAD_PATH.include? File.dirname(__FILE__)
 require 'lib/mint'
-t_1     = Time.now
-mint    = Mint::ExactChange.new(ARGV[0])
-puts "Calculating...\n"
-mint.calculate!
-t_2     = Time.now
-puts "Total exact change number   : #{mint.results}"
-puts "Coin set                    : #{mint.coin_set.join(", ")}"
-puts "Running time                : #{("%.3f" % (t_2 - t_1)).to_f}"
+if ARGV[0] == 'test'
+  filename = "exact_change_test_#{Time.now.to_i}.txt"
+  file    = File.open("temp_naive_2.txt", "w")
+  # [0.001].each do |i|
+  [0.25, 0.33, 0.75, 1.3, 1.8, 3, 6, 7, 8, 9, 10, 14, 18, 50].reverse.each do |i|
+    Mint::Runner.run!(:exact_change, i, file)
+  end
+  system "mate", filename
+else
+  Mint::Runner.run!(:exact_change, ARGV[0])
+end
 

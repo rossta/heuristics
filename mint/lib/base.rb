@@ -50,17 +50,14 @@ module Mint
     def calculate!
       h = 1
       dollar = 100
+      i_ceil  = dollar / 3
+      j_ceil  = dollar / 2 - 2
+      k_ceil  = dollar / 2 - 1
       l_ceil  = dollar / 2
-      l_floor = dollar / 10
-      k_ceil  = (dollar / 2) - 1
-      k_floor = dollar / 11
-      j_ceil  = (dollar / 2) - 2
-      j_floor = dollar / 12
-      i_ceil  = (dollar / 8)
-      i = h + 1
-      j = j_floor
-      k = k_floor
-      l = l_floor
+      i       = h + 1
+      j_floor = j = i + 1
+      k_floor = k = i + 2
+      l_floor = l = i + 3
       while i <= i_ceil
         while j <= j_ceil
           while k <= k_ceil

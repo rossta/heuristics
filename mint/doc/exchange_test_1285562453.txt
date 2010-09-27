@@ -1,0 +1,4 @@
+Total  number    : 1748
+Coin set                     : 1, 10, 20, 35, 40
+Running time                 : 135.212
+
