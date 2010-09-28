@@ -1,0 +1,9 @@
+Euclidean distance or Euclidean metric is the "ordinary" distance between two points that one would measure with a ruler.
+
+The Euclidean distance between points p and q is the length of the line segment . In Cartesian coordinates, if p = (p1, p2,..., pn) and q = (q1, q2,..., qn) are two points in Euclidean n-space, then the distance from p to q is given by:
+
+d(p, q) = √ (  sum of (pi - qi) ^ 2 over n from i = 1 )
+
+In three dimensional space where each point represented by {x,y,z}
+
+√ (Px – Qx)^2 + (Py – Qy)^2 + (Pz – Qz)^2

@@ -16,19 +16,18 @@ module Mint
 
     def run!
       t_1     = Time.now
-      mint    = case algorithm
+      mint    = case @algorithm
       when :exact_change
         Mint::ExactChange.new(n)
       when :exchange
         Mint::Exchange.new(n)
       else
-        raise "unknown algorithm referenced: #{algorithm.to_s}"
+        raise "unknown algorithm referenced: #{@algorithm.to_s}"
       end
-      algorithm = algorithm.to_s.gsub(/_/, " ")
       print "Calculating for N = #{n} ...\n"
       mint.calculate!
       t_2     = Time.now
-      print "Total #{algorithm} number    : #{mint.results}"
+      print "Total #{@algorithm.to_s.gsub(/_/, " ")} number    : #{mint.results}"
       print "Coin set                     : #{mint.coin_set.join(", ")}"
       print "Running time                 : #{("%.3f" % (t_2 - t_1)).to_f}"
       print "\n"
