@@ -59,9 +59,9 @@ module Mint
       k_ceil  = dollar / 2 - 4
       l_ceil  = dollar / 2
       i       = h + 1
-      j_floor = j = 20
-      k_floor = k = 30
-      l_floor = l = 40
+      j_floor = j = 10
+      k_floor = k = 15
+      l_floor = l = 20
       while h < h_ceil
         while i <= i_ceil
           while j <= j_ceil

@@ -73,3 +73,4 @@ Total exact change number   : 15308
 Coin set                    : 1, 10, 20, 35, 40
 Running time                : 85.08
 
+---------------------------
