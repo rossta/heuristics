@@ -17,3 +17,18 @@ describe Salesman::Edge do
     end
   end
 end
+
+describe Salesman::SpanTree do
+  
+  describe "build" do
+    it "should build array of array of tree cities n and tree edges length n - 1" do
+      cities, edges = [], []
+      10.times { cities << mock(Salesman::City) }
+      20.times { edges << mock(Salesman::City, :a => cities[rand(10)], :b => cities[rand(10)]) }
+      tree = Salesman::SpanTree.new(cities, edges)
+      tree.build
+      tree.tree_cities.length.should == cities.length
+      tree.tree_edges.length.should == cities.length - 1
+    end
+  end
+end
