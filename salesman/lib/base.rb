@@ -41,9 +41,6 @@ module Salesman
       @tree = SpanTree.build_from(@cities, @edges)
     end
 
-    def build_minimum_matching_tree
-      @tree
-    end
   end
 
   class Edge
@@ -91,7 +88,6 @@ module Salesman
       @x      = x
       @y      = y
       @z      = z
-      @parent = nil
     end
 
     def to_xyz
@@ -115,38 +111,41 @@ module Salesman
       @source_edges   = source_edges
       @edges          = []
       @size           = 0
-      @in_mst         = {}
+      @edge_count     = {}
     end
 
     def build
-      city_count = @cities.length
-      add_city_to_mst(@cities.first)
+      city_count    = @cities.size
+      add_edge_to_mst @source_edges.first
       while @size < city_count
         edge = @source_edges.detect do |e|
           # XOR since we want cities and edges that connect to the tree but do not cycle
           in_mst?(e.a) ^ in_mst?(e.b)
         end
-
-        @edges  << edge
-        if !in_mst?(edge.a)
-          add_city_to_mst(edge.a)
-        elsif !in_mst?(edge.b)
-          add_city_to_mst(edge.b)
-        else
-          raise "Tried to add double connected edge"
-        end
+        add_edge_to_mst(edge)
       end
       self
     end
 
-    def add_city_to_mst(city)
-      @in_mst[city.name] = true
-      @size += 1
-      city
+    def in_mst?(city)
+      edge_count(city) > 0
     end
 
-    def in_mst?(city)
-      @in_mst[city.name]
+    def add_edge_to_mst(edge)
+      increment_edge_count(edge.a)
+      increment_edge_count(edge.b)
+      @edges  << edge
+      edge
+    end
+
+    def increment_edge_count(city)
+      count = edge_count(city)
+      @size += 1 if count == 0
+      @edge_count[city.name] = count + 1
+    end
+
+    def edge_count(city)
+      @edge_count[city.name].to_i
     end
 
     def distance
