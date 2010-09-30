@@ -62,8 +62,8 @@ module Salesman
 
     attr_reader :a, :b, :distance
     def initialize(a, b)
-      @a        = a
-      @b        = b
+      @a = a
+      @b = b
     end
 
     def <=>(edge)
@@ -85,15 +85,13 @@ module Salesman
       cities
     end
 
-    attr_reader :number, :x, :y, :z
-    attr_writer :in_mst
-    def initialize(number, x, y, z)
-      @number = number
+    attr_reader :name, :x, :y, :z
+    def initialize(name, x, y, z)
+      @name     = name
       @x      = x
       @y      = y
       @z      = z
       @parent = nil
-      @in_mst = false
     end
 
     def to_xyz
@@ -104,13 +102,10 @@ module Salesman
       Measure.distance(self.to_xyz, city.to_xyz).to_i
     end
 
-    def in_mst?
-      @in_mst
-    end
   end
 
   class SpanTree
-    attr_accessor :tree_cities, :edges
+    attr_reader :size, :edges
     def self.build_from(cities, edges)
       new(cities, edges).build
     end
@@ -118,23 +113,24 @@ module Salesman
     def initialize(cities, source_edges)
       @cities         = cities
       @source_edges   = source_edges
-      @cities_in_mst  = 0
+      @edges          = []
+      @size           = 0
+      @in_mst         = {}
     end
 
     def build
-      @edges   = []
+      city_count = @cities.length
       add_city_to_mst(@cities.first)
-      while @cities_in_mst < @cities.length
+      while @size < city_count
         edge = @source_edges.detect do |e|
           # XOR since we want cities and edges that connect to the tree but do not cycle
-          (e.a.in_mst? ^ e.b.in_mst?)
+          in_mst?(e.a) ^ in_mst?(e.b)
         end
 
         @edges  << edge
-        puts @edges.length
-        if !edge.a.in_mst?
+        if !in_mst?(edge.a)
           add_city_to_mst(edge.a)
-        elsif !edge.b.in_mst?
+        elsif !in_mst?(edge.b)
           add_city_to_mst(edge.b)
         else
           raise "Tried to add double connected edge"
@@ -144,14 +140,19 @@ module Salesman
     end
 
     def add_city_to_mst(city)
-      city.in_mst = true
-      @cities_in_mst += 1
+      @in_mst[city.name] = true
+      @size += 1
       city
+    end
+
+    def in_mst?(city)
+      @in_mst[city.name]
     end
 
     def distance
       @edges.inject(0) { |sum, e| sum += e.distance }
     end
+
   end
 
 end
