@@ -8,9 +8,19 @@ module Salesman
     end
 
     def calculate!
+      t1 = Time.now
+      puts "initialize_cities..."
       initialize_cities
+      t2 = Time.now
+      puts Timer.diff(t1, t2)
+      puts "initialize_edges..."
       initialize_edges
+      t3 = Time.now
+      puts Timer.diff(t2, t3)
+      puts "build_minimum_spanning_tree..."
       build_minimum_spanning_tree
+      t4 = Time.now
+      puts Timer.diff(t3, t4)
     end
 
     protected
@@ -24,7 +34,7 @@ module Salesman
     end
 
     def build_minimum_spanning_tree
-      @tree = MinSpanTree.build_from(@cities, @edges)
+      @tree = SpanTree.build_from(@cities, @edges)
     end
   end
 
@@ -84,18 +94,18 @@ module Salesman
       Measure.distance(self.to_xyz, city.to_xyz).to_i
     end
   end
-  
+
   class SpanTree
     attr_accessor :tree_cities, :tree_edges
     def self.build_from(cities, edges)
       new(cities, edges).build
     end
-    
+
     def initialize(cities, edges)
       @cities = cities
       @edges  = edges
     end
-    
+
     def build
       @tree_cities  = []
       @tree_edges   = []
@@ -108,7 +118,7 @@ module Salesman
           b_in_tree     = @tree_cities.include?(e.b)
           !edge_in_tree && (a_in_tree ^ b_in_tree)
         end
-        
+
         @tree_edges  << edge
         if !a_in_tree
           @tree_cities << edge.a
@@ -118,6 +128,7 @@ module Salesman
           raise "Tried to add double connected edge"
         end
       end
+      self
     end
   end
 

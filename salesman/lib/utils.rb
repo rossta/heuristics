@@ -10,4 +10,9 @@ module Salesman
     end
   end
   
+  class Timer
+    def self.diff(t_1, t_2)
+      ("%.3f" % (t_2 - t_1)).to_f
+    end
+  end
 end

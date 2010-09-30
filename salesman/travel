@@ -1,5 +1,7 @@
 #! /usr/bin/env ruby
+
 raise "Usage: travel [path]" if ARGV.length != 1
+
 lib_path = File.expand_path(File.dirname(__FILE__)) + "/lib"
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'salesman'

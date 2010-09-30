@@ -1,0 +1,14 @@
+#! /usr/bin/env ruby
+
+raise "Usage: generate [path] [x limit] [y limit] [z limit] [times]" if ARGV.length > 5
+
+path    = ARGV[0] || "./data/cities_1000_#{Time.now.to_i}.txt"
+x_limit = (ARGV[1] || 3000).to_i
+y_limit = (ARGV[2] || 3000).to_i
+z_limit = (ARGV[3] || 300 ).to_i
+count   = (ARGV[4] || 1000).to_i
+file    = File.open(path, "a+")
+
+count.times do |i|
+  file.puts "#{i + 1} #{ rand(x_limit) } #{ rand(y_limit) } #{ rand(z_limit) }"
+end
