@@ -18,6 +18,7 @@ module Salesman
       salesman = Salesman::Base.new(path)
       salesman.calculate!
       t_2     = Time.now
+      print "Distance     : #{salesman.total_distance}"
       print "Running time : #{("%.3f" % (t_2 - t_1)).to_f}"
       print "\n"
     end

@@ -1,7 +1,7 @@
 module Salesman
 
   class Base
-    attr_reader :path, :cities, :distances
+    attr_reader :path, :cities, :distances, :total_distance
 
     def initialize(path)
       @path = path
@@ -21,6 +21,10 @@ module Salesman
       build_minimum_spanning_tree
       t4 = Time.now
       puts Timer.diff(t3, t4)
+    end
+
+    def total_distance
+      @tree.distance
     end
 
     protected
@@ -113,10 +117,9 @@ module Salesman
       while @tree_cities.length < @cities.length
         a_in_tree, b_in_tree = false, false
         edge = @edges.detect do |e|
-          edge_in_tree  = @tree_edges.include?(e)
           a_in_tree     = @tree_cities.include?(e.a)
           b_in_tree     = @tree_cities.include?(e.b)
-          !edge_in_tree && (a_in_tree ^ b_in_tree)
+          (a_in_tree ^ b_in_tree)
         end
 
         @tree_edges  << edge
@@ -129,6 +132,10 @@ module Salesman
         end
       end
       self
+    end
+
+    def distance
+      @tree_edges.inject(0) { |sum, e| sum += e.distance }
     end
   end
 
