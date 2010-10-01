@@ -21,6 +21,10 @@ module Salesman
       build_minimum_spanning_tree
       t4 = Time.now
       puts Timer.diff(t3, t4)
+      puts "find cities with odd number of edges..."
+      build_minimum_matching_tree
+      t5 = Time.now
+      puts Timer.diff(t4, t5)
     end
 
     def total_distance
@@ -41,6 +45,9 @@ module Salesman
       @tree = SpanTree.build_from(@cities, @edges)
     end
 
+    def build_minimum_matching_tree
+      @odd_cities
+    end
   end
 
   class Edge
@@ -152,6 +159,10 @@ module Salesman
       @edges.inject(0) { |sum, e| sum += e.distance }
     end
 
+    def odd_cities
+      cities_names = @edge_count.keys.select { |name| @edge_count[name].odd? }
+      cities_names.collect { |name| @cities.detect { |city| city.name == name } }
+    end
   end
 
 end

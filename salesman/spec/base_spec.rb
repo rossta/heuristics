@@ -50,5 +50,18 @@ describe Salesman::SpanTree do
       end
       @tree.edge_count(first_city).should == edge_count
     end
+
+    describe "odd_cities" do
+      it "should return list of cities with odd edge counts" do
+        # name: 0, count 1
+        # name: 1, count 2
+        # name: 2, count 2
+        # name: 3, count 2
+        # name: 4, count 1
+        @tree.odd_cities.should include(@cities.first)
+        @tree.odd_cities.should include(@cities.last)
+        # @tree.odd_cities.should_not include?(@cities.second)
+      end
+    end
   end
 end
