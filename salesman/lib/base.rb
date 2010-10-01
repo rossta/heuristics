@@ -21,7 +21,7 @@ module Salesman
       build_minimum_spanning_tree
       t4 = Time.now
       puts Timer.diff(t3, t4)
-      puts "find cities with odd number of edges..."
+      puts "build_minimum_matching_tree..."
       build_minimum_matching_tree
       t5 = Time.now
       puts Timer.diff(t4, t5)
@@ -46,7 +46,7 @@ module Salesman
     end
 
     def build_minimum_matching_tree
-      @odd_cities
+      @match = MatchTree.build_from(@tree.odd_cities, @edges)
     end
   end
 
@@ -105,64 +105,6 @@ module Salesman
       Measure.distance(self.to_xyz, city.to_xyz).to_i
     end
 
-  end
-
-  class SpanTree
-    attr_reader :size, :edges
-    def self.build_from(cities, edges)
-      new(cities, edges).build
-    end
-
-    def initialize(cities, source_edges)
-      @cities         = cities
-      @source_edges   = source_edges
-      @edges          = []
-      @size           = 0
-      @edge_count     = {}
-    end
-
-    def build
-      city_count    = @cities.size
-      add_edge_to_mst @source_edges.first
-      while @size < city_count
-        edge = @source_edges.detect do |e|
-          # XOR since we want cities and edges that connect to the tree but do not cycle
-          in_mst?(e.a) ^ in_mst?(e.b)
-        end
-        add_edge_to_mst(edge)
-      end
-      self
-    end
-
-    def in_mst?(city)
-      edge_count(city) > 0
-    end
-
-    def add_edge_to_mst(edge)
-      increment_edge_count(edge.a)
-      increment_edge_count(edge.b)
-      @edges  << edge
-      edge
-    end
-
-    def increment_edge_count(city)
-      count = edge_count(city)
-      @size += 1 if count == 0
-      @edge_count[city.name] = count + 1
-    end
-
-    def edge_count(city)
-      @edge_count[city.name].to_i
-    end
-
-    def distance
-      @edges.inject(0) { |sum, e| sum += e.distance }
-    end
-
-    def odd_cities
-      cities_names = @edge_count.keys.select { |name| @edge_count[name].odd? }
-      cities_names.collect { |name| @cities.detect { |city| city.name == name } }
-    end
   end
 
 end
