@@ -31,8 +31,8 @@ describe Salesman::Graph do
         edge_6 = Salesman::Edge.new(city_2, city_5)
         tree_edges = [edge_1, edge_2, edge_3, edge_4]
         match_edges = [edge_5, edge_6]
-        tour = Salesman::EulerTour.new(tree_edges, match_edges)
-        tour.travel!
+        tour = Salesman::EulerTour.new(tree_edges + match_edges)
+        tour.travel
         tour.cities.size.should == 7
         tour.cities.should == [city_1, city_4, city_3, city_1, city_5, city_2, city_1]
         tour.edges.size.should == 6
@@ -54,8 +54,8 @@ describe Salesman::Graph do
         it "should travel euler path" do
           tree_edges  = [@edge_1, @edge_2, @edge_4]
           match_edges = [@edge_3, @edge_5]
-          tour = Salesman::EulerTour.new(tree_edges, match_edges)
-          tour.travel!
+          tour = Salesman::EulerTour.new(tree_edges + match_edges)
+          tour.travel
           tour.cities.size.should == 6
           tour.cities.should == [@city_1, @city_4, @city_2, @city_3, @city_2, @city_1]
           tour.edges.size.should == 5
@@ -67,8 +67,8 @@ describe Salesman::Graph do
           edge_7 = Salesman::Edge.new(city_5, @city_4)
           tree_edges  = [@edge_1, edge_6, edge_7, @edge_2]
           match_edges = [@edge_3, @edge_5]
-          tour = Salesman::EulerTour.new(tree_edges, match_edges)
-          tour.travel!
+          tour = Salesman::EulerTour.new(tree_edges + match_edges)
+          tour.travel
           tour.cities.size.should == 7
           tour.cities.should == [@city_1, @city_4, city_5, @city_2, @city_3, @city_2, @city_1]
           tour.edges.size.should == 6

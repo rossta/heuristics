@@ -5,22 +5,9 @@ module Salesman
       @edges.inject(0) { |sum, e| sum += e.distance }
     end
   end
-
-  class Graph
-    include EdgeDistance
-    def self.create_from(cities, source_edges)
-      new(cities, source_edges).build
-    end
-
-    attr_reader :size, :cities, :edges
-    def initialize(cities, source_edges)
-      @cities     = cities
-      @source_edges = source_edges
-      @edges      = []
-      @size       = 0
-      @edge_count = {}
-    end
-
+  
+  module GraphBuilder
+    
     def in_tree?(city)
       edge_count(city) > 0
     end
@@ -35,17 +22,34 @@ module Salesman
     def increment_edge_count(city)
       count = edge_count(city)
       @size += 1 if count.zero?
-      @edge_count[city.name] = count + 1
+      @edge_counter[city.name] = count + 1
     end
 
     def edge_count(city)
-      @edge_count[city.name].to_i
+      @edge_counter[city.name].to_i
+    end
+  end
+
+  class Graph
+    include EdgeDistance
+
+    def self.create_from(cities, source_edges)
+      new(cities, source_edges).build
+    end
+
+    attr_reader :size, :cities, :edges
+    def initialize(cities, source_edges)
+      @cities     = cities
+      @source_edges = source_edges
+      @edges      = []
+      @size       = 0
+      @edge_counter = {}
     end
 
   end
 
   class MatchGraph < Graph
-    
+    include GraphBuilder
     def build
       @cities.each_with_index do |city, i|
         next unless edge_count(city).zero?
@@ -62,7 +66,7 @@ module Salesman
   end
 
   class SpanTree < Graph
-
+    include GraphBuilder
     def build
       city_count    = @cities.size
       add_edge @source_edges.first
@@ -78,42 +82,36 @@ module Salesman
     end
 
     def odd_cities
-      cities_names = @edge_count.keys.select { |name| @edge_count[name].odd? }
+      cities_names = @edge_counter.keys.select { |name| @edge_counter[name].odd? }
       cities_names.collect { |name| @cities.detect { |city| city.name == name } }
     end
 
   end
 
-  class EulerTour
-    include EdgeDistance
-    
-    def self.travel!(tree_edges, match_edges)
-      new(tree_edges, match_edges).travel!
+  class EulerTour < Graph
+
+    def self.travel(edges)
+      new(edges).travel
     end
 
     attr_reader :edges, :cities
-    def initialize(tree_edges, match_edges)
-      @tree_edges   = tree_edges
-      @match_edges  = match_edges
+    def initialize(edges)
+      super(nil, edges)
+      @cities = []
     end
 
-    def travel!
-      match_edges = @match_edges
-      @union_edges = @tree_edges + @match_edges
-      @euler_edges = []
-      @cities = []
-      find_tour(@union_edges.first.a)
-      @edges = @euler_edges
+    def travel
+      find_tour(@source_edges.first.a)
       self
     end
 
     def find_tour(a)
-      a_edges = @union_edges.select { |e| e.cities.include?(a) }
+      a_edges = @source_edges.select { |e| e.cities.include?(a) }
       a_edges.each do |e|
-        next unless @union_edges.include?(e)
-        edge = @union_edges.delete_at(@union_edges.index(e))
+        next unless @source_edges.include?(e)
+        edge = @source_edges.delete_at(@source_edges.index(e))
         find_tour(e.other(a))
-        @euler_edges << edge
+        @edges << edge
       end
       @cities << a
     end
@@ -122,6 +120,24 @@ module Salesman
       edges.map(&:from_to).flatten.group_by{|i| i }[city.name].to_a.size
     end
 
+  end
+
+  class EulerTourOptimizer
+    include EdgeDistance
+
+    def self.optimize(tour)
+      new(tour.cities, tour.edges).optimize
+    end
+
+    attr_reader :cities, :edges
+    def initialize(cities, edges)
+      @cities = cities
+      @edges = edges
+    end
+
+    def optimize
+      self
+    end
   end
 
 end

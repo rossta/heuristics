@@ -18,13 +18,16 @@ module Salesman
         build_minimum_spanning_tree
         puts "Tree edge distance: #{@tree.distance}"
       end
-      time "build_minimum_matching_tree..." do
-        build_minimum_matching_tree
+      time "build_minimum_matching_graph..." do
+        build_minimum_matching_graph
         puts "Matching edge distance: #{@match.distance}"
         puts "Total distance: #{@tree.distance + @match.distance}"
       end
       time "travel_euler_tour..." do
         travel_euler_tour
+      end
+      time "optimize_euler_tour..." do
+        optimize_euler_tour
       end
     end
 
@@ -55,12 +58,16 @@ module Salesman
       @tree   = SpanTree.create_from(@cities, @edges)
     end
 
-    def build_minimum_matching_tree
+    def build_minimum_matching_graph
       @match  = MatchGraph.create_from(@tree.odd_cities, @edges)
     end
 
     def travel_euler_tour
-      @tour   = EulerTour.travel!(@tree.edges, @match.edges)
+      @tour   = EulerTour.travel(@tree.edges + @match.edges)
+    end
+
+    def optimize_euler_tour
+      @tour   = EulerTourOptimizer.optimize(@tour)
     end
   end
 
@@ -95,7 +102,7 @@ module Salesman
     def cities
       [@a,@b]
     end
-    
+
     def other(city)
       if city == a
         b
@@ -145,5 +152,5 @@ module Salesman
     end
 
   end
-  
+
 end
