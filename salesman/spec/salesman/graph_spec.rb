@@ -14,7 +14,7 @@ describe Salesman::Graph do
     end
     @edges.sort!
   end
-  
+
   describe "EulerTour" do
     describe "travel" do
       it "should connect a-b, b-c, c-d, d-b, b-e" do
@@ -24,8 +24,8 @@ describe Salesman::Graph do
         city_4 = Salesman::City.new("4", 0, 2, 0)
         city_5 = Salesman::City.new("5", 0, 0, 0)
         edge_1 = Salesman::Edge.new(city_1, city_2)
-        edge_2 = Salesman::Edge.new(city_1, city_3)
         edge_3 = Salesman::Edge.new(city_1, city_4)
+        edge_2 = Salesman::Edge.new(city_1, city_3)
         edge_4 = Salesman::Edge.new(city_1, city_5)
         edge_5 = Salesman::Edge.new(city_3, city_4)
         edge_6 = Salesman::Edge.new(city_2, city_5)
@@ -38,9 +38,46 @@ describe Salesman::Graph do
         tour.cities.size.should == 6
         tour.cities.should == [city_5, city_1, city_3, city_4, city_1, city_2]
       end
+
+      describe "y formation" do
+        before(:each) do
+          @city_1 = Salesman::City.new("1", 0, 0, 0)
+          @city_2 = Salesman::City.new("2", 1, 1, 0)
+          @city_3 = Salesman::City.new("3", 1, 2, 0)
+          @city_4 = Salesman::City.new("4", 2, 0, 0)
+          @edge_1 = Salesman::Edge.new(@city_1, @city_2)
+          @edge_2 = Salesman::Edge.new(@city_2, @city_3)
+          @edge_3 = Salesman::Edge.new(@city_3, @city_2)
+          @edge_4 = Salesman::Edge.new(@city_2, @city_4)
+          @edge_5 = Salesman::Edge.new(@city_4, @city_1)
+        end
+        it "should travel euler path" do
+          tree_edges  = [@edge_1, @edge_2, @edge_4]
+          match_edges = [@edge_3, @edge_5]
+          tour = Salesman::EulerTour.new(tree_edges, match_edges)
+          tour.travel!
+          tour.edges.size.should == 4
+          tour.edges.should == [@edge_1, @edge_2, @edge_3, @edge_4]
+          tour.cities.size.should == 5
+          tour.cities.should == [@city_1, @city_2, @city_3, @city_2, @city_4]
+        end
+        it "should back track if path goes to final city too soon" do
+          city_5 = Salesman::City.new("5", 2, 1, 0)
+          edge_6 = Salesman::Edge.new(@city_2, city_5)
+          edge_7 = Salesman::Edge.new(city_5, @city_4)
+          tree_edges  = [@edge_1, edge_6, edge_7, @edge_2]
+          match_edges = [@edge_3, @edge_5]
+          tour = Salesman::EulerTour.new(tree_edges, match_edges)
+          tour.travel!
+          tour.edges.size.should == 5
+          tour.edges.should == [@edge_1, @edge_2, @edge_3, edge_6, edge_7]
+          tour.cities.size.should == 6
+          tour.cities.should == [@city_1, @city_2, @city_3, @city_2, city_5, @city_4]
+        end
+      end
     end
   end
-  
+
 
   describe "MatchGraph" do
     describe "build" do
