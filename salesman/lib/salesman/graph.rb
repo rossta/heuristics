@@ -1,6 +1,13 @@
 module Salesman
 
+  module EdgeDistance
+    def distance
+      @edges.inject(0) { |sum, e| sum += e.distance }
+    end
+  end
+
   class Graph
+    include EdgeDistance
     def self.create_from(cities, source_edges)
       new(cities, source_edges).build
     end
@@ -35,13 +42,10 @@ module Salesman
       @edge_count[city.name].to_i
     end
 
-    def distance
-      @edges.inject(0) { |sum, e| sum += e.distance }
-    end
   end
 
   class MatchGraph < Graph
-
+    
     def build
       @cities.each_with_index do |city, i|
         next unless edge_count(city).zero?
@@ -81,6 +85,8 @@ module Salesman
   end
 
   class EulerTour
+    include EdgeDistance
+    
     def self.travel!(tree_edges, match_edges)
       new(tree_edges, match_edges).travel!
     end
@@ -93,34 +99,23 @@ module Salesman
 
     def travel!
       match_edges = @match_edges
-      missing_edge   = match_edges.pop
-      final = missing_edge.a
-      start = missing_edge.b
+      @union_edges = @tree_edges + @match_edges
+      @euler_edges = []
+      @cities = []
+      find_tour(@union_edges.first.a)
+      @edges = @euler_edges
+      self
+    end
 
-      union_edges = @tree_edges + match_edges
-      euler_edges = []
-
-      edge = union_edges.detect { |e| e.cities.include?(start) }
-      edge.flip if edge.a != start
-      puts "Walking..."
-      euler_edges << union_edges.delete_at(union_edges.index(edge))
-      while union_edges.any?
-        # require "ruby-debug"; debugger
-        prev_edge = edge
-        edge = union_edges.detect { |e| (e.cities.include?(prev_edge.b)) && !e.cities.include?(final) }
-        if edge.nil?
-          edge = union_edges.last
-        end
-        edge.flip if edge.a != prev_edge.b
-        puts prev_edge.from_to.join(', ') + "..." + edge.from_to.join(', ')
-        euler_edges << union_edges.delete_at(union_edges.index(edge))
-        # puts "#{edge.a.name}: #{edge_count(edge.a, union_edges)}, #{edge_count(edge.a, euler_edges)}"
-        # puts "#{edge.b.name}: #{edge_count(edge.b, union_edges)}, #{edge_count(edge.b, euler_edges)}"
-        # puts "#{prev_edge.a.name}: #{edge_count(prev_edge.a, union_edges)}, #{edge_count(prev_edge.a, euler_edges)}"
-        # puts "#{prev_edge.b.name}: #{edge_count(prev_edge.b, union_edges)}, #{edge_count(prev_edge.b, euler_edges)}"
+    def find_tour(a)
+      a_edges = @union_edges.select { |e| e.cities.include?(a) }
+      a_edges.each do |e|
+        next unless @union_edges.include?(e)
+        edge = @union_edges.delete_at(@union_edges.index(e))
+        find_tour(e.other(a))
+        @euler_edges << edge
       end
-      @edges = euler_edges
-      @cities = @edges.map(&:a) + [@edges.last.b]
+      @cities << a
     end
 
     def edge_count(city, edges)

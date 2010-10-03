@@ -16,20 +16,21 @@ module Salesman
       end
       time "build_minimum_spanning_tree..." do
         build_minimum_spanning_tree
+        puts "Tree edge distance: #{@tree.distance}"
       end
       time "build_minimum_matching_tree..." do
         build_minimum_matching_tree
+        puts "Matching edge distance: #{@match.distance}"
+        puts "Total distance: #{@tree.distance + @match.distance}"
       end
       time "travel_euler_tour..." do
         travel_euler_tour
-        require "ruby-debug"; debugger
-        1
       end
     end
 
     def total_distance
-      puts "tree: #{@tree.distance} + match: #{@match.distance}"
-      @tree.distance + @match.distance
+      puts "tour distance"
+      @tour.distance
     end
 
     protected
@@ -93,6 +94,16 @@ module Salesman
 
     def cities
       [@a,@b]
+    end
+    
+    def other(city)
+      if city == a
+        b
+      elsif city == b
+        a
+      else
+        nil
+      end
     end
 
     def from_to
