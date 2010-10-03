@@ -108,33 +108,9 @@ module Salesman
         # require "ruby-debug"; debugger
         prev_edge = edge
         edge = union_edges.detect { |e| (e.cities.include?(prev_edge.b)) && !e.cities.include?(final) }
-        
         if edge.nil?
-          
-          final_edges = union_edges.select { |e| e.cities.include?(final) }
-          
-          if final_edges.size > 1 || (final_edges.size == 1 && union_edges.size == 1)
-            edge = union_edges.detect { |e| (e.cities.include?(prev_edge.b)) }
-            edge.flip if edge.a != prev_edge.b
-            puts prev_edge.from_to.join(', ') + "..." + edge.from_to.join(', ')
-            euler_edges << edge
-            break
-          else
-            back_track = 0
-            while edge.nil? && back_track < (union_edges + euler_edges).size
-              back_track += 1
-              prev_city = union_edges.last.b
-              union_edges << euler_edges.pop
-              edge = union_edges.detect { |e| 
-                (e.cities.include?(prev_city)) && 
-                !e.cities.include?(union_edges.last.b) && 
-                edge_count(prev_city, union_edges + euler_edges) > 2
-              }
-            end
-            prev_edge = euler_edges.last
-          end
+          edge = union_edges.last
         end
-        
         edge.flip if edge.a != prev_edge.b
         puts prev_edge.from_to.join(', ') + "..." + edge.from_to.join(', ')
         euler_edges << union_edges.delete_at(union_edges.index(edge))
