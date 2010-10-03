@@ -80,4 +80,40 @@ module Salesman
 
   end
 
+  class EulerTour
+    def self.travel!(tree_edges, match_edges)
+      new(tree_edges, match_edges).travel!
+    end
+
+    attr_reader :edges, :cities
+    def initialize(tree_edges, match_edges)
+      @tree_edges   = tree_edges
+      @match_edges  = match_edges
+    end
+
+    def travel!
+      match_edges = @match_edges
+      last_edge   = match_edges.pop
+      union_edges = @tree_edges + match_edges
+      euler_edges = []
+
+      edge = union_edges.detect { |e| e.cities.include?(last_edge.b) }
+      edge.flip if edge.a != last_edge.b
+
+      euler_edges << union_edges.delete(edge)
+      while union_edges.any?
+        prev_edge = edge
+        edge = union_edges.detect { |e| e.cities.include?(prev_edge.b) && !e.cities.include?(last_edge.a) }
+        if edge.nil?
+          edge = union_edges.first
+          raise "Last edge found not end of path #{edge.from_to.join(',')}" if !edge.cities.include?(last_edge.a)
+        end
+        edge.flip if edge.a != prev_edge.b
+        euler_edges << union_edges.delete(edge)
+      end
+      @edges = euler_edges
+      @cities = @edges.map(&:a) + [@edges.last.b]
+    end
+  end
+
 end

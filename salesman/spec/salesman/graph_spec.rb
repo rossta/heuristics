@@ -14,6 +14,33 @@ describe Salesman::Graph do
     end
     @edges.sort!
   end
+  
+  describe "EulerTour" do
+    describe "travel" do
+      it "should connect a-b, b-c, c-d, d-b, b-e" do
+        city_1 = Salesman::City.new("1", 1, 1, 0)
+        city_2 = Salesman::City.new("2", 2, 0, 0)
+        city_3 = Salesman::City.new("3", 2, 2, 0)
+        city_4 = Salesman::City.new("4", 0, 2, 0)
+        city_5 = Salesman::City.new("5", 0, 0, 0)
+        edge_1 = Salesman::Edge.new(city_1, city_2)
+        edge_2 = Salesman::Edge.new(city_1, city_3)
+        edge_3 = Salesman::Edge.new(city_1, city_4)
+        edge_4 = Salesman::Edge.new(city_1, city_5)
+        edge_5 = Salesman::Edge.new(city_3, city_4)
+        edge_6 = Salesman::Edge.new(city_2, city_5)
+        tree_edges = [edge_1, edge_2, edge_3, edge_4]
+        match_edges = [edge_5, edge_6]
+        tour = Salesman::EulerTour.new(tree_edges, match_edges)
+        tour.travel!
+        tour.edges.size.should == 5
+        tour.edges.should == [edge_4, edge_2, edge_5, edge_3, edge_1]
+        tour.cities.size.should == 6
+        tour.cities.should == [city_5, city_1, city_3, city_4, city_1, city_2]
+      end
+    end
+  end
+  
 
   describe "MatchGraph" do
     describe "build" do

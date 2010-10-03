@@ -16,4 +16,13 @@ describe Salesman::Edge do
       (e_1 <=> e_3).should == 0
     end
   end
+  
+  describe "cities" do
+    it "should return array of cities" do
+      c_1 = mock(Salesman::City)
+      c_2 = mock(Salesman::City)
+      edge = Salesman::Edge.new(c_1, c_2)
+      edge.cities.should == [c_1, c_2]
+    end
+  end
 end

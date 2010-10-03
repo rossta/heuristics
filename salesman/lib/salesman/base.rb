@@ -8,23 +8,23 @@ module Salesman
     end
 
     def calculate!
-      t1 = Time.now
-      puts "initialize_cities..."
-      initialize_cities
-      t2 = Time.now
-      puts Timer.diff(t1, t2)
-      puts "initialize_edges..."
-      initialize_edges
-      t3 = Time.now
-      puts Timer.diff(t2, t3)
-      puts "build_minimum_spanning_tree..."
-      build_minimum_spanning_tree
-      t4 = Time.now
-      puts Timer.diff(t3, t4)
-      puts "build_minimum_matching_tree..."
-      build_minimum_matching_tree
-      t5 = Time.now
-      puts Timer.diff(t4, t5)
+      time "initialize_cities..." do
+        initialize_cities
+      end
+      time "initialize_edges..." do
+        initialize_edges
+      end
+      time "build_minimum_spanning_tree..." do
+        build_minimum_spanning_tree
+      end
+      time "build_minimum_matching_tree..." do
+        build_minimum_matching_tree
+      end
+      time "travel_euler_tour..." do
+        travel_euler_tour
+        require "ruby-debug"; debugger
+        1
+      end
     end
 
     def total_distance
@@ -33,6 +33,14 @@ module Salesman
     end
 
     protected
+
+    def time(msg = '', &block)
+      t1 = Time.now
+      puts msg
+      yield
+      t2 = Time.now
+      puts Timer.diff(t1, t2)
+    end
 
     def initialize_cities
       @cities = City.create_from_file(path)
@@ -48,6 +56,10 @@ module Salesman
 
     def build_minimum_matching_tree
       @match  = MatchGraph.create_from(@tree.odd_cities, @edges)
+    end
+
+    def travel_euler_tour
+      @tour   = EulerTour.travel!(@tree.edges, @match.edges)
     end
   end
 
@@ -78,6 +90,21 @@ module Salesman
     def distance
       @distance ||= a.distance(b)
     end
+
+    def cities
+      [@a,@b]
+    end
+
+    def from_to
+      cities.map(&:name)
+    end
+
+    def flip
+      a1 = @a
+      @a = @b
+      @b = a1
+      self
+    end
   end
 
   class City
@@ -107,5 +134,5 @@ module Salesman
     end
 
   end
-
+  
 end
