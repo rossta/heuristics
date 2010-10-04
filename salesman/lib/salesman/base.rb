@@ -2,38 +2,45 @@ module Salesman
 
   class Base
     attr_reader :path, :cities, :distances, :total_distance
-
-    def initialize(path)
+    attr_accessor :tour, :tree, :match
+    def initialize(path = nil)
       @path = path
     end
 
     def calculate!
-      time "initialize_cities..." do
-        initialize_cities
+      time "Loading file and initializing cities ..." do
+        initialize_cities!
+        puts " num of cities            : #{@cities.size}"
       end
-      time "initialize_edges..." do
-        initialize_edges
+      time "Initializing edges between each city pair ..." do
+        initialize_edges!
+        puts " num of edges             : #{@edges.size}"
       end
-      time "build_minimum_spanning_tree..." do
-        build_minimum_spanning_tree
-        puts "Tree edge distance: #{@tree.distance}"
+      time "Sorting edges..." do
+        sort_edges!
       end
-      time "build_minimum_matching_graph..." do
-        build_minimum_matching_graph
-        puts "Matching edge distance: #{@match.distance}"
-        puts "Total distance: #{@tree.distance + @match.distance}"
+      time "Building minium spanning tree ..." do
+        build_minimum_spanning_tree!
+        puts " tree edge distance       : #{@tree.distance}"
       end
-      time "travel_euler_tour..." do
-        travel_euler_tour
+      time "Building graph of minimum matching edges ..." do
+        build_minimum_matching_graph!
+        puts " matching graph distance  : #{@match.distance}"
+        puts " tree + matching distance : #{@tree.distance + @match.distance}"
       end
-      time "optimize_euler_tour..." do
-        optimize_euler_tour
+      time "Walking euler tour: visit every edge once ..." do
+        travel_euler_tour!
+        puts " euler tour distance      : #{@tour.distance}"
+      end
+      time "Optimizing for cities with multiple visits ..." do
+        optimize_euler_tour!
       end
     end
 
     def total_distance
-      puts "tour distance"
-      @tour.distance
+      return @tour.distance if @tour
+      return @tree.distance + @match.distance if @tree && @match
+      return @tree.distance if @tree
     end
 
     protected
@@ -43,30 +50,35 @@ module Salesman
       puts msg
       yield
       t2 = Time.now
-      puts Timer.diff(t1, t2)
+      puts " #{Timer.diff(t1, t2)}"
+      print "\n"
     end
 
-    def initialize_cities
+    def initialize_cities!
       @cities = City.create_from_file(path)
     end
 
-    def initialize_edges
+    def initialize_edges!
       @edges  = Edge.create_from(@cities)
     end
 
-    def build_minimum_spanning_tree
+    def sort_edges!
+      @edges.sort!
+    end
+
+    def build_minimum_spanning_tree!
       @tree   = SpanTree.create_from(@cities, @edges)
     end
 
-    def build_minimum_matching_graph
+    def build_minimum_matching_graph!
       @match  = MatchGraph.create_from(@tree.odd_cities, @edges)
     end
 
-    def travel_euler_tour
+    def travel_euler_tour!
       @tour   = EulerTour.travel(@tree.edges + @match.edges)
     end
 
-    def optimize_euler_tour
+    def optimize_euler_tour!
       @tour   = EulerTourOptimizer.optimize(@tour)
     end
   end
@@ -81,7 +93,6 @@ module Salesman
           j += 1
         end
       end
-      edges.sort!
       edges
     end
 

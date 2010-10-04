@@ -137,7 +137,7 @@ module Salesman
 
     def optimize
       multi_cities = find_cities_with_multiple_visits
-      while multi_cities.any?
+      # while multi_cities.any?
         multi_cities.each do |city|
           city_edges = @edges.select { |e| e.cities.include? city }
           edge_groups = city_edges.map { |e|
@@ -158,8 +158,8 @@ module Salesman
           @edges.delete_at(index + 1)
           @cities.delete_at(index + 1)
         end
-        multi_cities = find_cities_with_multiple_visits
-      end
+        # multi_cities = find_cities_with_multiple_visits
+      # end
       self
     end
 
