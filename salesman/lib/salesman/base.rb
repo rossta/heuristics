@@ -21,7 +21,7 @@ module Salesman
       end
       time "Building minimum spanning tree ..." do
         build_minimum_spanning_tree!
-        puts " tree edge distance       : #{@tree.distance}"
+        puts " 2x tree edge distance    : #{@tree.distance * 2}"
       end
       time "Building graph of minimum matching edges ..." do
         build_minimum_matching_graph!

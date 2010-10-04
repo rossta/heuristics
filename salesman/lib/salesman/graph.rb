@@ -128,18 +128,13 @@ module Salesman
       new(tour.cities, tour.edges).optimize
     end
 
-    def initialize(cities, edges)
-      super
-      @edges = @source_edges
-    end
-
     attr_reader :cities, :edges
 
     def optimize
       indexes = {}
       @cities.each_with_index do |city, i|
         indexes[city] ||= []
-        indexes[city] << i
+        indexes[city] << i unless i == 0 || i == @cities.length - 1
       end
       uniq_cities = @cities.uniq
       marked = []
@@ -147,14 +142,13 @@ module Salesman
         inds = indexes[city]
         next unless inds && inds.size > 1
         next if city == @cities.last
-        distances = inds.map { |i| @edges[i].distance + @edges[i + 1].distance }
+        distances = inds.map { |i| @source_edges[i].distance + @source_edges[i + 1].distance }
         marked << inds[distances.index(distances.min)]
       end
       marked.each do |i|
         @cities[i] = nil
       end
       @cities.compact!
-      @edges = []
       @cities.each_with_index do |city, i|
         if next_city = @cities[i + 1]
           @edges << Edge.new(city, next_city)
@@ -163,9 +157,6 @@ module Salesman
       self
     end
 
-    def find_cities_with_multiple_visits
-      @cities.group_by {|i|i}.select{|k,v| v.size > 1 }.map(&:first)
-    end
   end
 
 end

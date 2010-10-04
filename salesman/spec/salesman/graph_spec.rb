@@ -30,7 +30,6 @@ describe Salesman::Graph do
       @cities = [@city_1, @city_2, @city_3, @city_2, @city_4, @city_1]
       @edges  = [@edge_1, @edge_2, @edge_3, @edge_4, @edge_5]
       @tour   = Salesman::EulerTourOptimizer.new(@cities, @edges)
-      Salesman::Edge.stub!(:new).and_return(@edge_6)
     end
     describe "optimize" do
       it "should cut out extra edges" do
