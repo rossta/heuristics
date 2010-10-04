@@ -19,6 +19,14 @@ module Salesman
       salesman.calculate!
       t_2     = Time.now
       print "\n"
+
+      print "Path           :"
+      print "#{salesman.tour.cities.map(&:name).join("\t")}"
+      print "\n"
+      print "Edges traveled : #{salesman.tour.edges.size}"
+      print "Cities visited : #{salesman.tour.cities.size}"
+      print "Unique cities  : #{salesman.tour.cities.uniq.size}"
+      print "\n"
       print "Total Distance : #{salesman.total_distance}"
       print "Running time   : #{("%.3f" % (t_2 - t_1)).to_f}"
       print "\n"

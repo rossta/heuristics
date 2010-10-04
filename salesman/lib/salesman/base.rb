@@ -19,7 +19,7 @@ module Salesman
       time "Sorting edges..." do
         sort_edges!
       end
-      time "Building minium spanning tree ..." do
+      time "Building minimum spanning tree ..." do
         build_minimum_spanning_tree!
         puts " tree edge distance       : #{@tree.distance}"
       end
@@ -32,9 +32,9 @@ module Salesman
         travel_euler_tour!
         puts " euler tour distance      : #{@tour.distance}"
       end
-      time "Optimizing for cities with multiple visits ..." do
-        optimize_euler_tour!
-      end
+      # time "Optimizing for cities with multiple visits ..." do
+      #   optimize_euler_tour!
+      # end
     end
 
     def total_distance

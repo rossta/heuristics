@@ -16,27 +16,38 @@ describe Salesman::Graph do
   end
   
   describe "EulerTourOptimizer" do
+    before(:each) do
+      @city_1 = Salesman::City.new("1", 0, 0, 0)
+      @city_2 = Salesman::City.new("2", 1, 1, 0)
+      @city_3 = Salesman::City.new("3", 0, 2, 0)
+      @city_4 = Salesman::City.new("4", 2, 0, 0)
+      @edge_1 = Salesman::Edge.new(@city_1, @city_2)
+      @edge_2 = Salesman::Edge.new(@city_2, @city_3)
+      @edge_3 = Salesman::Edge.new(@city_3, @city_2)
+      @edge_4 = Salesman::Edge.new(@city_2, @city_4)
+      @edge_5 = Salesman::Edge.new(@city_4, @city_1)
+      @edge_6 = Salesman::Edge.new(@city_1, @city_3)
+      @cities = [@city_1, @city_2, @city_3, @city_2, @city_4, @city_1]
+      @edges  = [@edge_1, @edge_2, @edge_3, @edge_4, @edge_5]
+      @tour   = Salesman::EulerTourOptimizer.new(@cities, @edges)
+      Salesman::Edge.stub!(:new).and_return(@edge_6)
+    end
     describe "optimize" do
-      it "should take short cuts" do
-        city_1 = Salesman::City.new("1", 0, 0, 0)
-        city_2 = Salesman::City.new("2", 1, 1, 0)
-        city_3 = Salesman::City.new("3", 0, 2, 0)
-        city_4 = Salesman::City.new("4", 2, 0, 0)
-        edge_1 = Salesman::Edge.new(city_1, city_2)
-        edge_2 = Salesman::Edge.new(city_2, city_3)
-        edge_3 = Salesman::Edge.new(city_3, city_2)
-        edge_4 = Salesman::Edge.new(city_2, city_4)
-        edge_5 = Salesman::Edge.new(city_4, city_1)
-        edge_6 = Salesman::Edge.new(city_1, city_3)
-        cities = [city_1, city_2, city_3, city_2, city_4, city_1]
-        edges  = [edge_1, edge_2, edge_3, edge_4, edge_5]
-        tour   = Salesman::EulerTourOptimizer.new(cities, edges)
-        Salesman::Edge.stub!(:new).and_return(edge_6)
-        tour.optimize
-        tour.edges.size.should == 4
-        tour.edges.map(&:from_to).should == [edge_6, edge_3, edge_4, edge_5].map(&:from_to)
-        tour.cities.size.should == 5
-        tour.cities.map(&:name).should == [city_1, city_3, city_2, city_4, city_1].map(&:name)
+      it "should cut out extra edges" do
+        @tour.optimize
+        @tour.edges.size.should == 4
+        @tour.edges.map(&:from_to).should == [@edge_6, @edge_3, @edge_4, @edge_5].map(&:from_to)
+      end
+      
+      it "should cut out extra cities" do
+        @tour.optimize
+        @tour.cities.size.should == 5
+        @tour.cities.map(&:name).should == [@city_1, @city_3, @city_2, @city_4, @city_1].map(&:name)
+      end
+
+      it "should visit every city at least once" do
+        @tour.optimize
+        @tour.cities.uniq.size.should == 4
       end
     end
   end
