@@ -136,38 +136,30 @@ module Salesman
     attr_reader :cities, :edges
 
     def optimize
+      indexes = {}
       @cities.each_with_index do |city, i|
-        break if city == @cities.last
-        edge_from_city = @edges[i]
-        raise "City not found in edge" if !edge_from_city.cities.include?(city)
-        edge_from_city.flip if edge_from_city.a != city
+        indexes[city] ||= []
+        indexes[city] << i
       end
-      multi_cities = find_cities_with_multiple_visits
-      multi_cities.delete(@cities.first)
-      city = multi_cities.pop
-      while city
-        city_edges = @edges.select { |e| e.cities.include? city }
-        edge_groups = city_edges.map { |e|
-          k = city_edges.index(e)
-          if k % 2 == 0 || e == @source_edges.first || e == @source_edges.last
-            nil
-          else
-            [city_edges[k - 1], e]
-          end
-        }.compact
-        if edge_groups.any? && edge_groups.size > 1
-          max_g = edge_groups.sort { |g, h|
-            g.first.other(city).distance(g.last.other(city)) <=> h.first.other(city).distance(h.last.other(city))
-          }.first
-          new_edge = Edge.new(max_g.first.other(city), max_g.last.other(city))
-          index = @edges.index(max_g.first)
-          next if index.nil?
-          @edges[index] = new_edge
-          @edges.delete_at(index + 1)
+      uniq_cities = @cities.uniq
+      marked = []
+      uniq_cities.each do |city|
+        inds = indexes[city]
+        next unless inds && inds.size > 1
+        next if city == @cities.last
+        distances = inds.map { |i| @edges[i].distance + @edges[i + 1].distance }
+        marked << inds[distances.index(distances.min)]
+      end
+      marked.each do |i|
+        @cities[i] = nil
+      end
+      @cities.compact!
+      @edges = []
+      @cities.each_with_index do |city, i|
+        if next_city = @cities[i + 1]
+          @edges << Edge.new(city, next_city)
         end
-        city = multi_cities.pop
       end
-      @cities = @edges.map(&:a) + [@edges.last.b]
       self
     end
 

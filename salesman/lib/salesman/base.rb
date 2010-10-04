@@ -32,9 +32,9 @@ module Salesman
         travel_euler_tour!
         puts " euler tour distance      : #{@tour.distance}"
       end
-      # time "Optimizing for cities with multiple visits ..." do
-      #   optimize_euler_tour!
-      # end
+      time "Optimizing for cities with multiple visits ..." do
+        optimize_euler_tour!
+      end
     end
 
     def total_distance
