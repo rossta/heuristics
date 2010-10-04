@@ -5,9 +5,9 @@ module Salesman
       @edges.inject(0) { |sum, e| sum += e.distance }
     end
   end
-  
+
   module GraphBuilder
-    
+
     def in_tree?(city)
       edge_count(city) > 0
     end
@@ -122,21 +122,50 @@ module Salesman
 
   end
 
-  class EulerTourOptimizer
-    include EdgeDistance
+  class EulerTourOptimizer < Graph
 
     def self.optimize(tour)
       new(tour.cities, tour.edges).optimize
     end
 
     attr_reader :cities, :edges
-    def initialize(cities, edges)
-      @cities = cities
-      @edges = edges
-    end
 
     def optimize
+      @edges = @source_edges
+      find_cities_with_multiple_visits.each do |city|
+        city_edges = @edges.select { |e| e.cities.include? city }
+        edge_groups = city_edges.map { |e|
+          k = city_edges.index(e)
+          if k % 2 == 0
+            nil
+          else
+            [city_edges[k - 1], e]
+          end
+        }.compact
+        min = 1000000
+        min_g = nil
+        edge_groups.each do |g|
+          distance  = g.inject(0) { |sum, f| sum += f.distance }
+          shortcut  = g.first.other(city).distance(g.last.other(city))
+          savings   = distance - shortcut
+          if min > savings
+            min   = savings
+            min_g = g
+          end
+        end
+        g = min_g
+          new_edge = Edge.new(g.first.other(city), g.last.other(city))
+          index = @edges.index(g.first)
+          next if index.nil?
+          @edges[index] = new_edge
+          @edges.delete_at(index + 1)
+          @cities.delete_at(index + 1)
+      end
       self
+    end
+    
+    def find_cities_with_multiple_visits
+      @cities.slice(0, @cities.size - 1).group_by {|i|i}.select{|k,v|v.size > 1}.map(&:first)
     end
   end
 
