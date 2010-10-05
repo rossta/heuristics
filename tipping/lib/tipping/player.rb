@@ -2,24 +2,40 @@ module Tipping
 
   class Player
 
-    def self.play!
-      new.play!
+    def self.ready!
+      new.listen
     end
 
-    def play!
-      server = TCPServer.open(2000)  # Socket to listen on port 2000
-      loop {                         # Servers run forever
-        client = server.accept       # Wait for a client to connect
-        inputs = client.gets
+    def listen
+      game_over = false
+      hostname = 'localhost'
+      port = 2000
 
-        puts(Time.now.ctime)         # Send the time to the client
-        puts "Reading..."
-        inputs.split.each { |i| puts i }
+      request = "SET 1,3"
+      while true
+        socket    = TCPSocket.open(hostname, port)
+        puts "Calculating..."
+        sleep 1
 
-        client.puts(Time.now.ctime)  # Send the time to the client
-        client.puts "Bye!"
-        client.close                 # Disconnect from the client
-      }
+        socket.write request
+        response  = socket.recv(1024)
+
+        case response.chop
+        when "ACCEPT"
+          puts "Thanks!"
+          request = "SET 2,4"
+        when "REJECT"
+          puts "Retrying..."
+          request = "SET 3,5"
+        when "TIP"
+          puts "OK... game over"
+          socket.close  # Close the socket when done
+          break
+        else
+          puts response.chop
+        end
+        sleep 1
+      end
     end
 
   end

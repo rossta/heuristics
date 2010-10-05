@@ -3,17 +3,18 @@
 require 'socket'               # Get sockets from stdlib
 require 'rubygems'
 
-hostname = 'localhost'
-port = 2000
-
-s = TCPSocket.open(hostname, port)
-
-ARGV.each do |arg|
-  s.puts arg
-end
-
-while line = s.gets   # Read lines from the socket
-  puts line.chop      # And print with platform line terminator
-end
-
-s.close               # Close the socket when done
+server = TCPServer.open(2000)  # Socket to listen on port 2000
+loop {                         # Servers run forever
+  client = server.accept       # Wait for a client to connect
+  
+  puts(Time.now.ctime)         # Send the time to the client
+  request = client.recv(1024)
+  puts "Receiving..."
+  puts request
+  
+  responses = %w|ACCEPT REJECT TIP|
+  response = responses[rand(responses.size)]
+  puts "Sending #{response}"
+  client.puts response
+  client.close
+}
