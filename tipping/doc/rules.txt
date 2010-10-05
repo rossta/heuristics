@@ -1,0 +1,16 @@
+No Tipping Game
+http://www.cs.nyu.edu/courses/fall10/G22.2965-001/notipping.html
+
+Description
+
+Given a uniform, flat board (made of a titanium alloy) 30 meters long and weighing 3 kilograms, consider it ranging from -15 meters to 15 meters. So the center of gravity is at 0. We place two supports of equal heights at positions -3 and -1 and a 3 kilogram block at position -4.
+
+The No Tipping game is a two person game that works as follows: you and I each start with 10 blocks having weights 1 kg through 10 kg. (10 should be a parameter -- no magic numbers in your programs please). The first player places one block anywhere on the board, then the second player places one block anywhere on the board, and play alternates with each player placing one block until the second player places the last block. (You may not place one block above another one, so each position will have at most one block.) If after any ply, the placement of a block causes the board to tip, then the player who did that ply loses. Suppose that the board hasn't tipped by the time the last block is placed. Then the players remove one block at a time (a player may remove a block originally placed by the other player) in turns. If the board tips following a removal, then the player who removed the last block loses.
+
+As the game proceeds, the net torque around each support is calculated and displayed. The blocks, whether on the board or in the possession of the players, are displayed with their weight values.
+
+Architecture Team Spec
+
+The architecture team must implement the display as specified above, so must calculate the net torque after every block is placed or removed. See Tyler Neylon's implementation for a 20 meter board and 7 weights . The display should also announce that tipping has occurred when it does occur. The architecture group should enhance this implementation, ensure it works on netscape and internet explorer and present it on discussion night and implement a random strategy.
+
+A Random Strategy should play the first or second player's game (depending on the command line). During AddMode, it should choose a random remaining block and place it as far left as possible so as to avoid tipping. During RemoveMode, it should examine all blocks on the board, determine which are will not cause tipping, and remove a random one of those. This should be a small challenge to defeat.
