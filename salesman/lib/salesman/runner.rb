@@ -1,6 +1,8 @@
 module Salesman
 
   class Runner
+    include Utils::Timer
+
     attr_accessor :path
 
     def self.run!(path)
@@ -13,12 +15,11 @@ module Salesman
     end
 
     def run!
-      t_1     = Time.now
-      print "Calculating for cities #{path} ...\n"
       salesman = Salesman::Base.new(path)
-      salesman.calculate!
-      t_2     = Time.now
-      print "\n"
+
+      time_diff = time "Calculating for cities #{path} ..." do
+        salesman.calculate!
+      end
 
       print "Path           :"
       print "#{salesman.tour.cities.map(&:name).join("\t")}"
@@ -28,7 +29,7 @@ module Salesman
       print "Unique cities  : #{salesman.tour.cities.uniq.size}"
       print "\n"
       print "Total Distance : #{salesman.total_distance}"
-      print "Running time   : #{("%.3f" % (t_2 - t_1)).to_f}"
+      print "Running time   : #{time_diff}"
       print "\n"
     end
 
