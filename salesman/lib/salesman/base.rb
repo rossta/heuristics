@@ -1,6 +1,8 @@
 module Salesman
 
   class Base
+    include Utils::Timer
+
     attr_reader :path, :cities, :distances, :total_distance
     attr_accessor :tour, :tree, :match
     def initialize(path = nil)
@@ -44,15 +46,6 @@ module Salesman
     end
 
     protected
-
-    def time(msg = '', &block)
-      t1 = Time.now
-      puts msg
-      yield
-      t2 = Time.now
-      puts " #{Timer.diff(t1, t2)}"
-      print "\n"
-    end
 
     def initialize_cities!
       @cities = City.create_from_file(path)
