@@ -1,13 +1,13 @@
 ---
    environment: production
-   chdir: /Users/rk1023/heuristics/server
+   chdir: /home/rk1023/heuristics/server
    address: 127.0.0.1
    user: rk1023
    group: rk1023
    port: 4567
-   pid: /Users/rk1023/heuristics/server/tmp/thin.pid
-   rackup: /Users/rk1023/heuristics/server/thin/config.ru
-   log: /Users/rk1023/heuristics/server/log/thin.log
+   pid: /home/rk1023/heuristics/server/tmp/thin.pid
+   rackup: /home/rk1023/heuristics/server/thin/config.ru
+   log: /home/rk1023/heuristics/server/log/thin.log
    max_conns: 1024
    timeout: 30
    max_persistent_conns: 512
