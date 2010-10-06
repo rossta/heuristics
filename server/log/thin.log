@@ -1,0 +1,20 @@
+>> Writing PID to /Users/ross/projects/heuristics/server/tmp/thin.pid
+/Users/ross/projects/heuristics/server/thin/config.ru:3: warning: Sinatra::Application.default_options is deprecated; use 'set' instead.
+/Users/ross/projects/heuristics/server/thin/config.ru:3: warning: The :env option is deprecated; use :environment instead.
+/Users/ross/projects/heuristics/server/thin/config.ru:9: warning: Sinatra.application is deprecated; use Sinatra::Application instead.
+>> Thin web server (v1.2.5 codename This Is Not A Web Server)
+>> Maximum connections set to 1024
+>> Listening on 127.0.0.1:4567, CTRL+C to stop
+127.0.0.1 - - [05/Oct/2010 23:30:35] "GET / HTTP/1.1" 200 12 0.0006
+127.0.0.1 - - [05/Oct/2010 23:30:36] "GET /favicon.ico HTTP/1.1" 404 420 0.0008
+>> Stopping ...
+>> Exiting!
+>> Writing PID to /Users/ross/projects/heuristics/server/tmp/thin.pid
+/Users/ross/projects/heuristics/server/thin/config.ru:3: warning: Sinatra::Application.default_options is deprecated; use 'set' instead.
+/Users/ross/projects/heuristics/server/thin/config.ru:3: warning: The :env option is deprecated; use :environment instead.
+/Users/ross/projects/heuristics/server/thin/config.ru:9: warning: Sinatra.application is deprecated; use Sinatra::Application instead.
+>> Thin web server (v1.2.5 codename This Is Not A Web Server)
+>> Maximum connections set to 1024
+>> Listening on 127.0.0.1:4567, CTRL+C to stop
+>> Stopping ...
+>> Exiting!
