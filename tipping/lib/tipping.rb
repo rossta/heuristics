@@ -1,4 +1,5 @@
 require 'rubygems'
 require 'socket'
-require 'tipping/player'
 require 'tipping/base'
+require 'tipping/alphabeta'
+require 'tipping/player'
