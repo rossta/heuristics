@@ -32,7 +32,7 @@ module Tipping
 
   class GameState
 
-    attr_writer :successors
+    attr_accessor :successors
 
     def self.min(successors = nil)
       new(Player::MIN, successors)
@@ -44,11 +44,7 @@ module Tipping
 
     def initialize(player, successors)
       @player = player
-      @successors = successors
-    end
-
-    def successors
-      @successors ||= []
+      @successors = successors || []
     end
 
     def score
