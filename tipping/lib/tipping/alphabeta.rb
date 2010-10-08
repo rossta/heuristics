@@ -10,16 +10,16 @@ module Tipping
 
       alpha = a
       beta  = b
-      case state.turn
-      when GameState::MIN
-        state.children.each do |child|
-          beta = [beta, AlphaBeta.score(child, alpha, beta)].min
+      case state.player
+      when Player::MIN
+        state.successors.each do |s|
+          beta = [beta, AlphaBeta.score(s, alpha, beta)].min
           return alpha if alpha >= beta
         end
         return beta
-      when GameState::MAX
-        state.children.each do |child|
-          alpha = [alpha, AlphaBeta.score(child, alpha, beta)].max
+      when Player::MAX
+        state.successors.each do |s|
+          alpha = [alpha, AlphaBeta.score(s, alpha, beta)].max
           return beta if alpha >= beta
         end
         return alpha
@@ -31,38 +31,36 @@ module Tipping
   end
 
   class GameState
-    MIN = :min
-    MAX = :max
 
-    attr_writer :children
+    attr_writer :successors
 
-    def self.min(children = nil)
-      new(MIN, children)
+    def self.min(successors = nil)
+      new(Player::MIN, successors)
     end
 
-    def self.max(children = nil)
-      new(MAX, children)
+    def self.max(successors = nil)
+      new(Player::MAX, successors)
     end
 
-    def initialize(turn, children)
-      @turn = turn
-      @children = children
+    def initialize(player, successors)
+      @player = player
+      @successors = successors
     end
 
-    def children
-      @children ||= []
+    def successors
+      @successors ||= []
     end
 
     def score
       @score ||= 0
     end
 
-    def turn
-      @turn
+    def player
+      @player
     end
 
     def leaf?
-      children.empty?
+      successors.empty?
     end
 
     def min?

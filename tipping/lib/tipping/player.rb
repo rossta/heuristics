@@ -1,7 +1,10 @@
 module Tipping
 
   class Player
-
+    
+    MIN = :min
+    MAX = :max
+    
     def self.ready!
       new.listen
     end
