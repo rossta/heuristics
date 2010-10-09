@@ -4,68 +4,26 @@ module Tipping
 
   class AlphaBeta
 
-    def self.score(state, a = MIN_INT, b = MAX_INT)
+    def self.move(position, depth, alpha = MIN_INT, beta = MAX_INT)
+      return position.move if depth == 0
 
-      return state.score if state.leaf?
+      best_move  = MIN_INT
+      local_alpha = alpha
 
-      alpha = a
-      beta  = b
-      case state.player
-      when Player::MIN
-        state.successors.each do |s|
-          beta = [beta, AlphaBeta.score(s, alpha, beta)].min
-          return alpha if alpha >= beta
-        end
-        return beta
-      when Player::MAX
-        state.successors.each do |s|
-          alpha = [alpha, AlphaBeta.score(s, alpha, beta)].max
-          return beta if alpha >= beta
-        end
-        return alpha
-      else
-        raise "Game state undefined"
+      position.next_moves.each do |move|
+        best_move = [
+          best_move,
+          -AlphaBeta.move(move.position, depth - 1, -beta, -local_alpha)
+        ].max
+
+        break if best_move >= beta
+        local_alpha = best_move if best_move > local_alpha
       end
+
+      best_move
     end
 
   end
 
-  class GameState
-
-    attr_accessor :successors
-
-    def self.min(successors = nil)
-      new(Player::MIN, successors)
-    end
-
-    def self.max(successors = nil)
-      new(Player::MAX, successors)
-    end
-
-    def initialize(player, successors)
-      @player = player
-      @successors = successors || []
-    end
-
-    def score
-      @score ||= 0
-    end
-
-    def player
-      @player
-    end
-
-    def leaf?
-      successors.empty?
-    end
-
-    def min?
-      @state == MIN
-    end
-
-    def max?
-      @state == MAX
-    end
-  end
 end
 

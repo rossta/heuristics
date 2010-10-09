@@ -2,31 +2,40 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Tipping::AlphaBeta do
 
-  describe "self.score" do
+  def position_move(position)
+    mock(Tipping::Move, :position => position)
+  end
+
+  describe "self.move" do
 
     describe "min node" do
       it "should return lowest value of successors" do
-        a = Tipping::GameState.min
-        b = Tipping::GameState.max
-        c = Tipping::GameState.max
-        a.successors = [b, c]
-        b.stub!(:score => 1)
-        c.stub!(:score => 2)
+        b = mock(Tipping::Position, :move => 2)
+        c = mock(Tipping::Position, :move => 1)
 
-        Tipping::AlphaBeta.score(a).should == 1
+        move_b = mock(Tipping::Move, :position => b)
+        move_c = mock(Tipping::Move, :position => c)
+
+        a = mock(Tipping::Position, :next_moves => [move_b, move_c])
+
+        depth = 1
+
+        Tipping::AlphaBeta.move(a, depth).should == -c.move
       end
     end
 
     describe "max node" do
       it "should return highest value of successors" do
-        a = Tipping::GameState.max
-        b = Tipping::GameState.min
-        c = Tipping::GameState.min
-        a.successors = [b, c]
-        b.stub!(:score => 1)
-        c.stub!(:score => 2)
+        b = mock(Tipping::Position, :move => -2)
+        c = mock(Tipping::Position, :move => -1)
+        move_b = mock(Tipping::Move, :position => b)
+        move_c = mock(Tipping::Move, :position => c)
 
-        Tipping::AlphaBeta.score(a).should == 2
+        a = mock(Tipping::Position, :next_moves => [move_b, move_c])
+
+        depth = 1
+
+        Tipping::AlphaBeta.move(a, depth).should == -b.move
       end
 
       describe "four level tree" do
@@ -35,43 +44,47 @@ describe Tipping::AlphaBeta do
         # MAX   d       e           f       g
         # MIN   h   i   j   k       l   m   n   o
         # vals  8   6   10          2   4
-        
+
         before(:each) do
-          maxes, mins = [], []
-          5.times { maxes << Tipping::GameState.max }
-          10.times { mins << Tipping::GameState.min }
-          @a, @d, @e, @f, @g = maxes
-          @b, @c, @h, @i, @j, @k, @l, @m, @n, @o = mins
+          positions = []
+          15.times { positions << mock(Tipping::Position) }
+          @a, @d, @e, @f, @g, @b, @c, @h, @i, @j, @k, @l, @m, @n, @o = positions
 
-          @a.successors = [@b, @c]
+          moves = []
+          positions.each { |p|
+            moves << position_move(p)
+          }
+          @move_a, @move_d, @move_e, @move_f, @move_g, @move_b, @move_c, @move_h,
+          @move_i, @move_j, @move_k, @move_l, @move_m, @move_n, @move_o = moves
 
-          @b.successors = [@d, @e]
-          @c.successors = [@f, @g]
-          @d.successors = [@h, @i]
-          @e.successors = [@j, @k]
-          @f.successors = [@l, @m]
-          @g.successors = [@n, @o]
-          @h.stub!(:score => 8)
-          @i.stub!(:score => 6)
-          @j.stub!(:score => 10)
-          @k.stub!(:score => 24)
-          @l.stub!(:score => 2)
-          @m.stub!(:score => 4)
-          @n.stub!(:score => 19)
-          @o.stub!(:score => 13)
+          @a.stub!(:next_moves => [@move_b, @move_c])
+          @b.stub!(:next_moves => [@move_d, @move_e])
+          @c.stub!(:next_moves => [@move_f, @move_g])
+          @d.stub!(:next_moves => [@move_h, @move_i])
+          @e.stub!(:next_moves => [@move_j, @move_k])
+          @f.stub!(:next_moves => [@move_l, @move_m])
+          @g.stub!(:next_moves => [@move_n, @move_o])
+          @h.stub!(:move => -8)
+          @i.stub!(:move => -6)
+          @j.stub!(:move => -10)
+          @k.stub!(:move => -24)
+          @l.stub!(:move => -2)
+          @m.stub!(:move => -4)
+          @n.stub!(:move => -19)
+          @o.stub!(:move => -13)
         end
-        
+
         describe "states" do
           it "should return 8 for d" do
-            Tipping::AlphaBeta.score(@d).should == 8
-          end
-          
-          it "should return 8 for b" do
-            Tipping::AlphaBeta.score(@b).should == 8
+            Tipping::AlphaBeta.move(@d, 1).should == 8
           end
 
           it "should return 8 for b" do
-            Tipping::AlphaBeta.score(@a).should == 8
+            Tipping::AlphaBeta.move(@b, 2).should == -8
+          end
+
+          it "should return 8 for b" do
+            Tipping::AlphaBeta.move(@a, 3).should == 8
           end
         end
       end
