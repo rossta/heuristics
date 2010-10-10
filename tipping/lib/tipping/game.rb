@@ -10,21 +10,21 @@ module Tipping
       @@instance
     end
 
-    attr_reader :range, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position
+    attr_reader :range, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position, :player, :opponent
 
     def initialize(opts = {})
-      @range = opts[:range] || 15
-      blocks  = opts[:blocks] || 10
-      @player_blocks    = (1..blocks).to_a
-      @opponent_blocks  = (1..blocks).to_a
+      @range      = opts[:range] || 15
+      block_count = opts[:block_count] || 10
+      @player     = Player.new(block_count)
+      @opponent   = Player.new(block_count)
       @weight           = opts[:weight] || 3
       @left_support     = opts[:left_support] || -3
       @right_support    = opts[:right_support] || -1
     end
 
-    # def position
-    #   @position ||= Position.new(@game)
-    # end
+    def position
+      @position ||= Position.new(@game)
+    end
 
     def min
       -@range
@@ -49,7 +49,7 @@ module Tipping
     def available_moves(position)
       open_locations = locations.select { |l| position[l].nil? }
       
-      @player_blocks.collect { |w|
+      @player.blocks.collect { |w|
         open_locations.collect { |l| Move.new(w, l, position) }
       }.flatten
     end

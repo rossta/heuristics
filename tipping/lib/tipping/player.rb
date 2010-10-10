@@ -1,6 +1,6 @@
 module Tipping
-
-  class Player
+  
+  class Referee
     ONE = :one
     TWO = :two
 
@@ -10,7 +10,7 @@ module Tipping
       @client = Client.new(opts)
     end
 
-    def play!
+    def begin!
       # loop
       # if my_turn?
       #   move = player.choose_move
@@ -21,5 +21,12 @@ module Tipping
       # update_game_position
     end
   end
-
+  
+  class Player
+    attr_accessor :blocks
+    def initialize(block_count)
+      @blocks = (1..block_count).to_a
+    end
+  end
+  
 end

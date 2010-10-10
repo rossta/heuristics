@@ -10,10 +10,6 @@ describe Tipping::Game do
       subject.locations.first.should == -15
       subject.locations.last.should == 15
     end
-    it "should give player and opponent 10 weights, 1..10" do
-      subject.opponent_blocks.should == (1..10).to_a
-      subject.player_blocks.should == (1..10).to_a
-    end
     it "should have weight 3" do
       subject.weight.should == 3
     end
@@ -26,11 +22,25 @@ describe Tipping::Game do
   describe "available_moves" do
     it "should return moves for open locations and unused weights" do
       @game = Tipping::Game.new({
-        :blocks => 5,
-        :range => 5
+        :block_count  => 5,
+        :range        => 5
       })
       @position = Tipping::Position.new(@game)
       @game.available_moves(@position).size.should == 55
+    end
+
+    it "should return moves for open locations and unused weights" do
+      @game = Tipping::Game.new({
+        :blocks => 5,
+        :range  => 5
+      })
+      @position = Tipping::Position.new(@game)
+    end
+  end
+  
+  describe "add_block" do
+    it "should add block to board" do
+      
     end
   end
 
