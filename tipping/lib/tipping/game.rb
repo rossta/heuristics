@@ -29,6 +29,10 @@ module Tipping
     def self.weight
       instance.weight
     end
+    
+    def self.score(board)
+      instance.score(board)
+    end
 
     attr_reader :length, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position
 
@@ -47,15 +51,19 @@ module Tipping
     end
 
     def min
-      @min ||= position.min
+      @min ||= -max
     end
 
     def max
-      @max ||= position.max
+      @max ||= @length / 2
     end
     
     def torque
       @torque ||= Torque.new(self)
+    end
+    
+    def score(board)
+      raise "Need to define Game#score of board method"
     end
   end
 

@@ -22,7 +22,4 @@ module Tipping
     end
   end
 
-  class Move
-
-  end
 end

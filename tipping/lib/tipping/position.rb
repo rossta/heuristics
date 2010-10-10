@@ -4,13 +4,15 @@ module Tipping
     MIN = :min
     MAX = :max
 
-    attr_accessor :board
+    attr_reader :board
 
     def initialize
       @board = {}
     end
 
     def []=(location, weight)
+      raise "Outside board boundary" if location > Game.max || location < Game.min
+      raise "Location #{location} already contains weight #{weight}" unless @board[location].nil?
       @board[location] = weight
     end
 
@@ -18,22 +20,52 @@ module Tipping
       @board[location]
     end
 
-    def place(weight)
-      Placer.new(self, weight)
+    def remove(location)
+      @board[location] = nil
     end
 
-    class Placer
-      attr_accessor :weight
-      def initialize(position, weight)
-        @position = position
-        @weight = weight
-      end
+    def current_score
+      Game.score(@board)
+    end
 
-      def at(location)
-        raise "Outside board boundary" if location > Game.max || location < Game.min
-        raise "Location #{location} already contains weight #{weight}" unless @position[location].nil?
-        @position[location] = @weight
-      end
+  end
+
+  class Move
+
+    def initialize(weight, location, position)
+      @weight   = weight
+      @location = location
+      @position = position
+      @done = false
+    end
+
+    def <=>(move)
+      self.score <=> move.score
+    end
+
+    def score
+      @score ||= ensure_do && @position.current_score
+    end
+
+    def do
+      @position[@location] = @weight
+      @done = true
+    end
+
+    def undo
+      @position.remove(@location)
+      @done = false
+    end
+
+    def done?
+      @done
+    end
+
+    protected
+
+    def ensure_do
+      self.do unless done?
     end
   end
+
 end
