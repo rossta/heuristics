@@ -9,35 +9,11 @@ module Tipping
     def self.instance
       @@instance
     end
-    
-    def self.left_support
-      instance.left_support
-    end
-    
-    def self.right_support
-      instance.right_support
-    end
-    
-    def self.min
-      instance.min
-    end
-    
-    def self.max
-      instance.max
-    end
-    
-    def self.weight
-      instance.weight
-    end
-    
-    def self.score(board)
-      instance.score(board)
-    end
 
-    attr_reader :length, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position
+    attr_reader :range, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position
 
     def initialize(opts = {})
-      @length = opts[:length] || 30
+      @range = opts[:range] || 15
       blocks  = opts[:blocks] || 10
       @player_blocks    = (1..blocks).to_a
       @opponent_blocks  = (1..blocks).to_a
@@ -46,24 +22,36 @@ module Tipping
       @right_support    = opts[:right_support] || -1
     end
 
-    def position
-      @position ||= Position.new(@length)
-    end
+    # def position
+    #   @position ||= Position.new(@game)
+    # end
 
     def min
-      @min ||= -max
+      -@range
     end
 
     def max
-      @max ||= @length / 2
+      @range
     end
-    
+
     def torque
       @torque ||= Torque.new(self)
     end
-    
-    def score(board)
+
+    def score(position)
       raise "Need to define Game#score of board method"
+    end
+    
+    def locations
+      @locations ||= (min..max).to_a
+    end
+
+    def available_moves(position)
+      open_locations = locations.select { |l| position[l].nil? }
+      
+      @player_blocks.collect { |w|
+        open_locations.collect { |l| Move.new(w, l, position) }
+      }.flatten
     end
   end
 

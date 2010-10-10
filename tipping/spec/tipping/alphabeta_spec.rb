@@ -16,7 +16,7 @@ describe Tipping::AlphaBeta do
         move_b = mock(Tipping::Move, :position => b)
         move_c = mock(Tipping::Move, :position => c)
 
-        a = mock(Tipping::Position, :next_moves => [move_b, move_c])
+        a = mock(Tipping::Position, :available_moves => [move_b, move_c])
 
         depth = 1
 
@@ -31,7 +31,7 @@ describe Tipping::AlphaBeta do
         move_b = mock(Tipping::Move, :position => b)
         move_c = mock(Tipping::Move, :position => c)
 
-        a = mock(Tipping::Position, :next_moves => [move_b, move_c])
+        a = mock(Tipping::Position, :available_moves => [move_b, move_c])
 
         depth = 1
 
@@ -57,13 +57,13 @@ describe Tipping::AlphaBeta do
           @move_a, @move_d, @move_e, @move_f, @move_g, @move_b, @move_c, @move_h,
           @move_i, @move_j, @move_k, @move_l, @move_m, @move_n, @move_o = moves
 
-          @a.stub!(:next_moves => [@move_b, @move_c])
-          @b.stub!(:next_moves => [@move_d, @move_e])
-          @c.stub!(:next_moves => [@move_f, @move_g])
-          @d.stub!(:next_moves => [@move_h, @move_i])
-          @e.stub!(:next_moves => [@move_j, @move_k])
-          @f.stub!(:next_moves => [@move_l, @move_m])
-          @g.stub!(:next_moves => [@move_n, @move_o])
+          @a.stub!(:available_moves => [@move_b, @move_c])
+          @b.stub!(:available_moves => [@move_d, @move_e])
+          @c.stub!(:available_moves => [@move_f, @move_g])
+          @d.stub!(:available_moves => [@move_h, @move_i])
+          @e.stub!(:available_moves => [@move_j, @move_k])
+          @f.stub!(:available_moves => [@move_l, @move_m])
+          @g.stub!(:available_moves => [@move_n, @move_o])
           @h.stub!(:move => -8)
           @i.stub!(:move => -6)
           @j.stub!(:move => -10)

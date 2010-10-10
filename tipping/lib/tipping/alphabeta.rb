@@ -10,7 +10,7 @@ module Tipping
       best_move  = MIN_INT
       local_alpha = alpha
 
-      position.next_moves.each do |move|
+      position.available_moves.each do |move|
         move.do(position) if move.respond_to?(:do)
         best_move = [
           best_move,

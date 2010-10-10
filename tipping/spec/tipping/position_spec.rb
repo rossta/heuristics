@@ -14,10 +14,14 @@ describe Tipping::Position do
     end
   end
 
-  describe "next_moves" do
+  describe "available_moves" do
 
     it "should return all moves possible from current position" do
-      pending
+      move_1 = mock(Tipping::Move)
+      move_2 = mock(Tipping::Move)
+      available_moves = [move_1, move_2]
+      @position.game.should_receive(:available_moves).with(@position).and_return(available_moves)
+      @position.available_moves.should == available_moves
     end
   end
 

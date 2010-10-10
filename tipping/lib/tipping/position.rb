@@ -4,14 +4,15 @@ module Tipping
     MIN = :min
     MAX = :max
 
-    attr_reader :board
+    attr_reader :board, :game
 
-    def initialize
+    def initialize(game = nil)
+      @game  = game || Game.new
       @board = {}
     end
 
     def []=(location, weight)
-      raise "Outside board boundary" if location > Game.max || location < Game.min
+      raise "Outside board boundary" if location > @game.max || location < @game.min
       raise "Location #{location} already contains weight #{weight}" unless @board[location].nil?
       @board[location] = weight
     end
@@ -23,9 +24,13 @@ module Tipping
     def remove(location)
       @board[location] = nil
     end
+    
+    def available_moves
+      @game.available_moves(self)
+    end
 
     def current_score
-      Game.score(@board)
+      @game.score(self)
     end
 
   end
