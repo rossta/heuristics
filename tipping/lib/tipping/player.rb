@@ -6,7 +6,7 @@ module Tipping
 
     def initialize(opts = {})
       @turn   = opts.delete(:turn) || ONE
-      @game   = Game.new(opts)
+      @game   = Game.setup(opts)
       @client = Client.new(opts)
     end
 

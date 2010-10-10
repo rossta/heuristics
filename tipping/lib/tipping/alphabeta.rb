@@ -11,10 +11,12 @@ module Tipping
       local_alpha = alpha
 
       position.next_moves.each do |move|
+        move.do(position) if move.respond_to?(:do)
         best_move = [
           best_move,
           -AlphaBeta.move(move.position, depth - 1, -beta, -local_alpha)
         ].max
+        move.undo(position) if move.respond_to?(:undo)
 
         break if best_move >= beta
         local_alpha = best_move if best_move > local_alpha
