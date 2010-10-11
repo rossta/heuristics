@@ -22,26 +22,50 @@ describe Tipping::Game do
   describe "available_moves" do
     it "should return moves for open locations and unused weights" do
       @game = Tipping::Game.new({
-        :block_count  => 5,
+        :max_block    => 5,
         :range        => 5
       })
       @position = Tipping::Position.new(@game)
       @game.available_moves(@position).size.should == 55
     end
 
-    it "should return moves for open locations and unused weights" do
+    it "should return moves representing placing unused weights at each open location one at a time" do
       @game = Tipping::Game.new({
-        :blocks => 5,
-        :range  => 5
+        :max_block  => 5,
+        :range      => 5
       })
       @position = Tipping::Position.new(@game)
+      @position[-4] = 3
+      @position[1]  = @game.player.blocks.delete(1)
+      @position[-1] = @game.opponent.blocks.delete(1)
+      
+      open_slots    = @position.open_slots.size
+      unused_blocks = @game.player.blocks.size
+      @game.available_moves(@position).size.should == open_slots * unused_blocks
     end
   end
   
-  describe "add_block" do
-    it "should add block to board" do
+  describe "complete_move" do
+    describe "player" do
+      it "should update player's available blocks" do
+        pending
+      end
       
+      it "should update game position" do
+        pending
+      end
     end
+    
+    describe "opponent" do
+      it "should update oppponent's available blocks" do
+        pending
+      end
+      
+      it "should update game position" do
+        pending
+      end
+    end
+    
   end
 
 end

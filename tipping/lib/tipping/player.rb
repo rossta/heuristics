@@ -24,8 +24,8 @@ module Tipping
   
   class Player
     attr_accessor :blocks
-    def initialize(block_count)
-      @blocks = (1..block_count).to_a
+    def initialize(max_block)
+      @blocks = (1..max_block).to_a
     end
   end
   

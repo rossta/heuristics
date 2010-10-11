@@ -10,13 +10,13 @@ module Tipping
       @@instance
     end
 
-    attr_reader :range, :opponent_blocks, :player_blocks, :weight, :left_support, :right_support, :position, :player, :opponent
+    attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent
 
     def initialize(opts = {})
       @range      = opts[:range] || 15
-      block_count = opts[:block_count] || 10
-      @player     = Player.new(block_count)
-      @opponent   = Player.new(block_count)
+      max_block   = opts[:max_block] || 10
+      @player     = Player.new(max_block)
+      @opponent   = Player.new(max_block)
       @weight           = opts[:weight] || 3
       @left_support     = opts[:left_support] || -3
       @right_support    = opts[:right_support] || -1
@@ -52,6 +52,10 @@ module Tipping
       @player.blocks.collect { |w|
         open_locations.collect { |l| Move.new(w, l, position) }
       }.flatten
+    end
+    
+    def complete_move(move, player)
+      raise "not implemented"
     end
   end
 

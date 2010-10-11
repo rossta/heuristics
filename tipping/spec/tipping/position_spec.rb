@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Tipping::Position do
   before(:each) do
     @position = Tipping::Position.new
-    Tipping::Game.stub!(:min => -15)
-    Tipping::Game.stub!(:max => 15)
   end
 
   describe "[]" do
@@ -24,7 +22,30 @@ describe Tipping::Position do
       @position.available_moves.should == available_moves
     end
   end
-
+  
+  describe "open_slots" do
+    describe "empty board" do
+      it "return all open slots between min and max" do
+        locations = (-5..5).to_a
+        @game = mock(Tipping::Game, :max => 5, :min => -5, :locations => locations)
+        @position = Tipping::Position.new(@game)
+        @position.open_slots.should == locations
+      end
+    end
+    describe "spots filled" do
+      it "return all open slots between min and max" do
+        locations = (-5..5).to_a
+        @game = mock(Tipping::Game, :max => 5, :min => -5, :locations => locations)
+        @position = Tipping::Position.new(@game)
+        @position[-4] = 4
+        @position[3]  = 2
+        open_slots = locations.dup
+        open_slots.delete(-4)
+        open_slots.delete(3)
+        @position.open_slots.should == open_slots
+      end
+    end
+  end
 end
 
 describe Tipping::Move do
@@ -83,7 +104,7 @@ describe Tipping::Move do
     it "should ensure do was called" do
       @position_1.stub!(:current_score => 10)
       @position_2.stub!(:current_score => 20)
-      @move_1 <=> @move_2
+      cmp = (@move_1 <=> @move_2)
       @move_1.done?.should be_true
       @move_2.done?.should be_true
     end

@@ -32,7 +32,13 @@ module Tipping
     def current_score
       @game.score(self)
     end
-
+    
+    def open_slots
+      @game.locations.select { |i| !@board.keys.include?(i) }
+    end
+    
+    protected
+    
   end
 
   class Move
