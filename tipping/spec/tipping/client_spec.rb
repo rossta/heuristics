@@ -40,4 +40,20 @@ describe Tipping::Client do
     end
   end
 
+  describe "server connection" do
+    describe "ADD" do
+      it "should respond to ADD first move" do
+        begin
+          start_server
+          response = "ADD|3,-4|in1=-6,out3=6"
+          client = Tipping::Client.new
+          client.connect
+          client.message.should =~ /Connected/
+        ensure
+          stop_server
+        end
+      end
+    end
+  end
+
 end
