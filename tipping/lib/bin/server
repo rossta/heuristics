@@ -1,0 +1,36 @@
+#! /usr/bin/env ruby
+
+require 'socket'               # Get sockets from stdlib
+require 'rubygems'
+require 'server'
+
+puts "Start server"
+server = Tipping::Server.new(4445)
+
+# server = TCPServer.open(2000)  # Socket to listen on port 2000
+# loop {                         # Servers run forever
+#   client = server.accept       # Wait for a client to connect
+#   
+#   puts(Time.now.ctime)         # Send the time to the client
+#   request = client.recv(1024)
+#   puts "Receiving..."
+#   puts request
+#   
+#   responses = %w|ACCEPT REJECT TIP|
+#   response = responses[rand(responses.size)]
+#   puts "Sending #{response}"
+#   client.puts response
+#   client.close
+# }
+# 
+# 
+# require "socket"  
+# server = TCPServer.new('localhost', 20000)  
+# loop do  
+#   Thread.start(server.accept) do |s|  
+#     print(s, " is accepted\n")  
+#     s.write(Time.now)  
+#     print(s, " is gone\n")  
+#     s.close  
+#   end  
+# end

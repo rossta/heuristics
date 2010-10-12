@@ -1,0 +1,8 @@
+#! /usr/bin/env ruby
+
+require 'socket'               # Get sockets from stdlib
+require 'rubygems'
+require 'server'
+
+puts "Start client"
+client = Tipping::Client.new(ARGV[0], 4445)
