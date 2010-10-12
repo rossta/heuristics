@@ -32,12 +32,14 @@ public class Client {
             System.out.println("Server: " + fromServer);
             if (fromServer.equals("Bye"))
                 break;
+            if (((fromServer.startsWith("ADD")) || (fromServer.startsWith("REMOVE")))) {
 		    
-            fromUser = stdIn.readLine();
-	    if (fromUser != null) {
-                //System.out.println("Client: " + fromUser);
-                out.println(fromUser);
-	    }
+            	fromUser = stdIn.readLine();
+            	if (fromUser != null) {
+            		//System.out.println("Client: " + fromUser);
+            		out.println(fromUser);
+            	}        
+            }
         }
 
         out.close();

@@ -112,7 +112,6 @@ module Tipping
     end
   end
 
-
 end
 
   #           while ((inputline = in.readLine()) != null) {

@@ -23,7 +23,6 @@ public class Server {
             try {
             	//establishes client connection. Waits till a client connects
                 clientSocket = serverSocket.accept();
-                System.out.println("keep alive is " + clientSocket.getKeepAlive() ) ;
                 clientSocket.setKeepAlive(true);
                 clientSocket.setTcpNoDelay(true);
                 
