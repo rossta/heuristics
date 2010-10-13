@@ -1,12 +1,12 @@
 module Tipping
   class Client
-    attr_reader :host, :port, :timeout, :logger, :sock
+    attr_reader :host, :port, :timeout, :sock, :name
 
     def initialize(options = {})
       @host = options[:host] || "localhost"
-      @port = (options[:port] || 12345).to_i
+      @port = (options[:port] || 4445).to_i
       @timeout = (options[:timeout] || 5).to_i
-      @logger = options[:logger] || logger(:DEBUG)
+      @name = options[:name] || "Client"
       @sock = nil
     end
 
@@ -38,16 +38,29 @@ module Tipping
       !! @sock
     end
 
-    def call(*args)
-      process(args) do
-        read
+    def call(command)
+      process(command)
+    end
+    
+    def read
+      begin
+        response = @sock.gets.chomp
+        # response = @sock.read(1)
+      rescue Errno::EAGAIN
+        disconnect
+        raise Errno::EAGAIN, "Timeout reading from the socket"
       end
+      raise Errno::ECONNRESET, "Connection lost" unless response
+
+      hear response
+      interpret response
     end
 
-    def process(*args)
-      logging(commands) do
+    def process(command)
+      logging(command) do
         ensure_connected do
-          @sock.write(join_commands(commands))
+          @sock.puts(command)
+          @sock.flush
           yield if block_given?
         end
       end
@@ -70,6 +83,14 @@ module Tipping
       end
     end
 
+    def echo(command)
+      puts "#{@name} >> #{command}"
+    end
+
+    def hear(command)
+      puts "Game >> #{command}"
+    end
+
     protected
 
     def ensure_connected
@@ -86,25 +107,37 @@ module Tipping
       end
     end
 
-    def logging(commands)
-      return yield unless @logger && @logger.debug?
-
+    def logging(command)
       begin
-        commands.each do |name, *args|
-          @logger.debug("Redis >> #{name.to_s.upcase} #{args.join(" ")}")
-        end
+        echo command
 
         t1 = Time.now
         yield
       ensure
-        @logger.debug("Redis >> %0.2fms" % ((Time.now - t1) * 1000))
+        echo "%0.2fms" % ((Time.now - t1) * 1000)
       end
     end
 
-    def logger(level, namespace = nil)
-      logger = (namespace || Kernel).const_get(:Logger).new("/dev/null")
-      logger.level = (namespace || Logger).const_get(level)
-      logger
+    def interpret(line)
+      response = line.split("|")
+      case response.first
+      when /^ADD/, /^REMOVE/
+        line
+      when /^WIN/
+        echo "FTW!"
+        disconnect
+        line
+      when /^TIP/, /^LOSE/
+        echo "Waa Waa. I lose."
+        disconnect
+        line
+      when /^ACCEPT/, /^REJECT/
+        line
+      when /^TIMEOUT/
+        reconnect
+      else
+        line
+      end
     end
 
   end
