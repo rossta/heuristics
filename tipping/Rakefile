@@ -1,0 +1,19 @@
+require 'rake'
+
+namespace :install do
+  desc "Install server files for testing"
+  task :server do
+    url = "http://homepages.nyu.edu/~rnp226/HPS/notipping"
+    dest = "lib/bin"
+    system "rm #{dest}/*.java* #{dest}/*.class*"
+    begin
+      %w|Client Server ServerConnection GameState|.each do |file|
+        system "wget #{url}/#{file}.java -P #{dest}"
+      end
+      system 'javac lib/bin/*.java'
+    rescue
+      puts "There was a problem installing the sample server"
+      open url
+    end
+  end
+end
