@@ -41,19 +41,33 @@ describe Tipping::Client do
 
   describe "server connection" do
     describe "ADD" do
-      # it "should respond to ADD first move" do
-      #   begin
-      #     client = Tipping::Client.new(:port => 4445)
-      #     server = start_server(4445) do |s|
-      #       client.connect
-      #       s.send("Connected")
-      #     end
-      #     client.read.should =~ /Connected/
-      #   ensure
-      #     stop_server
-      #   end
-      # end
+      it "should respond to ADD first move" do
+        pending
+        begin
+          client = Tipping::Client.new(:port => 4445)
+          server = start_server(4445) do |s|
+            client.connect
+            s.send("Connected")
+          end
+          client.read.should =~ /Connected/
+        ensure
+          stop_server
+        end
+      end
     end
   end
 
+  describe "format_add_remove" do
+    it "should return [:add, { position }, { torques }]" do
+      # in means right, out means left
+      # message = "(ADD/REMOVE)|3,-4 4,-1 3,4 5,-2 6,0|in=25,out=-10"
+      message   = "ADD|3,-4|in=-9.0,out=3.0"
+      formatted = subject.send(:format_add_remove, message)
+      formatted.should == ["ADD", {-4 => 3}, { :left => 3.0, :right => -9.0 }]
+
+      message   = "REMOVE|3,-4 6,7|in=-10.0,out=-13.0"
+      formatted = subject.send(:format_add_remove, message)
+      formatted.should == ["REMOVE", {-4 => 3, 7 => 6}, { :left => -13.0, :right => -10.0 }]
+    end
+  end
 end
