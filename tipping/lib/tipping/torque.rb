@@ -33,19 +33,19 @@ module Tipping
     protected
 
     def left_out_locations
-      @left_out_locations ||= (@game.min..@game.left_support - 1).to_a
+      @game.left_out_locations
     end
-
+    
     def left_in_locations
-      @left_in_locations ||= (@game.left_support + 1..@game.max).to_a
+      @game.left_in_locations
     end
-
+    
     def right_out_locations
-      @right_out_locations ||= (@game.min..@game.right_support - 1).to_a
+      @game.right_out_locations
     end
-
+    
     def right_in_locations
-      @left_in_locations ||= (@game.right_support + 1..@game.max).to_a
+      @game.right_in_locations
     end
 
     def from_left(location, position)

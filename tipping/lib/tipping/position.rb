@@ -21,6 +21,10 @@ module Tipping
       @board[location]
     end
 
+    def prepare!
+      self[-4] = 3
+    end
+
     def remove(location)
       @board[location] = nil
     end

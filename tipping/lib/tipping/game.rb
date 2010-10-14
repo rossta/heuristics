@@ -23,7 +23,11 @@ module Tipping
     end
 
     def position
-      @position ||= Position.new(@game)
+      @position ||= begin
+        position = Position.new
+        position.prepare!
+        position
+      end
     end
 
     def min
@@ -39,8 +43,14 @@ module Tipping
     end
 
     def score(position, player_type)
-      current_player = send(:player_type)
-      raise "Need to define Game#score of board method"
+      current_player = send(player_type)
+      multiplier = player_type == OPPONENT ? -1 : 1
+      return -1 * multiplier if torque.left(position) > 0
+      return -1 * multiplier if torque.right(position) < 0
+      score = locations.inject(0) { |sum, loc|
+        sum += position[loc].to_i * ((left_support - loc).abs + (right_support - loc).abs)
+      }
+      score * multiplier
     end
 
     def locations
@@ -57,6 +67,22 @@ module Tipping
 
     def complete_move(move, player)
       raise "not implemented"
+    end
+
+    def left_out_locations
+      @left_out_locations ||= (min..left_support - 1).to_a
+    end
+
+    def left_in_locations
+      @left_in_locations ||= (left_support + 1..max).to_a
+    end
+
+    def right_out_locations
+      @right_out_locations ||= (min..right_support - 1).to_a
+    end
+
+    def right_in_locations
+      @right_in_locations ||= (right_support + 1..max).to_a
     end
   end
 
