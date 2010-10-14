@@ -165,7 +165,7 @@ public class ServerConnection implements Runnable {
 									}
 									else {
 										out.println("ACCEPT");
-										if (game.getWeights_used() >= 2) {
+										if (game.getWeights_used() >= 20) {
 											game.setMode("REMOVE");
 										}
 										game.setCurrent_player(game.nextPlayer());

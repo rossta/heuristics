@@ -6,6 +6,10 @@ describe Tipping::AlphaBeta do
     mock(Tipping::Move, :position => position)
   end
 
+  before(:each) do
+    Tipping::Move.stub!(:worst_move).and_return(Tipping::MIN_INT)
+  end
+
   describe "self.move" do
 
     describe "min node" do

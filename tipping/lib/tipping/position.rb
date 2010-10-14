@@ -24,29 +24,40 @@ module Tipping
     def remove(location)
       @board[location] = nil
     end
-    
-    def available_moves
-      @game.available_moves(self)
+
+    def available_moves(player_type)
+      @game.available_moves(self, player_type)
     end
 
-    def current_score
-      @game.score(self)
+    def current_score(player_type)
+      @game.score(self, player_type)
     end
-    
+
     def open_slots
       @game.locations.select { |i| !@board.keys.include?(i) }
     end
-    
+
     protected
-    
+
   end
 
   class Move
 
-    def initialize(weight, location, position)
+    def self.worst_move
+      @@worst_move ||= begin
+        move = Move.new(nil, nil, nil)
+        move.score = MIN_INT
+        move
+      end
+    end
+
+    attr_accessor :score, :player_type
+
+    def initialize(weight, location, position, player_type)
       @weight   = weight
       @location = location
       @position = position
+      @player_type = player_type
       @done = false
     end
 
@@ -55,7 +66,7 @@ module Tipping
     end
 
     def score
-      @score ||= ensure_do && @position.current_score
+      @score ||= ensure_do && @position.current_score(@player_type)
     end
 
     def do

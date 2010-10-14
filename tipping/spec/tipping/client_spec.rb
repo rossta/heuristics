@@ -6,10 +6,9 @@ describe Tipping::Client do
     describe "defaults" do
       it "define host, port, timeout, logger, socket" do
         client = Tipping::Client.new
-        client.host.should == "127.0.0.1"
-        client.port.should == 12345
+        client.host.should == "localhost"
+        client.port.should == 4445
         client.timeout.should == 5
-        client.logger.should be_nil
         client.sock.should be_nil
       end
     end
@@ -42,17 +41,18 @@ describe Tipping::Client do
 
   describe "server connection" do
     describe "ADD" do
-      it "should respond to ADD first move" do
-        begin
-          start_server
-          response = "ADD|3,-4|in1=-6,out3=6"
-          client = Tipping::Client.new
-          client.connect
-          client.message.should =~ /Connected/
-        ensure
-          stop_server
-        end
-      end
+      # it "should respond to ADD first move" do
+      #   begin
+      #     client = Tipping::Client.new(:port => 4445)
+      #     server = start_server(4445) do |s|
+      #       client.connect
+      #       s.send("Connected")
+      #     end
+      #     client.read.should =~ /Connected/
+      #   ensure
+      #     stop_server
+      #   end
+      # end
     end
   end
 

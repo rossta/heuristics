@@ -18,8 +18,8 @@ describe Tipping::Position do
       move_1 = mock(Tipping::Move)
       move_2 = mock(Tipping::Move)
       available_moves = [move_1, move_2]
-      @position.game.should_receive(:available_moves).with(@position).and_return(available_moves)
-      @position.available_moves.should == available_moves
+      @position.game.should_receive(:available_moves).with(@position, :player).and_return(available_moves)
+      @position.available_moves(:player).should == available_moves
     end
   end
   
@@ -53,7 +53,7 @@ describe Tipping::Move do
   describe "perform move" do
     before(:each) do
       @position = Tipping::Position.new
-      @move = Tipping::Move.new(-3, 5, @position)
+      @move = Tipping::Move.new(-3, 5, @position, :player)
     end
 
     describe "do" do
@@ -92,8 +92,8 @@ describe Tipping::Move do
     before(:each) do
       @position_1 = Tipping::Position.new
       @position_2 = Tipping::Position.new
-      @move_1 = Tipping::Move.new(1, 4, @position_1)
-      @move_2 = Tipping::Move.new(4, 1, @position_2)
+      @move_1 = Tipping::Move.new(1, 4, @position_1, :player)
+      @move_2 = Tipping::Move.new(4, 1, @position_2, :player)
     end
 
     after(:each) do

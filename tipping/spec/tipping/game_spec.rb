@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe Tipping::Game do
+  
+  describe "score" do
+    
+    describe "red strategy: going first" do
+      it "should force bad endgame for blue" do
+        pending
+      end
+    end
+    
+    describe "blue strategy: going last" do
+      it "should prevent bad endgame" do
+        pending
+      end
+    end
+  end
+  
   describe "defaults" do
     it "should have range 15" do
       subject.range.should == 15
@@ -26,7 +42,7 @@ describe Tipping::Game do
         :range        => 5
       })
       @position = Tipping::Position.new(@game)
-      @game.available_moves(@position).size.should == 55
+      @game.available_moves(@position, :player).size.should == 55
     end
 
     it "should return moves representing placing unused weights at each open location one at a time" do
@@ -41,7 +57,7 @@ describe Tipping::Game do
       
       open_slots    = @position.open_slots.size
       unused_blocks = @game.player.blocks.size
-      @game.available_moves(@position).size.should == open_slots * unused_blocks
+      @game.available_moves(@position, :player).size.should == open_slots * unused_blocks
     end
   end
   

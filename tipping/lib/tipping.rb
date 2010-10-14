@@ -19,6 +19,9 @@ module Tipping
     LOSE    = "LOSE",
     TIMEOUT = "TIMEOUT"
   ]
+  
+  OPPONENT = :opponent
+  PLAYER = :player
 
   class NoTipping
     ONE = :one
@@ -55,7 +58,8 @@ module Tipping
         response = @client.read
         case response.first
         when /^ADD/, /^REMOVE/, /^REJECT/
-          @client.call("#{rand(10)},#{rand(10)}")
+          next_move = @game.player.next_move(response)
+          @client.call(next_move)
         when /^ACCEPT/
           @client.echo("Thank you")
         when /^WIN/, /^TIP/, /^LOSE/

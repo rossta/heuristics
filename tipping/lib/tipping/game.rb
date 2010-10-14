@@ -38,22 +38,23 @@ module Tipping
       @torque ||= Torque.new(self)
     end
 
-    def score(position)
+    def score(position, player_type)
+      current_player = send(:player_type)
       raise "Need to define Game#score of board method"
     end
-    
+
     def locations
       @locations ||= (min..max).to_a
     end
 
-    def available_moves(position)
+    def available_moves(position, player_type)
       open_locations = locations.select { |l| position[l].nil? }
-      
+
       @player.blocks.collect { |w|
-        open_locations.collect { |l| Move.new(w, l, position) }
+        open_locations.collect { |l| Move.new(w, l, position, player_type) }
       }.flatten
     end
-    
+
     def complete_move(move, player)
       raise "not implemented"
     end
