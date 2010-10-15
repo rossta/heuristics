@@ -5,6 +5,7 @@ module Tipping
     MAX = :max
 
     attr_reader :board, :game
+    attr_accessor :move
 
     def initialize(game = nil)
       @game  = game || Game.new
@@ -49,13 +50,13 @@ module Tipping
 
     def self.worst_move
       @@worst_move ||= begin
-        move = Move.new(nil, nil, nil)
+        move = Move.new(nil, nil, nil, nil)
         move.score = MIN_INT
         move
       end
     end
 
-    attr_accessor :score, :player_type
+    attr_accessor :score, :player_type, :position
 
     def initialize(weight, location, position, player_type)
       @weight   = weight
@@ -70,21 +71,35 @@ module Tipping
     end
 
     def score
-      @score ||= ensure_do && @position.current_score(@player_type)
+      @score ||= begin
+        ensure_do
+        @position.current_score(@player_type)
+      end
+    end
+
+    def inverse
+      @score = -score
+      self
     end
 
     def do
       @position[@location] = @weight
+      @position.move = self
       @done = true
     end
 
     def undo
+      @position.move = nil
       @position.remove(@location)
       @done = false
     end
 
     def done?
       @done
+    end
+
+    def to_s
+      [@weight, @location].join(",")
     end
 
     protected

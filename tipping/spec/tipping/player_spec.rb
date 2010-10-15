@@ -10,7 +10,7 @@ describe Tipping::Player do
   
   describe "initialize" do
     it "should have blocks for given block range" do
-      player = Tipping::Player.new(10)
+      player = Tipping::Player.new(Tipping::Game.new(:max_block => 10))
       player.blocks.should == [1,2,3,4,5,6,7,8,9,10]
     end
   end

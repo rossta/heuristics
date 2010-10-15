@@ -27,6 +27,10 @@ public class GameState {
 		
 		double in1=0,out1=0,in3=0,out3=0;
 		
+		//the board weights 3 kgs which is concentrated at 0, so there is some intorque at -3 and -1
+		in3 += 9;
+		in1 += 3;
+		
 		for (int i=0; i<position_weights.length; i++) {
 			if (position_weights[i] == -1)
 				continue;

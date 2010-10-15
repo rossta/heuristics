@@ -190,6 +190,7 @@ public class ServerConnection implements Runnable {
 						if (game.getPosition_weights()[pos+15] == wt) {
 							game.getPosition_weights()[pos+15] = -1;
 							game.decrementWeights_used();
+							game.calculate_torque();
 							if (game.getRighttorque() > 0 || game.getLefttorque() > 0) { 
 								System.out.println("in=" + game.getRighttorque() + " & out=" + game.getLefttorque());
 								out.println("TIP");

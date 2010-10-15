@@ -2,12 +2,7 @@ require 'spec_helper'
 
 describe Tipping::Torque do
   before(:each) do
-    @game = mock(Tipping::Game)
-    @game.stub!(:min => -15)
-    @game.stub!(:max => 15)
-    @game.stub!(:left_support => -3)
-    @game.stub!(:right_support => -1)
-    @game.stub!(:weight => 3)
+    @game = Tipping::Game.new
   end
 
   describe "self.calc" do

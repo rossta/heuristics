@@ -59,7 +59,7 @@ module Tipping
         case response.first
         when /^ADD/, /^REMOVE/, /^REJECT/
           next_move = @game.player.next_move(response)
-          @client.call(next_move)
+          @client.call(next_move.to_s)
         when /^ACCEPT/
           @client.echo("Thank you")
         when /^WIN/, /^TIP/, /^LOSE/

@@ -10,16 +10,20 @@ module Tipping
       @@instance
     end
 
-    attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent
+    def self.position
+      @@instance.position if @@instance
+    end
+
+    attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent, :max_block
 
     def initialize(opts = {})
       @range      = opts[:range] || 15
-      max_block   = opts[:max_block] || 10
-      @player     = Player.new(max_block)
-      @opponent   = Player.new(max_block)
+      @max_block  = opts[:max_block] || 10
       @weight           = opts[:weight] || 3
       @left_support     = opts[:left_support] || -3
       @right_support    = opts[:right_support] || -1
+      @player     = Player.new(self)
+      @opponent   = Player.new(self)
     end
 
     def position
@@ -31,7 +35,7 @@ module Tipping
     end
 
     def min
-      -@range
+      - max
     end
 
     def max
