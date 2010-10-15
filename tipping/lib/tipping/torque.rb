@@ -10,16 +10,16 @@ module Tipping
       @game = game
     end
 
-    def left(position)
+    def out(position)
       out_torque  = left_out_locations.inject(0) { |sum, i| sum += from_left(i, position) }
       in_torque   = left_in_locations.inject(0) { |sum, i| sum += from_left(i, position) } + left_board_torque
       out_torque - in_torque
     end
 
-    def right(position)
+    def in(position)
       out_torque  = right_out_locations.inject(0) { |sum, i| sum += from_right(i, position) }
       in_torque   = right_in_locations.inject(0) { |sum, i| sum += from_right(i, position) } + right_board_torque
-      out_torque - in_torque
+      in_torque - out_torque
     end
 
     def board(fulcrum)

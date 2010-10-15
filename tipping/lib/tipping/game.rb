@@ -49,8 +49,8 @@ module Tipping
     def score(position, player_type)
       current_player = send(player_type)
       multiplier = player_type == OPPONENT ? -1 : 1
-      return -1 * multiplier if torque.left(position) > 0
-      return -1 * multiplier if torque.right(position) < 0
+      return -1 * multiplier if torque.out(position) > 0
+      return -1 * multiplier if torque.in(position) > 0
       score = locations.inject(0) { |sum, loc|
         sum += position[loc].to_i * ((left_support - loc).abs + (right_support - loc).abs)
       }
