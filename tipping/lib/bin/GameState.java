@@ -19,7 +19,7 @@ public class GameState {
 	 * At -3, the tip occurs when torque on the left > torque on right or out3-in3 > 0
 	 * At -1, the tip occurs when torque on the right > torque on left or in1-out1 > 0
 	 * If either of the conditions hold true, the player loses the game
-	 */	
+	 */
 	public void calculate_torque() {		
 		
 		right_torque=0.0;
@@ -37,17 +37,29 @@ public class GameState {
 			
 			int pos = i-15;
 			int wt = position_weights[i];
+			System.out.println("Calculating: " + pos + "," + wt);
 			
-			if (pos < -3)
+			if (pos < -3) {
+				System.out.print("out3: " + out3 + "+" + "(-1) * (" + pos + "-(-3)) * " + wt);
 				out3 += (-1) * (pos-(-3)) * wt;
-			else
-				in3 += pos-(-3)* wt;
+				System.out.println("=" + out3);
+			} else {
+				System.out.print("in3: " + in3 + "+" + pos + "-(-3) * " + wt);
+				in3 += (pos-(-3))* wt;
+				System.out.println("=" + in3);
+			}
 			
 			
-			if (pos < -1)
+			if (pos < -1) {
+				System.out.print("out1: " + out1 + "+" + "(-1) * (" + pos + "-(-1)) * " + wt);
 				out1 += (-1) * (pos-(-1)) * wt;
-			else
-				in1 += pos-(-1)* wt;			
+				System.out.println("=" + out1);
+			}
+			else {
+				System.out.print("in1: " + in1 + "+"  + pos + "-(-1) * " + wt);
+				in1 += (pos-(-1))* wt;
+				System.out.println("=" + in1);
+			}
 		}
 		
 		System.out.println("in1=" + in1);
@@ -151,6 +163,9 @@ public class GameState {
 		weights_used--;
 	}
 	
+	public void removePlayer(String tag) {
+		this.players.remove(tag);
+	}
 	
 	
 }
