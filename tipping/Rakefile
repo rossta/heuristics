@@ -1,8 +1,8 @@
 require 'rake'
 
-namespace :install do
+namespace :server do
   desc "Install server files for testing"
-  task :server do
+  task :install do
     url = "http://homepages.nyu.edu/~rnp226/HPS/notipping"
     dest = "lib/bin"
     system "rm #{dest}/*.java* #{dest}/*.class*"
@@ -16,4 +16,18 @@ namespace :install do
       open url
     end
   end
+  
+  desc "Run official server for game (call java)"
+  task :java do
+    dest = "lib/bin"
+    system "cd lib/bin; java Server"
+  end
+  
+  desc "Run test server that forwards messages from STDIN"
+  task :echo do
+    dest = "lib/bin"
+    system "ruby #{dest}/echo"
+  end
 end
+
+task :server => ["server:java"]
