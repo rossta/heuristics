@@ -14,3 +14,9 @@ REJECT - server has rejected your placement because: some other block is already
 TIP - Your last move caused the board to tip - Game Over.
 WIN - THe opponent tipped the scale or exceeded 2 minutes. You won.
 TIMEOUT - You exceeded 2 minutes
+
+
+
+ADD|3,-4|in1=25,out3=-10
+ADD|3,-4 10,-1 1,0|in1=25,out3=-10
+ADD|3,-4 10,-1 1,0 9,-6 2,-1|in1=25,out3=-10

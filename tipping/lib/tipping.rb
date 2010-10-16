@@ -20,12 +20,12 @@ module Tipping
     TIMEOUT = "TIMEOUT"
   ]
   
-  OPPONENT = :opponent
-  PLAYER = :player
+  OPPONENT  = :opponent
+  PLAYER    = :player
+  FIRST     = :first
+  SECOND    = :second
 
   class NoTipping
-    ONE = :one
-    TWO = :two
 
     def initialize(opts = {})
       @game   = Game.setup(opts)
@@ -58,7 +58,7 @@ module Tipping
         response = @client.read
         case response.first
         when /^ADD/, /^REMOVE/, /^REJECT/
-          next_move = @game.player.next_move(response)
+          next_move = @player.next_move(response)
           @client.call(next_move.to_s)
         when /^ACCEPT/
           @client.echo("Thank you")
@@ -69,6 +69,10 @@ module Tipping
         end
       end
 
+    end
+    
+    def player
+      @player ||= @game.player
     end
 
   end

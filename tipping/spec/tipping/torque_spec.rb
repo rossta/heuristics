@@ -33,7 +33,7 @@ describe Tipping::Torque do
     end
 
     describe "with weights" do
-      it "should equal -9/-3" do
+      it "should equal -15/-3 with 3,-4 3,0" do
         position = @game.position
         position[0] = 3
 
@@ -41,6 +41,24 @@ describe Tipping::Torque do
         @torque.out(position).should == -15
         # -9 (6 in-torque - 9 out-torque)
         @torque.in(position).should == -3
+      end
+
+      it "should equal -15/-3 with 3,-4 3,0" do
+        position = @game.position
+        position[-1] = 10
+
+        # -9 (3 out-torque - 18 in-torque)
+        @torque.out(position).should == -26
+        # -9 (6 in-torque - 9 out-torque)
+        @torque.in(position).should == -6
+      end
+
+      it "should equal -14/-2 with 3,-4 2,1" do
+        position = @game.position
+        position[1] = 2
+
+        @torque.out(position).should == -14
+        @torque.in(position).should == -2
       end
     end
 

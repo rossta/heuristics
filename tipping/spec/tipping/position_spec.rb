@@ -12,6 +12,23 @@ describe Tipping::Position do
     end
   end
 
+  describe "update_all" do
+    it "should set all board locations/weights to new given keys/values" do
+      @position.update_all({
+        -4  => 3,
+         2  => 1,
+        -1  => 10
+      })
+      @position[-4].should == 3
+      @position[2].should == 1
+      @position[-1].should == 10
+      unoccupied = (-15..-5).to_a + [-3, -2] + [0, 1] + (3..15).to_a
+      unoccupied.each do |loc|
+        @position[loc].should == nil
+      end
+    end
+  end
+
   describe "available_moves" do
 
     it "should return all moves possible from current position" do
@@ -22,7 +39,7 @@ describe Tipping::Position do
       @position.available_moves(:player).should == available_moves
     end
   end
-  
+
   describe "open_slots" do
     describe "empty board" do
       it "return all open slots between min and max" do
@@ -53,79 +70,9 @@ describe Tipping::Move do
   describe "perform move" do
     before(:each) do
       @position = Tipping::Position.new
-      @move = Tipping::Move.new(-3, 5, @position, :player)
+      @move = Tipping::Move.new(-3, 5, :player)
     end
 
-    describe "do" do
-      it "should perform move on current position" do
-        @move.do
-        @position[5].should == -3
-      end
-
-      it "should be done after do" do
-        @move.do
-        @move.done?.should be_true
-      end
-
-      it "should not be done before do" do
-        @move.done?.should be_false
-      end
-    end
-
-    describe "undo" do
-      it "should undo move on current position" do
-        @move.do
-        @move.undo
-        @position[5].should be_nil
-      end
-
-      it "should not be done after undo" do
-        @move.do
-        @move.undo
-        @move.done?.should be_false
-      end
-    end
-
-  end
-
-  describe "<=>" do
-    before(:each) do
-      @position_1 = Tipping::Position.new
-      @position_2 = Tipping::Position.new
-      @move_1 = Tipping::Move.new(1, 4, @position_1, :player)
-      @move_2 = Tipping::Move.new(4, 1, @position_2, :player)
-    end
-
-    after(:each) do
-      @move_1.undo
-      @move_2.undo
-    end
-
-    it "should ensure do was called" do
-      @position_1.stub!(:current_score => 10)
-      @position_2.stub!(:current_score => 20)
-      cmp = (@move_1 <=> @move_2)
-      @move_1.done?.should be_true
-      @move_2.done?.should be_true
-    end
-
-    it "should return -1 if this move is worse than other" do
-      @position_1.stub!(:current_score => 10)
-      @position_2.stub!(:current_score => 20)
-      (@move_1 <=> @move_2).should == -1
-    end
-
-    it "should return +1 if this move is better than other" do
-      @position_1.stub!(:current_score => 20)
-      @position_2.stub!(:current_score => 10)
-      (@move_1 <=> @move_2).should == 1
-    end
-
-    it "should return 0 if this move is equal other" do
-      @position_1.stub!(:current_score => 10)
-      @position_2.stub!(:current_score => 10)
-      (@move_1 <=> @move_2).should == 0
-    end
   end
 
 end

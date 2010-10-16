@@ -45,7 +45,6 @@ module Tipping
     def read
       begin
         response = @sock.gets.chomp
-        # response = @sock.read(1)
       rescue Errno::EAGAIN
         disconnect
         raise Errno::EAGAIN, "Timeout reading from the socket"

@@ -92,51 +92,46 @@ describe Tipping::Game do
 
   describe "available_moves" do
     it "should return moves for open locations and unused weights" do
-      @game = Tipping::Game.new({
-        :max_block    => 5,
-        :range        => 5
-      })
-      @position = Tipping::Position.new(@game)
-      @game.available_moves(@position, :player).size.should == 55
+      @game = Tipping::Game.new
+      @game.update_position({-4 => 3})
+      @game.available_moves(:player).size.should == 300
     end
-
-    it "should return moves representing placing unused weights at each open location one at a time" do
-      @game = Tipping::Game.new({
-        :max_block  => 5,
-        :range      => 5
-      })
-      @position = Tipping::Position.new(@game)
-      @position[-4] = 3
-      @position[1]  = @game.player.blocks.delete(1)
-      @position[-1] = @game.opponent.blocks.delete(1)
-
-      open_slots    = @position.open_slots.size
-      unused_blocks = @game.player.blocks.size
-      @game.available_moves(@position, :player).size.should == open_slots * unused_blocks
-    end
-  end
-
-  describe "complete_move" do
-    describe "player" do
-      it "should update player's available blocks" do
-        pending
+    
+    describe "nested moved" do
+      before(:each) do
+        @game = Tipping::Game.new
+        @game.update_position({-4 => 3})
+        @move_1 = Tipping::Move.new(5, 0, Tipping::PLAYER)
+        @move_2 = Tipping::Move.new(4, 1, Tipping::OPPONENT)
       end
-
-      it "should update game position" do
-        pending
+      it "should return moves representing placing unused weights at each open location one at a time" do
+        @game.do_move(@move_1)
+        @game.player.blocks.should == [1,2,3,4,6,7,8,9,10]
+        @game.opponent.blocks.should == [1,2,3,4,5,6,7,8,9,10]
+        @game.position.open_slots.size.should == 29
+        @game.position.open_slots.should == (-15..-5).to_a + (-3..-1).to_a + (1..15).to_a
+        @game.available_moves(:player).size.should == 261
+        @game.available_moves(:opponent).size.should == 290
       end
-    end
-
-    describe "opponent" do
-      it "should update oppponent's available blocks" do
-        pending
-      end
-
-      it "should update game position" do
-        pending
+      it "should return moves representing placing unused weights at each open location one at a time" do
+        @game.do_move(@move_1)
+        @game.do_move(@move_2)
+        @game.player.blocks.should    == [1,2,3,4,6,7,8,9,10]
+        @game.opponent.blocks.should  == [1,2,3,5,6,7,8,9,10]
+        @game.position.open_slots.size.should == 28
+        @game.position.open_slots.should == (-15..-5).to_a + (-3..-1).to_a + (2..15).to_a
+        @game.available_moves(:player).size.should    == 252
+        @game.available_moves(:opponent).size.should  == 252
+        
+        @game.undo_move(@move_2)
+        @game.player.blocks.should == [1,2,3,4,6,7,8,9,10]
+        @game.opponent.blocks.should == [1,2,3,4,5,6,7,8,9,10]
+        @game.position.open_slots.size.should == 29
+        @game.position.open_slots.should == (-15..-5).to_a + (-3..-1).to_a + (1..15).to_a
+        @game.available_moves(:player).size.should == 261
+        @game.available_moves(:opponent).size.should == 290
       end
     end
-
   end
 
 end

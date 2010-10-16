@@ -4,34 +4,33 @@ module Tipping
 
   class AlphaBeta
 
-    def self.move(position, depth, alpha = MIN_INT, beta = MAX_INT)
-      return position.move if depth == 0
-
-      best_move   = Move.worst_move
-      local_alpha = alpha
+    def self.best_score(position, depth, alpha = MIN_INT, beta = MAX_INT)
       player_type = player_type_for(depth)
+      return position.current_score(player_type) if depth == 0
 
-      position.available_moves(player_type).each do |move|
-        find_alpha_beta_move(move, depth, beta, local_alpha) do |alpha_beta_move|
-          best_move = [
-            best_move,
-            alpha_beta_move
-          ].max
+      available_moves = position.available_moves(player_type)
+      local_alpha = alpha
+      best_value  = MIN_INT
+      best_move   = available_moves.first
+
+      # return -INFINITY if position.win?
+      # handlenomove(position) if position.available_moves(player_type).empty?
+      available_moves.each do |move|
+        position.do! move
+        if position.tipped?
+          position.undo! move
+          next
         end
-
-        break if best_move.score >= beta
-        local_alpha = best_move.score if best_move.score > local_alpha
+        value, later_move = AlphaBeta.best_score(position, depth - 1, -beta, -local_alpha)
+        value = -value
+        position.undo! move
+        best_value  = [best_value, value].max
+        best_move   = move if best_value == value
+        break if (best_value >= beta)
+        local_alpha = best_value if best_value > local_alpha
       end
-
-      best_move
-    end
-    
-    def self.find_alpha_beta_move(move, depth, beta, local_alpha)
-      move.do
-      alpha_beta_move = AlphaBeta.move(move.position, depth - 1, -beta, -local_alpha).inverse
-      yield(alpha_beta_move)
-      alpha_beta_move.inverse
-      move.undo
+      puts [best_value, best_move].join(", ") if Game.instance.debug?
+      [best_value, best_move]
     end
 
     protected
