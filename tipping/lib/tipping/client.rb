@@ -110,10 +110,10 @@ module Tipping
       begin
         echo command
 
-        t1 = Time.now
+        # t1 = Time.now
         yield
       ensure
-        echo "%0.2fms" % ((Time.now - t1) * 1000)
+        # echo "%0.2fms" % ((Time.now - t1) * 1000)
       end
     end
 

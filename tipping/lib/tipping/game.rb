@@ -28,6 +28,7 @@ module Tipping
       @opponent   = Player.new(self)
       @condition  = ADD
       @debug      = opts[:debug] || false
+      @first_location = -4
     end
 
     def min
@@ -50,6 +51,7 @@ module Tipping
       score = locations.inject(0) { |sum, loc|
         sum += position[loc].to_i * ((left_support - loc).abs + (right_support - loc).abs)
       }
+      print "."
       score * multiplier
     end
 
@@ -86,32 +88,7 @@ module Tipping
       position.update_all(locations)
       case condition
       when ADD
-        case locations.size
-        when 1
-          @player.turn    = FIRST
-          @opponent.turn  = SECOND
-          @first_location = locations.keys.first
-        when 2
-          @player.turn    = SECOND
-          @opponent.turn  = FIRST
-        end
-        locations.delete(@first_location)
-        return unless locations.any?
-        @debug = true
-
-        turn = locations.size % 2 == 0 ? FIRST : SECOND
-        locations.delete_if { |loc, wt|
-          @player.moved?(loc, wt) || @opponent.moved?(loc, wt)
-        }
-
-        warn "Locations unaccounted for!" unless locations.size == 1
-        loc = locations.keys.first
-        wt  = locations.values.first
-        @opponent.add_move(Move.new(wt, loc, OPPONENT))
-        puts "OPPONENT BLOCKS       : #{@opponent.blocks_to_s}"
-        puts "send :opponent blocks : #{send(:opponent).blocks_to_s}"
-        puts "PLAYER BLOCKS         : #{@player.blocks_to_s}"
-        puts "send :opponent blocks : #{send(:player).blocks_to_s}"
+        respond_to_add(locations)
       when REMOVE
       end
     end
@@ -137,6 +114,36 @@ module Tipping
       state << "Position: #{position}"
       state << "Blocks  : #{send(player_type).blocks.join("|")}"
       state.join("\n")
+    end
+    
+    protected
+    
+    def respond_to_add(locations)
+      case locations.size
+      when 1
+        @player.turn    = FIRST
+        @opponent.turn  = SECOND
+      when 2
+        @player.turn    = SECOND
+        @opponent.turn  = FIRST
+      end
+      locations.delete(@first_location)
+      return unless locations.any?
+      @debug = true
+
+      turn = locations.size % 2 == 0 ? FIRST : SECOND
+      locations.delete_if { |loc, wt|
+        @player.moved?(loc, wt) || @opponent.moved?(loc, wt)
+      }
+
+      warn "Locations unaccounted for!" unless locations.size == 1
+      loc = locations.keys.first
+      wt  = locations.values.first
+      @opponent.add_move(Move.new(wt, loc, OPPONENT))
+      puts "OPPONENT BLOCKS       : #{@opponent.blocks_to_s}"
+      puts "send :opponent blocks : #{send(:opponent).blocks_to_s}"
+      puts "PLAYER BLOCKS         : #{@player.blocks_to_s}"
+      puts "send :opponent blocks : #{send(:player).blocks_to_s}"
     end
   end
 

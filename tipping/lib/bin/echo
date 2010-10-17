@@ -1,0 +1,29 @@
+#! /usr/bin/env ruby
+
+lib_path = File.expand_path(File.dirname(__FILE__)) + "/.."
+$LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
+require 'tipping'
+
+class EchoServer
+
+  def initialize(port)
+    begin
+      @server = TCPServer.new('localhost', port)
+    rescue Exception => e
+      puts e.message
+    end
+  end
+
+  def connect
+    puts "Waiting for client"
+    client = @server.accept
+    client.puts "Welcome"
+    while message = STDIN.gets
+      client.puts message
+    end
+    client.close
+  end
+end
+
+server  = EchoServer.new(4445)
+server.connect

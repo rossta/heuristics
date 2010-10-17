@@ -61,7 +61,7 @@ module Tipping
           next_move = @player.next_move(response)
           @client.call(next_move.to_s)
         when /^ACCEPT/
-          @client.echo("Thank you")
+          # @client.echo("Thank you")
         when /^WIN/, /^TIP/, /^LOSE/
           break
         else
