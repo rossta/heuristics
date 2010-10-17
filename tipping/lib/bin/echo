@@ -20,6 +20,7 @@ class EchoServer
     client.puts "Welcome"
     while message = STDIN.gets
       client.puts message
+      puts client.gets
     end
     client.close
   end

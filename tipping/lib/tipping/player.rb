@@ -32,15 +32,15 @@ module Tipping
         depth = 2
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
         add_move(@best_move)
+
         @best_move
       when REMOVE
         command, locations, torque = message
 
         @game.update_position(REMOVE, locations)
-
-        depth = 2
-
+        depth = 4
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
+
         @best_move
       when REJECT
         # handle weight already used

@@ -19,7 +19,7 @@ module Tipping
     LOSE    = "LOSE",
     TIMEOUT = "TIMEOUT"
   ]
-  
+
   OPPONENT  = :opponent
   PLAYER    = :player
   FIRST     = :first
@@ -40,7 +40,7 @@ module Tipping
       @client.connect
 
       @client.call(@client.name)
-      
+
       sleep 1
       play_game
 
@@ -60,11 +60,15 @@ module Tipping
       loop do
         response = @client.read
         case response.first
-        when /^ADD/, /^REMOVE/, /^REJECT/
+        when /^ADD/, /^REJECT/
           next_move = @player.next_move(response)
           @client.call(next_move.to_s)
+        when /^REMOVE/
+          next_move = @player.next_move(response)
+          @client.call(next_move.to_s)
+
         when /^ACCEPT/
-          # @client.echo("Thank you")
+          @client.echo("Thank you")
         when /^WIN/, /^TIP/, /^LOSE/
           break
         else
@@ -73,7 +77,7 @@ module Tipping
       end
 
     end
-    
+
     def player
       @player ||= @game.player
     end

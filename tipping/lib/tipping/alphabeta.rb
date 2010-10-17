@@ -9,6 +9,9 @@ module Tipping
       return position.current_score(player_type) if depth == 0
 
       available_moves = position.available_moves(player_type)
+
+      return position.current_score(player_type) if available_moves.empty?
+
       local_alpha = alpha
       best_value  = MIN_INT
       best_move   = available_moves.first

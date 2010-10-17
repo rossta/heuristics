@@ -15,7 +15,7 @@ module Tipping
     end
 
     attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent, :max_block
-    attr_accessor :condition
+    attr_accessor :phase
 
     def initialize(opts = {})
       @range      = opts[:range] || 15
@@ -26,7 +26,7 @@ module Tipping
       @position   = Position.new(self)
       @player     = Player.new(self)
       @opponent   = Player.new(self)
-      @debug      = opts[:debug] || false
+      @debug      = opts[:debug] || true
     end
 
     def min
@@ -62,9 +62,14 @@ module Tipping
 
     def available_moves(player_type)
       puts report(player_type) if debug?
-      send(player_type).blocks.collect { |w|
-        position.open_slots.collect { |l| Move.new(w, l, player_type) }
-      }.flatten
+      case phase
+      when REMOVE
+        position.board.collect { |l, w| Move.new(w, l, player_type) }
+      else
+        send(player_type).blocks.collect { |w|
+          position.open_slots.collect { |l| Move.new(w, l, player_type) }
+        }.flatten
+      end
     end
 
     def debug?
@@ -72,19 +77,33 @@ module Tipping
     end
 
     def do_move(move)
-      @position[move.location] = move.weight
-      send(move.player_type).use_block(move.weight)
+      case phase
+      when REMOVE
+        @position.remove(move.location)
+      when ADD
+        @position[move.location] = move.weight
+        send(move.player_type).use_block(move.weight)
+      else
+        warn "Don't know how to do move"
+      end
     end
 
     def undo_move(move)
-      @position.remove(move.location)
-      send(move.player_type).replace_block(move.weight)
+      case phase
+      when REMOVE
+        @position[move.location] = move.weight
+      when ADD
+        @position.remove(move.location)
+        send(move.player_type).replace_block(move.weight)
+      else
+        warn "Don't know how to undo move"
+      end
     end
 
-    def update_position(condition, locations)
-      @condition = condition
+    def update_position(phase, locations)
+      @phase = phase
       position.update_all(locations)
-      case condition
+      case phase
       when ADD
         respond_to_add(locations)
       when REMOVE
@@ -94,6 +113,20 @@ module Tipping
         when 2
           # penultimate block
         end
+        # locations.delete(FIRST_LOCATION)
+        # return unless locations.any?
+
+        # locations.delete_if { |loc, wt| @player.moved?(loc, wt) || @opponent.moved?(loc, wt) }
+        # warn "Locations unaccounted for!" unless locations.size == 1
+        #
+        # loc = locations.keys.first
+        # wt  = locations.values.first
+        # @opponent.add_move(Move.new(wt, loc, OPPONENT))
+        # if debug?
+        #   puts report(OPPONENT)
+        #   puts report(PLAYER)
+        # end
+
       end
     end
 
@@ -119,11 +152,11 @@ module Tipping
       state << "Blocks  : #{send(player_type).blocks.join("|")}"
       state.join("\n")
     end
-    
+
     def first_weight
       FIRST_WEIGHT
     end
-    
+
     def first_location
       FIRST_LOCATION
     end
@@ -141,7 +174,6 @@ module Tipping
       end
       locations.delete(FIRST_LOCATION)
       return unless locations.any?
-      @debug = true
 
       locations.delete_if { |loc, wt| @player.moved?(loc, wt) || @opponent.moved?(loc, wt) }
       warn "Locations unaccounted for!" unless locations.size == 1
