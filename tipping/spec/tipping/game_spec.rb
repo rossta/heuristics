@@ -5,7 +5,7 @@ describe Tipping::Game do
   describe "score" do
     before(:each) do
       @game     = Tipping::Game.new
-      @position = Tipping::Position.new
+      @position = @game.position
       @position.prepare!
     end
     describe "conservative" do
@@ -93,14 +93,14 @@ describe Tipping::Game do
   describe "available_moves" do
     it "should return moves for open locations and unused weights" do
       @game = Tipping::Game.new
-      @game.update_position({-4 => 3})
+      @game.update_position(Tipping::ADD, {-4 => 3})
       @game.available_moves(:player).size.should == 300
     end
     
     describe "nested moved" do
       before(:each) do
         @game = Tipping::Game.new
-        @game.update_position({-4 => 3})
+        @game.update_position(Tipping::ADD, {-4 => 3})
         @move_1 = Tipping::Move.new(5, 0, Tipping::PLAYER)
         @move_2 = Tipping::Move.new(4, 1, Tipping::OPPONENT)
       end

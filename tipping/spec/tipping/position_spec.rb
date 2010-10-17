@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Tipping::Position do
   before(:each) do
-    @position = Tipping::Position.new
+    @game = Tipping::Game.new
+    @position = Tipping::Position.new(@game)
   end
 
   describe "[]" do
@@ -26,17 +27,6 @@ describe Tipping::Position do
       unoccupied.each do |loc|
         @position[loc].should == nil
       end
-    end
-  end
-
-  describe "available_moves" do
-
-    it "should return all moves possible from current position" do
-      move_1 = mock(Tipping::Move)
-      move_2 = mock(Tipping::Move)
-      available_moves = [move_1, move_2]
-      @position.game.should_receive(:available_moves).with(@position, :player).and_return(available_moves)
-      @position.available_moves(:player).should == available_moves
     end
   end
 
@@ -69,7 +59,7 @@ describe Tipping::Move do
 
   describe "perform move" do
     before(:each) do
-      @position = Tipping::Position.new
+      @position = Tipping::Position.new(Tipping::Game.new)
       @move = Tipping::Move.new(-3, 5, :player)
     end
 

@@ -28,15 +28,20 @@ module Tipping
       when ADD
         command, locations, torque = message
 
-        @game.condition = ADD
-        @game.update_position(locations)
-        @game.available_moves(:player)
-
+        @game.update_position(ADD, locations)
         depth = 2
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
         add_move(@best_move)
         @best_move
       when REMOVE
+        command, locations, torque = message
+
+        @game.update_position(REMOVE, locations)
+
+        depth = 2
+
+        @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
+        @best_move
       when REJECT
         # handle weight already used
         # handle invalid weight

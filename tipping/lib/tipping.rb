@@ -25,6 +25,9 @@ module Tipping
   FIRST     = :first
   SECOND    = :second
 
+  FIRST_LOCATION = -4
+  FIRST_WEIGHT = 3
+
   class NoTipping
 
     def initialize(opts = {})

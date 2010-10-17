@@ -23,7 +23,7 @@ module Tipping
     end
 
     def prepare!
-      self[-4] = 3
+      self[game.first_location] = game.first_weight
     end
     
     def clear
