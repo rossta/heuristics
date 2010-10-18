@@ -125,17 +125,17 @@ module Tipping
       when /^WIN/
         echo "FTW!"
         disconnect
-        line
+        response
       when /^TIP/, /^LOSE/
         echo "Waa Waa. I lose."
         disconnect
-        line
+        response
       when /^ACCEPT/, /^REJECT/
-        line
+        response
       when /^TIMEOUT/
         reconnect
       else
-        line
+        response
       end
     end
 
