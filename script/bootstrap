@@ -1,0 +1,12 @@
+#! /usr/bin/env ruby
+
+raise "Usage: ./boostrap [project name]" if ARGV.length == 0
+
+project_name = ARGV[0].to_s.downcase
+dirs = %w|lib spec doc|
+
+system "mkdir #{project_name}"
+system "cd #{project_name}; mkdir #{dirs.join(" ")}"
+system "cd #{project_name}/lib; touch #{project_name}.rb; mkdir #{project_name}"
+system "cd #{project_name}; echo '#{project_name}\n' > README.markdown"
+system "cd #{project_name}; echo 'namespace :#{project_name} do\nend' > Rakefile"
