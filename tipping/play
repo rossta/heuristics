@@ -5,7 +5,8 @@ $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'tipping'
 
 no_tipping = Tipping::NoTipping.new({
-  :name => ARGV[0]
+  :name => ARGV[0],
+  :port => (ARGV[1] || 4445).to_i
 })
 no_tipping.start!
 
