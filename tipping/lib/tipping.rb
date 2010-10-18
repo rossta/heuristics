@@ -46,6 +46,7 @@ module Tipping
       @client.connect
 
       @client.call(@client.name)
+      response = @client.read
 
       sleep 1
       play_game
