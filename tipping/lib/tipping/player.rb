@@ -29,7 +29,8 @@ module Tipping
         command, locations, torque = message
 
         @game.update_position(ADD, locations)
-        depth = 2
+        
+        depth = (locations.size > 7 || locations.size < 3) ? 2 : 4
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
         add_move(@best_move)
 
@@ -38,7 +39,8 @@ module Tipping
         command, locations, torque = message
 
         @game.update_position(REMOVE, locations)
-        depth = 4
+
+        depth = (locations.size > 7) ? 4 : 6
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
 
         @best_move
