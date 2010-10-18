@@ -17,7 +17,6 @@ module Tipping
       best_move   = available_moves.first
 
       # return -INFINITY if position.win?
-      # handlenomove(position) if position.available_moves(player_type).empty?
       available_moves.each do |move|
         position.do! move
         if position.tipped?

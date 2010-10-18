@@ -6,6 +6,7 @@ require 'tipping/game'
 require 'tipping/position'
 require 'tipping/torque'
 require 'tipping/client'
+require 'tipping/score'
 
 module Tipping
 
@@ -27,6 +28,11 @@ module Tipping
 
   FIRST_LOCATION = -4
   FIRST_WEIGHT = 3
+
+  STRATEGIES = [
+    TIPPERS       = "TIPPERS",
+    CONSERVATIVE  = "CONSERVATIVE"
+  ]
 
   class NoTipping
 

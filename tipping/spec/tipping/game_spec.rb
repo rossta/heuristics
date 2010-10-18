@@ -15,22 +15,22 @@ describe Tipping::Game do
 
         it "should return high score based for large weight close to support" do
           @position[@game.left_support] = 10
-          @game.score(@position, :player).should == (10 * (0 + 2)) + (3 * (1 + 3))
+          @game.score(:player).should == (10 * (0 + 2)) + (3 * (1 + 3))
         end
 
         it "should return not as high score for small weight close support" do
           @position[@game.right_support] = 1
-          @game.score(@position, :player).should == (1 * (0 + 2)) + (3 * (1 + 3))
+          @game.score(:player).should == (1 * (0 + 2)) + (3 * (1 + 3))
         end
 
         it "should return negative score if tip left" do
           @position[-10] = 10
-          @game.score(@position, :player).should == -1
+          @game.score(:player).should == -1
         end
 
         it "should return negative score if tip right" do
           @position[10] = 10
-          @game.score(@position, :player).should == -1
+          @game.score(:player).should == -1
         end
       end
       describe "player" do
@@ -39,22 +39,22 @@ describe Tipping::Game do
 
         it "should return neg high score based for large weight close to support" do
           @position[@game.left_support] = 10
-          @game.score(@position, :opponent).should == -((10 * (0 + 2)) + (3 * (1 + 3)))
+          @game.score(:opponent).should == -((10 * (0 + 2)) + (3 * (1 + 3)))
         end
 
         it "should return neg not as high score for small weight close support" do
           @position[@game.right_support] = 1
-          @game.score(@position, :opponent).should == - ((1 * (0 + 2)) + (3 * (1 + 3)))
+          @game.score(:opponent).should == - ((1 * (0 + 2)) + (3 * (1 + 3)))
         end
 
         it "should return positive score if tip left" do
           @position[-10] = 10
-          @game.score(@position, :opponent).should == 1
+          @game.score(:opponent).should == 1
         end
 
         it "should return positive score if tip right" do
           @position[10] = 10
-          @game.score(@position, :opponent).should == 1
+          @game.score(:opponent).should == 1
         end
       end
     end

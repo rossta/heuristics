@@ -14,8 +14,8 @@ module Tipping
       @@instance.position if @@instance
     end
 
-    attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent, :max_block
-    attr_accessor :phase
+    attr_reader :range, :weight, :left_support, :right_support, :position, :player, :opponent, :max_block, :max_plies
+    attr_accessor :phase, :strategy
 
     def initialize(opts = {})
       @range      = opts[:range] || 15
@@ -27,6 +27,8 @@ module Tipping
       @player     = Player.new(self)
       @opponent   = Player.new(self)
       @debug      = opts[:debug] || true
+
+      @max_plies  = @max_block * 2
     end
 
     def min
@@ -41,14 +43,17 @@ module Tipping
       @torque ||= Torque.new(self)
     end
 
-    def score(position, player_type)
+    def score(player_type)
       current_player = send(player_type)
       multiplier = player_type == OPPONENT ? -1 : 1
-
       return -1 * multiplier if tipped?(position)
-      score = locations.inject(0) { |sum, loc|
-        sum += position[loc].to_i * ((left_support - loc).abs + (right_support - loc).abs)
-      }
+
+      case strategy
+      when TIPPERS
+        score = Score.tippers(self, player_type)
+      else
+        score = Score.conservative(self)
+      end
       score * multiplier
     end
 
@@ -107,26 +112,16 @@ module Tipping
       when ADD
         respond_to_add(locations)
       when REMOVE
-        case locations.size
-        when 1
-          # last block
-        when 2
-          # penultimate block
-        end
-        # locations.delete(FIRST_LOCATION)
-        # return unless locations.any?
-
-        # locations.delete_if { |loc, wt| @player.moved?(loc, wt) || @opponent.moved?(loc, wt) }
-        # warn "Locations unaccounted for!" unless locations.size == 1
-        #
-        # loc = locations.keys.first
-        # wt  = locations.values.first
-        # @opponent.add_move(Move.new(wt, loc, OPPONENT))
-        # if debug?
-        #   puts report(OPPONENT)
-        #   puts report(PLAYER)
+        # @strategy = if locations.size < (max_block / 2)
+        #   TIPPERS
+        # else
+        #   CONSERVATIVE
         # end
-
+        @strategy = TIPPERS
+        # else
+        #   CONSERVATIVE
+        # end
+        puts "STRATEGY #{@strategy}"
       end
     end
 
@@ -172,6 +167,14 @@ module Tipping
         @player.turn    = SECOND
         @opponent.turn  = FIRST
       end
+
+      @strategy = if locations.size > max_plies - (max_block / 2)
+        TIPPERS
+      else
+        CONSERVATIVE
+      end
+      puts "STRATEGY: #{@strategy}"
+
       locations.delete(FIRST_LOCATION)
       return unless locations.any?
 

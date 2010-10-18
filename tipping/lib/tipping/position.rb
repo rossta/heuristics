@@ -47,7 +47,7 @@ module Tipping
     end
 
     def current_score(player_type)
-      @game.score(self, player_type)
+      @game.score(player_type)
     end
 
     def tipped?
