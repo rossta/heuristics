@@ -112,15 +112,7 @@ module Tipping
       when ADD
         respond_to_add(locations)
       when REMOVE
-        # @strategy = if locations.size < (max_block / 2)
-        #   TIPPERS
-        # else
-        #   CONSERVATIVE
-        # end
         @strategy = TIPPERS
-        # else
-        #   CONSERVATIVE
-        # end
         puts "STRATEGY #{@strategy}"
       end
     end
@@ -141,10 +133,10 @@ module Tipping
       @right_in_locations ||= (right_support + 1..max).to_a
     end
 
-    def report(player_type)
+    def report(player_type, opts = {})
       state = [player_type.to_s.upcase]
       state << "Position: #{position}"
-      state << "Blocks  : #{send(player_type).blocks.join("|")}"
+      state << "Blocks  : #{send(player_type).blocks.join("|")}" if phase == ADD
       state.join("\n")
     end
 

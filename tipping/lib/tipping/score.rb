@@ -9,9 +9,10 @@ module Tipping
     end
 
     def self.tippers(game, player_type)
+      other_player = player_type == PLAYER ? OPPONENT : PLAYER
       tip_count = 0
       position = game.position
-      position.available_moves(player_type).each do |move|
+      position.available_moves(other_player).each do |move|
         position.do! move
         tip_count += 1 if position.tipped?
         position.undo! move
