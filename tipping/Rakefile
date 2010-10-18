@@ -1,33 +1,47 @@
 require 'rake'
 
-namespace :server do
-  desc "Install server files for testing"
-  task :install do
-    url = "http://homepages.nyu.edu/~rnp226/HPS/notipping"
-    dest = "lib/bin"
-    system "rm #{dest}/*.java* #{dest}/*.class*"
-    begin
-      %w|Client Server ServerConnection GameState|.each do |file|
-        system "wget #{url}/#{file}.java -P #{dest}"
+namespace :tipping do
+  namespace :server do
+    desc "Install server files for testing"
+    task :install do
+      url = "http://homepages.nyu.edu/~rnp226/HPS/notipping"
+      dest = "lib/bin"
+      system "rm #{dest}/*.java* #{dest}/*.class*"
+      begin
+        %w|Client Server ServerConnection GameState|.each do |file|
+          system "wget #{url}/#{file}.java -P #{dest}"
+        end
+        system 'javac lib/bin/*.java'
+      rescue
+        puts "There was a problem installing the sample server"
+        open url
       end
-      system 'javac lib/bin/*.java'
-    rescue
-      puts "There was a problem installing the sample server"
-      open url
+    end
+
+    desc "Run official server for game (call java)"
+    task :basic do
+      dest = "lib/bin"
+      system "cd lib/bin; java Server"
+    end
+
+    desc "Run official server for game (call java)"
+    task :java do
+      dest = "lib/server"
+      system "cd lib/server; java Server"
+    end
+
+    task :gui do
+      dest = "lib/server"
+      system "cd lib/server; appletviewer -J-Djava.security.policy=mysecurity.policy applet.html"
+    end
+
+    desc "Run test server that forwards messages from STDIN"
+    task :echo do
+      dest = "lib/bin"
+      system "ruby #{dest}/echo"
     end
   end
-  
-  desc "Run official server for game (call java)"
-  task :java do
-    dest = "lib/bin"
-    system "cd lib/bin; java Server"
-  end
-  
-  desc "Run test server that forwards messages from STDIN"
-  task :echo do
-    dest = "lib/bin"
-    system "ruby #{dest}/echo"
-  end
-end
 
-task :server => ["server:java"]
+  task :server => ["server:java"]
+  task :gui => ["server:gui"]
+end
