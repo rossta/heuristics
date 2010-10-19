@@ -6,7 +6,8 @@ require 'tipping'
 
 no_tipping = Tipping::NoTipping.new({
   :name => ARGV[0],
-  :port => (ARGV[1] || 4445).to_i
+  :host => (ARGV[1] || 'localhost'),
+  :port => (ARGV[2] || 4445).to_i
 })
 no_tipping.start!
 
