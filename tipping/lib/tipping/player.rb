@@ -40,7 +40,7 @@ module Tipping
 
         @game.update_position(REMOVE, locations)
 
-        depth = (locations.size > 7) ? 4 : 6
+        depth = (locations.size > 8) ? 4 : locations.size
         @best_score, @best_move = AlphaBeta.best_score(@game.position, depth)
 
         @best_move
