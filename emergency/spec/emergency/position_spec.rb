@@ -17,5 +17,14 @@ describe Emergency::Position do
       center.y.should == 15
     end
   end
-
+  
+  describe "distance_to" do
+    it "should calc distance between first and second position" do
+      pos_1   = Emergency::Position.new(10, 10)
+      pos_2   = Emergency::Position.new(20, 20)
+      pos_1.distance_to(pos_2).should == 20
+      pos_2.distance_to(pos_1).should == 20
+    end
+  end
+  
 end

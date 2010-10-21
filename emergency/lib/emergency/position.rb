@@ -22,9 +22,17 @@ module Emergency
     def y
       position.y
     end
-    
+
     def to_coord
       [x,y]
+    end
+
+    def nearest(positions)
+      positions.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
+    end
+    
+    def distance_to(pos)
+      position.distance_to pos
     end
 
   end
@@ -40,6 +48,15 @@ module Emergency
     attr_accessor :x, :y
     def initialize(x = nil, y = nil)
       @x = x; @y = y
+    end
+
+    def distance_to(pos)
+      begin
+      (self.x - pos.x).abs + (self.y - pos.y).abs
+    rescue
+      require "ruby-debug"; debugger
+      1
+    end
     end
   end
 

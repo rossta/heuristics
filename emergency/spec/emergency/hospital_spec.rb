@@ -25,4 +25,16 @@ describe Emergency::Hospital do
       hosp_2.y.should == 4
     end
   end
+
+end
+
+describe Emergency::Ambulance do
+  
+  describe "any_saveable?" do
+    
+    it "should return true" do
+      
+    end
+    
+  end
 end

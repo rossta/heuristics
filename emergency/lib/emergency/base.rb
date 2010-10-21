@@ -9,10 +9,10 @@ module Emergency
     end
 
     def go!
-      time "Loading file and initializing cities ..." do
+      time "Locating people..." do
         initialize_space!
-        puts " num of people            : #{@people.size}"
-        puts " num of hospitals         : #{@hospitals.size}"
+        puts " num of people            : #{Person.all.size}"
+        puts " num of hospitals         : #{Hospital.all.size}"
       end
 
       time "Locating hospitals..." do
@@ -21,12 +21,15 @@ module Emergency
 
       time "Sending out ambulances... " do
         respond_to_emergency!
+        puts " num of people saved      : #{Person.saved.size}"
       end
 
     end
 
     def initialize_space!
       @people, @hospitals = Parser.new(@path).parse
+      Hospital.all = @hospitals
+      Person.all = @people
     end
 
     def locate_hospitals!
@@ -44,6 +47,9 @@ module Emergency
 
     def respond_to_emergency!
       @hospitals.each do |h|
+        h.ambulances.each do |a|
+          a.travel(@people)
+        end
       end
     end
 
