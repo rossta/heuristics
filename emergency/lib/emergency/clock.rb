@@ -3,7 +3,7 @@ module Emergency
   class Clock
     @@time = 0
 
-    def self.tick(time = 1)
+    def self.tick(time)
       @@time += time
     end
 

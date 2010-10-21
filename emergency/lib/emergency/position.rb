@@ -30,7 +30,7 @@ module Emergency
     def nearest(positions)
       positions.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
     end
-    
+
     def distance_to(pos)
       position.distance_to pos
     end
@@ -51,12 +51,7 @@ module Emergency
     end
 
     def distance_to(pos)
-      begin
       (self.x - pos.x).abs + (self.y - pos.y).abs
-    rescue
-      require "ruby-debug"; debugger
-      1
-    end
     end
   end
 

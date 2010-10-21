@@ -80,16 +80,17 @@ module Emergency
     end
 
     def pickup(person)
+      Clock.tick(distance_to(person) + LOAD_TIME)
       self.position = person.position
-      Clock.tick distance_to(person) + LOAD_TIME
       @patients << person
+      self.time = Clock.time
       puts "- pick up   #{person.name}  at #{person.to_coord.join(', ')}"
     end
 
     def unload
       hospital = nearest(Hospital.all)
+      Clock.tick(distance_to(hospital) + UNLOAD_TIME)
       self.position = hospital.position
-      Clock.tick distance_to(hospital) + UNLOAD_TIME
       @patients.each { |p| p.drop_at(hospital) }
       puts "- drop off  #{@patients.map(&:name).join(", ")}     at #{hospital.to_coord.join(', ')}"
       @patients = []
