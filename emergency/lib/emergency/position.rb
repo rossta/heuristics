@@ -24,7 +24,7 @@ module Emergency
     end
 
     def to_coord
-      [x,y]
+      position.to_coord
     end
 
     def nearest(positions)
@@ -52,6 +52,10 @@ module Emergency
 
     def distance_to(pos)
       (self.x - pos.x).abs + (self.y - pos.y).abs
+    end
+    
+    def to_coord
+      [x,y]
     end
   end
 

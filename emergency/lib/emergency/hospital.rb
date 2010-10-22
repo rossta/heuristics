@@ -24,6 +24,7 @@ module Emergency
     def assign_ambulance_positions
       @ambulances.each do |a|
         a.position = position
+        a.origin = position
       end
     end
 
@@ -37,16 +38,17 @@ module Emergency
     UNLOAD_TIME = 1
     MAX_LOAD    = 4
 
-    attr_accessor :time, :patients
+    attr_accessor :time, :patients, :origin
 
     def initialize
       @time = 0
       @patients = []
+      @log = []
     end
 
     def travel(people)
-      puts "People needing saving: #{Person.all.size - Person.saved.size}"
-      puts "Ambulance #{name} at #{self.to_coord.join(', ')}"
+      # puts "People needing saving: #{Person.all.size - Person.saved.size}"
+      # puts "Ambulance #{name} at #{self.to_coord.join(', ')}"
       Clock.reset
 
       while person = next_saveable(people)
@@ -63,7 +65,7 @@ module Emergency
         end
 
         unload
-        puts "Time    : #{Clock.time}"
+        # puts "Time    : #{Clock.time}"
       end
 
       @time = Clock.time
@@ -82,7 +84,7 @@ module Emergency
       self.position = person.position
       @patients << person
       self.time = Clock.time
-      puts "- Person #{person.name} (#{person.to_coord.join(', ')}) pick up"
+      Logger.record "#{display_name} (#{origin.to_coord.join(',')}) #{person.display_name}"
     end
 
     def unload
@@ -90,7 +92,7 @@ module Emergency
       Clock.tick(distance_to(hospital) + UNLOAD_TIME)
       self.position = hospital.position
       @patients.each { |p| p.drop_at(hospital) }
-      puts "- Hospital #{hospital.name} (#{hospital.to_coord.join(', ')}) drop off #{@patients.map(&:name).join(", ")}"
+      Logger.record "#{display_name} (#{hospital.to_coord.join(',')})"
       @patients = []
     end
 
@@ -106,6 +108,10 @@ module Emergency
       @patients.include? person
     end
 
+    def display_name
+      "Ambulance #{name}"
+    end
+    
   end
 
 end

@@ -21,9 +21,14 @@ module Emergency
 
       time "Sending out ambulances... " do
         respond_to_emergency!
-        puts " num of people saved      : #{Person.saved.size}"
       end
-
+      
+      file = File.new("out/results_#{Time.now.to_i}", "w")
+      
+      Logger.log.each do |line|
+        file.puts line
+      end
+      
     end
 
     def initialize_space!
@@ -46,11 +51,15 @@ module Emergency
     end
 
     def respond_to_emergency!
+      run = 1
+      puts "Attempt #{run}"
+      Logger.log!(run)
       @hospitals.each do |h|
         h.ambulances.each do |a|
           a.travel(@people)
         end
       end
+      puts " num of people saved      : #{Person.saved.size}"
     end
 
   end

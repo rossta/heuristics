@@ -46,5 +46,13 @@ module Emergency
       @saved
     end
     
+    def description
+      to_coord + [time]
+    end
+    
+    def display_name
+      "#{name} (#{description.join(',')})"
+    end
+    
   end
 end
