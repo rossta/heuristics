@@ -1,0 +1,6 @@
+#! /usr/bin/env ruby
+
+raise "Usage: script/validate [input_file] [results_file]" unless ARGV.length == 2
+system "rm bin/*"
+system "javac -d bin vendor/Ambulance/Validator.java"
+system "java -cp bin Validator #{ARGV[0]} #{ARGV[1]}"

@@ -1,9 +1,11 @@
 #! /usr/bin/env ruby
 
-raise "Usage: ./script/emergency [path]" if ARGV.length != 1
+raise "Usage: ./script/emergency [path]" if ARGV.length < 1
 
 lib_path = File.expand_path(File.dirname(__FILE__)) + "/../lib"
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'emergency'
 
-Emergency::Runner.run!(ARGV[0])
+debug = (ARGV[2]).to_s =~ /(-d|debug)/ ? true : false
+
+Emergency::Runner.run!(ARGV[0], debug)

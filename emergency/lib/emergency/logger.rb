@@ -15,8 +15,8 @@ module Emergency
       @loggers[id]
     end
 
-    def self.log!(id)
-      logger = new(id)
+    def self.log!(id, debug = false)
+      logger = new(id, debug)
       @@logger = logger
       @@loggers[id] = logger
     end
@@ -25,15 +25,29 @@ module Emergency
       @@logger.record text
     end
     
+    def self.save!
+      unless @debug
+        filename = "out/results_#{Time.now.to_i}"
+        file = File.new(filename, "w")
+      
+        log.each do |line|
+          file.puts line
+        end
+      
+        puts ">> Saved to #{filename}"
+      end
+    end
+    
     attr_reader :log
-    def initialize(id)
+    def initialize(id, debug = false)
       @id = id
+      @debug = debug
       @log = []
     end
 
     def record(text)
       puts ">> #{text}"
-      @log << text
+      @log << text unless @debug
     end
 
   end

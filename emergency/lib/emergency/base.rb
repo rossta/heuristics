@@ -4,8 +4,9 @@ module Emergency
     include Utils::Timer
     attr_accessor :people, :hospitals
 
-    def initialize(path)
+    def initialize(path, debug = false)
       @path = path
+      @debug = debug
     end
 
     def go!
@@ -23,12 +24,9 @@ module Emergency
         respond_to_emergency!
       end
       
-      file = File.new("out/results_#{Time.now.to_i}", "w")
-      
-      Logger.log.each do |line|
-        file.puts line
+      time "Saving to file..." do
+        save_to_results_file!
       end
-      
     end
 
     def initialize_space!
@@ -43,23 +41,26 @@ module Emergency
         h.position.x = rand(grid.width)
         h.position.y = rand(grid.height)
         h.assign_ambulance_positions
-        puts "Hospital #{h.name}: (#{h.to_coord.join(',')})"
-        h.ambulances.each do |a|
-          puts "- Ambulance #{a.name}: (#{a.to_coord.join(',')})"
-        end
       end
     end
 
     def respond_to_emergency!
       run = 1
       puts "Attempt #{run}"
-      Logger.log!(run)
+      Logger.log!(run, @debug)
+      # Hospitals 0 (x, y) 1 (x,y) 2 (x,y)
+      hospital_list = @hospitals.map {|h| "#{h.name} (#{h.to_coord.join(',')})" }.join(" ")
+      Logger.record "Hospitals #{hospital_list}"
       @hospitals.each do |h|
         h.ambulances.each do |a|
           a.travel(@people)
         end
       end
       puts " num of people saved      : #{Person.saved.size}"
+    end
+    
+    def save_to_results_file!
+      Logger.save!
     end
 
   end
