@@ -48,8 +48,8 @@ module Emergency
       puts "People needing saving: #{Person.all.size - Person.saved.size}"
       puts "Ambulance #{name} at #{self.to_coord.join(', ')}"
       Clock.reset
+
       while person = next_saveable(people)
-        # find 'best' person
         pickup person
 
         while @patients.size < MAX_LOAD do
@@ -71,9 +71,7 @@ module Emergency
 
     def next_saveable(people)
       people.select { |p|
-          p.alive? && !p.saved?
-        }.select { |p|
-          time_to_save_person(p) >= p.time_left
+          p.alive? && !p.saved? && !patient?(p) && time_to_save_person(p) <= p.time_left
         }.sort { |p1, p2|
           viability(p1) <=> viability(p2)
         }.first
@@ -84,7 +82,7 @@ module Emergency
       self.position = person.position
       @patients << person
       self.time = Clock.time
-      puts "- pick up   #{person.name}  at #{person.to_coord.join(', ')}"
+      puts "- Person #{person.name} (#{person.to_coord.join(', ')}) pick up"
     end
 
     def unload
@@ -92,7 +90,7 @@ module Emergency
       Clock.tick(distance_to(hospital) + UNLOAD_TIME)
       self.position = hospital.position
       @patients.each { |p| p.drop_at(hospital) }
-      puts "- drop off  #{@patients.map(&:name).join(", ")}     at #{hospital.to_coord.join(', ')}"
+      puts "- Hospital #{hospital.name} (#{hospital.to_coord.join(', ')}) drop off #{@patients.map(&:name).join(", ")}"
       @patients = []
     end
 
@@ -102,6 +100,10 @@ module Emergency
 
     def viability(person)
       distance_to(person) * person.time_left
+    end
+
+    def patient?(person)
+      @patients.include? person
     end
 
   end
