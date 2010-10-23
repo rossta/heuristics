@@ -45,7 +45,7 @@ module Emergency
       puts "Attempt #{iter}"
       Logger.log!(iter, @debug)
 
-      grid = Grid.create(@people.map(&:to_coord))
+      grid = Grid.create(@people.map(&:description))
 
       centroids = grid.centroids(@hospitals.size)
 
