@@ -44,6 +44,10 @@ module Emergency
       y = ((pos_1.y - pos_2.y) / 2).to_i + pos_2.y
       Position.new(x, y)
     end
+    
+    def self.distance(point_1, point_2)
+      (point_1[0] - point_2[0]).abs + (point_1[1] - point_1[1]).abs
+    end
 
     attr_accessor :x, :y
     def initialize(x = nil, y = nil)

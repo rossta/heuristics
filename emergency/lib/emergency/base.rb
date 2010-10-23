@@ -45,10 +45,12 @@ module Emergency
       puts "Attempt #{iter}"
       Logger.log!(iter, @debug)
 
-      grid = Grid.create(@people.map(&:x), @people.map(&:y))
+      grid = Grid.create(@people.map(&:to_coord))
+
+      centroids = grid.centroids(@hospitals.size)
 
       @hospitals.each_with_index do |h, i|
-        h.position = grid.cluster_position(i)
+        h.position = centroids[i]
         h.assign_ambulance_positions
       end
 
@@ -77,12 +79,15 @@ module Emergency
   end
 
   class Grid
-    def self.create(x_list, y_list)
-      Grid.new(x_list, y_list)
+    def self.create(points)
+      Grid.new(points)
     end
 
     attr_accessor :sw, :ne
-    def initialize(x_list, y_list)
+    def initialize(points)
+      @points = points
+      x_list = points.map { |p| p[0] }
+      y_list = points.map { |p| p[1] }
       min_x = x_list.min
       min_y = y_list.min
       max_x = x_list.max
@@ -102,14 +107,47 @@ module Emergency
     def height
       @height ||= ne.y - sw.y
     end
-    
-    def cluster!(grid)
-      @clusters = []
+
+    def centroids(num)
+      centroids = []
+      num.to_i.times { centroids << [rand(width), rand(height)] }
+
+      while true
+        clusters = {}
+        centroids.each { |c| clusters[c] = [c] }
+        @points.each do |pt|
+          min_cent = centroids.first
+          min_dist = Position.distance(pt, min_cent)
+          other_centroids = centroids - [min_cent]
+          other_centroids.each do |cent|
+            dist = Position.distance(pt, cent)
+            if dist < min_dist
+              min_dist = dist
+              min_cent = cent
+            end
+          end
+          clusters[min_cent] << pt
+        end
+
+        cents = []
+
+        clusters.each do |cent, cluster|
+          unless cluster.empty?
+            cent_x = (cluster.map { |p| p[0] }.inject(&:+) / cluster.size).to_i
+            cent_y = (cluster.map { |p| p[1] }.inject(&:+) / cluster.size).to_i
+          else
+            cent_x = cent[0]
+            cent_y = cent[1]
+          end
+          cents << [cent_x, cent_y]
+        end
+        break if cents.sort == centroids.sort
+        centroids = cents
+      end
+
+      centroids.map { |c| Position.new(c[0], c[1]) }
     end
-    
-    def cluster_position(index)
-      Position.new(rand(width), rand(height))
-    end
+
   end
 
   class Parser
