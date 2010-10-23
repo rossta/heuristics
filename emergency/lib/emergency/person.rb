@@ -11,7 +11,11 @@ module Emergency
     def self.all=(all)
       @@all = all
     end
-    
+
+    def self.reset
+      all.map { |p| p.unsave! }
+    end
+
     def self.saved
       all.select {|p| p.saved? }
     end
@@ -38,21 +42,25 @@ module Emergency
 
     def drop_at(hospital)
       @saved = true if alive?
-      self.position = hospital.position
-      @hospital_distance = 0
+      # self.position = hospital.position
+      # @hospital_distance = 0
+    end
+
+    def unsave!
+      @saved = false
     end
 
     def saved?
       @saved
     end
-    
+
     def description
       to_coord + [time]
     end
-    
+
     def display_name
       "#{name} (#{description.join(',')})"
     end
-    
+
   end
 end

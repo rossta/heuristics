@@ -6,38 +6,34 @@ module Emergency
     def self.logger
       @@logger
     end
-    
-    def self.log
-      @@logger.log
-    end
 
     def self.retrieve(id)
-      @loggers[id]
+      @@loggers[id]
     end
 
     def self.log!(id, debug = false)
-      logger = new(id, debug)
-      @@logger = logger
-      @@loggers[id] = logger
+      @@logger = new(id, debug)
+      @@loggers[id] = @@logger
     end
 
     def self.record(text)
       @@logger.record text
     end
-    
-    def self.save!
+
+    def self.save!(id)
+      logger = retrieve(id)
       unless @debug
         filename = "out/results_#{Time.now.to_i}"
         file = File.new(filename, "w")
-      
-        log.each do |line|
+
+        logger.log.each do |line|
           file.puts line
         end
-      
+
         puts ">> Saved to #{filename}"
       end
     end
-    
+
     attr_reader :log
     def initialize(id, debug = false)
       @id = id

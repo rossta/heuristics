@@ -10,22 +10,30 @@ module Emergency
     end
 
     def go!
-      time "Locating people..." do
-        initialize_space!
-        puts " num of people            : #{Person.all.size}"
-        puts " num of hospitals         : #{Hospital.all.size}"
+      @most_saved = 0
+      @best_run   = 0
+
+      50.times do |iter|
+        [Person, Hospital, Ambulance].each { |klass| klass.acts_as_named }
+        time "Locating people..." do
+          initialize_space!
+          puts " num of people            : #{Person.all.size}"
+          puts " num of hospitals         : #{Hospital.all.size}"
+        end
+
+        time "Locating hospitals..." do
+          locate_hospitals!
+        end
+
+        time "Sending out ambulances... " do
+          respond_to_emergency!(iter)
+        end
       end
 
-      time "Locating hospitals..." do
-        locate_hospitals!
-      end
-
-      time "Sending out ambulances... " do
-        respond_to_emergency!
-      end
-      
       time "Saving to file..." do
         save_to_results_file!
+        puts " best iteration           : #{@best_run}"
+        puts " num of people saved      : #{@most_saved}"
       end
     end
 
@@ -44,11 +52,9 @@ module Emergency
       end
     end
 
-    def respond_to_emergency!
-      run = 1
-      puts "Attempt #{run}"
-      Logger.log!(run, @debug)
-      # Hospitals 0 (x, y) 1 (x,y) 2 (x,y)
+    def respond_to_emergency!(iter)
+      puts "Attempt #{iter}"
+      Logger.log!(iter, @debug)
       hospital_list = @hospitals.map {|h| "#{h.name} (#{h.to_coord.join(',')})" }.join(" ")
       Logger.record "Hospitals #{hospital_list}"
       @hospitals.each do |h|
@@ -56,11 +62,16 @@ module Emergency
           a.travel(@people)
         end
       end
-      puts " num of people saved      : #{Person.saved.size}"
+      saved = Person.saved.size
+      puts " num of people saved      : #{saved}"
+      if saved > @most_saved
+        @most_saved = saved
+        @best_run   = iter
+      end
     end
-    
+
     def save_to_results_file!
-      Logger.save!
+      Logger.save!(@best_run)
     end
 
   end
