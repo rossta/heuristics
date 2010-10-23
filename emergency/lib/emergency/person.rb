@@ -12,10 +12,6 @@ module Emergency
       @@all = all
     end
 
-    def self.reset
-      all.map { |p| p.unsave! }
-    end
-
     def self.saved
       all.select {|p| p.saved? }
     end
@@ -42,8 +38,9 @@ module Emergency
 
     def drop_at(hospital)
       @saved = true if alive?
-      # self.position = hospital.position
-      # @hospital_distance = 0
+      @dropped = true
+      self.position = hospital.position
+      @hospital_distance = 0
     end
 
     def unsave!
@@ -52,6 +49,10 @@ module Emergency
 
     def saved?
       @saved
+    end
+
+    def dropped?
+      @dropped
     end
 
     def description

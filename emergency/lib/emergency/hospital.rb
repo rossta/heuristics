@@ -24,7 +24,6 @@ module Emergency
     def assign_ambulance_positions
       @ambulances.each do |a|
         a.position = position
-        a.origin = position
       end
     end
 
@@ -38,7 +37,7 @@ module Emergency
     UNLOAD_TIME = 1
     MAX_LOAD    = 4
 
-    attr_accessor :time, :patients, :origin
+    attr_accessor :time, :patients
 
     def initialize
       @time = 0
@@ -65,7 +64,6 @@ module Emergency
         end
 
         unload
-        # puts "Time    : #{Clock.time}"
       end
 
       @time = Clock.time
@@ -73,7 +71,7 @@ module Emergency
 
     def next_saveable(people)
       people.select { |p|
-          p.alive? && !p.saved? && !patient?(p) && time_to_save_person(p) <= p.time_left
+          p.alive? && !p.dropped? && !patient?(p) && time_to_save_person(p) <= p.time_left
         }.sort { |p1, p2|
           viability(p1) <=> viability(p2)
         }.first
@@ -84,7 +82,7 @@ module Emergency
       self.position = person.position
       @patients << person
       self.time = Clock.time
-      Logger.record "#{display_name} (#{origin.to_coord.join(',')}) #{person.display_name}"
+      Logger.record "#{display_name} #{person.display_name}"
     end
 
     def unload

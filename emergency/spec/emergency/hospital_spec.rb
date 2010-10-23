@@ -36,6 +36,7 @@ describe Emergency::Ambulance do
   before(:each) do
     Emergency::Clock.stub!(:tick)
     Emergency::Clock.stub!(:time).and_return(10)
+    Emergency::Logger.stub!(:record)
     @person = Emergency::Person.new(10, 10, 100)
     @amb = Emergency::Ambulance.new
     @amb.position = Emergency::Position.new(0, 0)
