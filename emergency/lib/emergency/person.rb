@@ -25,7 +25,7 @@ module Emergency
     end
 
     def alive?
-      time_left > 0
+      time_left >= 0
     end
 
     def time_left
