@@ -21,6 +21,7 @@ module Emergency
       time_diff = time "Saving people in #{path} ..." do
         emergency.go!
       end
+
     end
 
   end

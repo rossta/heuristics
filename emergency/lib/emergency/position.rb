@@ -55,7 +55,7 @@ module Emergency
     end
 
     def distance_to(pos)
-      (self.x - pos.x).abs + (self.y - pos.y).abs
+      (self.x.to_i - pos.x.to_i).abs + (self.y.to_i - pos.y.to_i).abs
     end
     
     def to_coord

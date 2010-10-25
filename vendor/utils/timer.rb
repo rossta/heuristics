@@ -16,6 +16,24 @@ module Utils
       puts ""
       diff
     end
+    
+    begin
+      require "system_timer"
+
+      def with_timeout(seconds, &block)
+        SystemTimer.timeout_after(seconds, &block)
+      end
+
+    rescue LoadError
+      warn "WARNING: using the built-in Timeout class" unless RUBY_VERSION >= "1.9" || RUBY_PLATFORM =~ /java/
+
+      require "timeout"
+
+      def with_timeout(seconds, &block)
+        Timeout.timeout(seconds, &block)
+      end
+    end
+    
 
   end
 

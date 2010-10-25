@@ -14,24 +14,33 @@ module Emergency
       @best_run   = 0
       @best_grid  = nil
 
-      5.times do |iter|
-        [Person, Hospital, Ambulance].each { |klass| klass.acts_as_named }
+      begin
+        with_timeout 118 do
+          1000.times do |iter|
+            begin
+              [Person, Hospital, Ambulance].each { |klass| klass.acts_as_named }
 
-        time "Locating people..." do
-          initialize_space!
-          puts " num of people            : #{Person.all.size}"
-          puts " num of hospitals         : #{Hospital.all.size}"
+              time "Locating people..." do
+                initialize_space!
+                puts " num of people            : #{Person.all.size}"
+                puts " num of hospitals         : #{Hospital.all.size}"
+              end
+
+              time "Sending out ambulances... " do
+                respond_to_emergency!(iter)
+              end
+            rescue TypeError
+              next
+            end
+          end
         end
-
-        time "Sending out ambulances... " do
-          respond_to_emergency!(iter)
+      rescue Timeout::Error
+        puts "Time's up!...\n"
+        time "Saving to file..." do
+          save_to_results_file!
+          puts " best iteration           : #{@best_run}"
+          puts " num of people saved      : #{@most_saved}"
         end
-      end
-
-      time "Saving to file..." do
-        save_to_results_file!
-        puts " best iteration           : #{@best_run}"
-        puts " num of people saved      : #{@most_saved}"
       end
     end
 
