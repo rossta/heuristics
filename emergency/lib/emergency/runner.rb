@@ -3,20 +3,20 @@ module Emergency
   class Runner
     include Utils::Timer
 
-    attr_accessor :path, :debug
+    attr_accessor :path, :record
 
-    def self.run!(path, debug)
-      runner = new(path, debug)
+    def self.run!(path, record)
+      runner = new(path, record)
       runner.run!
     end
 
-    def initialize(path, debug = false)
+    def initialize(path, record = false)
       @path = path
-      @debug = debug
+      @record = record
     end
 
     def run!
-      emergency = Emergency::Base.new(path, debug)
+      emergency = Emergency::Base.new(path, record)
 
       time_diff = time "Saving people in #{path} ..." do
         emergency.go!

@@ -4,9 +4,9 @@ module Emergency
     include Utils::Timer
     attr_accessor :people, :hospitals
 
-    def initialize(path, debug = false)
+    def initialize(path, opts = {})
       @path = path
-      @debug = debug
+      @opts = opts
     end
 
     def go!
@@ -34,8 +34,8 @@ module Emergency
         end
       rescue Timeout::Error
         puts "Time's up!...\n"
-        time "Saving to file..." do
-          save_to_results_file!
+        time "Finishing..." do
+          save_to_results_file!           if @opts[:record]
           puts " best iteration           : #{@best_run}"
           puts " num of people saved      : #{@most_saved}"
         end
@@ -54,7 +54,7 @@ module Emergency
 
     def respond_to_emergency!(iter)
       puts "Attempt #{iter}"
-      Logger.log!(iter, @debug)
+      Logger.log!(iter, @opts)
 
       grid = Grid.create(@locations)
 
@@ -69,7 +69,7 @@ module Emergency
       hospital_list = @hospitals.map {|h| "#{h.name} (#{h.to_coord.join(',')})" }.join(" ")
       Logger.record "Hospitals #{hospital_list}"
 
-      @ambulances.each do |a|
+      while a = Ambulance.next do
         a.travel(@people)
       end
 
@@ -80,7 +80,6 @@ module Emergency
         @best_run   = iter
         @best_grid  = grid
       end
-
     end
 
     def save_to_results_file!

@@ -6,6 +6,8 @@ lib_path = File.expand_path(File.dirname(__FILE__)) + "/../lib"
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'emergency'
 
-debug = (ARGV[2]).to_s =~ /(-d|debug)/ ? true : false
+options = [ARGV[1], ARGV[2]].flatten
+record  = options.include?("record")
+verbose = options.include?("verbose")
 
-Emergency::Runner.run!(ARGV[0], debug)
+Emergency::Runner.run!(ARGV[0], {:record => record, :verbose => verbose})

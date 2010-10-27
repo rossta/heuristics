@@ -11,8 +11,8 @@ module Emergency
       @@loggers[id]
     end
 
-    def self.log!(id, debug = false)
-      @@logger = new(id, debug)
+    def self.log!(id, opts = {})
+      @@logger = new(id, opts)
       @@loggers[id] = @@logger
     end
 
@@ -22,7 +22,7 @@ module Emergency
 
     def self.save!(id)
       logger = retrieve(id)
-      unless @debug
+      unless @record
         filename = "out/results_#{Time.now.to_i}"
         file = File.new(filename, "w")
 
@@ -35,15 +35,16 @@ module Emergency
     end
 
     attr_reader :log
-    def initialize(id, debug = false)
+    def initialize(id, opts = {})
       @id = id
-      @debug = debug
       @log = []
+      @record = opts[:record] || false
+      @verbose = opts[:verbose] || false
     end
 
     def record(text)
-      puts ">> #{text}"
-      @log << text unless @debug
+      puts ">> #{text}" if @verbose
+      @log << text if @record
     end
 
   end
