@@ -4,12 +4,8 @@ module Emergency
     include Positioning
     include ActsAsNamed
 
-    def self.all
-      @@all
-    end
-
-    def self.all=(all)
-      @@all = all
+    def self.reset_all
+      all.map(&:reset)
     end
 
     def self.saved
@@ -20,6 +16,7 @@ module Emergency
 
     def initialize(x, y, time)
       @position = Position.new(x, y)
+      @original_position = @position
       @time = time
       @saved = false
     end
@@ -39,8 +36,15 @@ module Emergency
     def drop_at(hospital)
       @saved = true if alive?
       @dropped = true
-      self.position = hospital.position
+      @position = hospital.position
       @hospital_distance = 0
+    end
+
+    def reset
+      @saved = false
+      @dropped = false
+      @position = @original_position
+      @hospital_distance = nil
     end
 
     def unsave!

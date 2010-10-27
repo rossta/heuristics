@@ -15,17 +15,15 @@ module Emergency
       @best_grid  = nil
 
       begin
-        with_timeout 118 do
+        with_timeout 60 do
+          time "Locating people..." do
+            initialize_space!
+            puts " num of people            : #{Person.all.size}"
+            puts " num of hospitals         : #{Hospital.all.size}"
+          end
+
           1000.times do |iter|
             begin
-              [Person, Hospital, Ambulance].each { |klass| klass.acts_as_named }
-
-              time "Locating people..." do
-                initialize_space!
-                puts " num of people            : #{Person.all.size}"
-                puts " num of hospitals         : #{Hospital.all.size}"
-              end
-
               time "Sending out ambulances... " do
                 respond_to_emergency!(iter)
               end
@@ -45,31 +43,34 @@ module Emergency
     end
 
     def initialize_space!
+      [Person, Hospital, Ambulance].each { |klass| klass.acts_as_named }
       @people, @hospitals = Parser.new(@path).parse
+      @ambulances   = @hospitals.map(&:ambulances).flatten.sort { |a_1, a_2| a_1.name.to_i <=> a_2.name.to_i }
       Hospital.all  = @hospitals
       Person.all    = @people
+      Ambulance.all = @ambulances
+      @locations    = @people.map(&:description)
     end
 
     def respond_to_emergency!(iter)
       puts "Attempt #{iter}"
       Logger.log!(iter, @debug)
 
-      grid = Grid.create(@people.map(&:description))
+      grid = Grid.create(@locations)
 
       centroids = grid.centroids(@hospitals.size)
 
-      @hospitals.each_with_index do |h, i|
+      @hospitals.sort { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }.each_with_index do |h, i|
         h.position = centroids[i]
-        h.assign_ambulance_positions
+        h.reset_ambulances
       end
+      Person.reset_all
 
       hospital_list = @hospitals.map {|h| "#{h.name} (#{h.to_coord.join(',')})" }.join(" ")
       Logger.record "Hospitals #{hospital_list}"
 
-      @hospitals.each do |h|
-        h.ambulances.each do |a|
-          a.travel(@people)
-        end
+      @ambulances.each do |a|
+        a.travel(@people)
       end
 
       saved = Person.saved.size
@@ -79,6 +80,7 @@ module Emergency
         @best_run   = iter
         @best_grid  = grid
       end
+
     end
 
     def save_to_results_file!

@@ -17,12 +17,20 @@ module Emergency
       def acts_as_named
         @instance_count = 0
       end
-      
+
       def new(*args)
         instance = super(*args)
         instance.name = @instance_count
         @instance_count += 1
         instance
+      end
+
+      def all
+        @all
+      end
+
+      def all=(all)
+        @all = all
       end
 
     end
