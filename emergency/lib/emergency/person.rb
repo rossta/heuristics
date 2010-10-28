@@ -3,30 +3,34 @@ module Emergency
   class Person
     include Positioning
     include ActsAsNamed
-
+    
+    PHEROME_CONSTANT = 0.07
+    
     def self.reset_all
-      all.map(&:reset)
+      all.map { |p| p.reset }
     end
 
     def self.saved
       all.select {|p| p.saved? }
     end
 
-    attr_accessor :time, :name
+    attr_accessor :time, :name, :save_count
+    attr_reader :pherome
 
     def initialize(x, y, time)
       @position = Position.new(x, y)
       @original_position = @position
       @time = time
       @saved = false
+      @pherome = 0
     end
 
-    def alive?
-      time_left >= 0
+    def alive?(expired_time)
+      time_left(expired_time) >= 0
     end
 
-    def time_left
-      time - Clock.time
+    def time_left(expired_time)
+      time - expired_time
     end
 
     def hospital_distance
@@ -34,8 +38,9 @@ module Emergency
     end
 
     def drop_at(hospital)
-      @saved = true if alive?
+      @saved = true
       @dropped = true
+      @pherome += 1
       @position = hospital.position
       @hospital_distance = 0
     end
@@ -67,5 +72,9 @@ module Emergency
       "#{name} (#{description.join(',')})"
     end
 
+    def update_pherome(score)
+      @pherome = ((1 - PHEROME_CONSTANT) * @pherome) + (1/score)
+    end
+    
   end
 end

@@ -15,7 +15,7 @@ module Emergency
       @best_grid  = nil
 
       begin
-        with_timeout 60 do
+        with_timeout 30 do
           time "Locating people..." do
             initialize_space!
             puts " num of people            : #{Person.all.size}"
@@ -58,10 +58,10 @@ module Emergency
 
       grid = Grid.create(@locations)
 
-      centroids = grid.centroids(@hospitals.size)
+      @centroids ||= grid.centroids(@hospitals.size)
 
       @hospitals.sort { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }.each_with_index do |h, i|
-        h.position = centroids[i]
+        h.position = @centroids[i]
         h.reset_ambulances
       end
       Person.reset_all
@@ -70,7 +70,7 @@ module Emergency
       Logger.record "Hospitals #{hospital_list}"
 
       while a = Ambulance.next do
-        a.travel(@people)
+        a.save_all(@people)
       end
 
       saved = Person.saved.size
