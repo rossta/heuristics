@@ -6,7 +6,7 @@ lib_path = File.expand_path(File.dirname(__FILE__)) + "/../lib"
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'emergency'
 
-options = [ARGV[1], ARGV[2]].flatten
+options = ARGV.flatten
 record  = options.include?("record")
 verbose = options.include?("verbose")
 

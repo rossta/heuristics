@@ -15,7 +15,7 @@ module Emergency
       @best_grid  = nil
 
       begin
-        with_timeout 30 do
+        with_timeout 118 do
           time "Locating people..." do
             initialize_space!
             puts " num of people            : #{Person.all.size}"
