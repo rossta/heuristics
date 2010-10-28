@@ -58,10 +58,10 @@ module Emergency
 
       grid = Grid.create(@locations)
 
-      @centroids ||= grid.centroids(@hospitals.size)
+      centroids = grid.centroids(@hospitals.size)
 
       @hospitals.sort { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }.each_with_index do |h, i|
-        h.position = @centroids[i]
+        h.position = centroids[i]
         h.reset_ambulances
       end
       Person.reset_all
@@ -149,8 +149,9 @@ module Emergency
             cent_x = cent[0]
             cent_y = cent[1]
           end
-          cents << [cent_x, cent_y]
+          cents << [cent_x, cent_y, cluster.size]
         end
+        cents.sort! { |c_1,c_2| c_2[2] <=> c_1[2] }
         break if cents.sort == centroids.sort
         centroids = cents
       end
