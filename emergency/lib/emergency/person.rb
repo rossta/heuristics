@@ -4,7 +4,7 @@ module Emergency
     include Positioning
     include ActsAsNamed
     
-    PHEROME_CONSTANT = 0.07
+    PHEROME_CONSTANT = 0.009
     
     def self.reset_all
       all.map { |p| p.reset }
@@ -73,7 +73,7 @@ module Emergency
     end
 
     def update_pherome(score)
-      @pherome = ((1 - PHEROME_CONSTANT) * @pherome) + (1/score)
+      @pherome = ((1 - (1/score)) * @pherome)
     end
     
   end

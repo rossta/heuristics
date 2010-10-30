@@ -22,6 +22,7 @@ module Emergency
 
     def initialize(hospital)
       @hospital = hospital
+      reset
     end
 
     def reset
@@ -70,15 +71,15 @@ module Emergency
 
     def pickup(person)
       tick distance_to(person) + LOAD_TIME
-      @position = person.position
+      travel_to person.position
       @patients << person
       Logger.record "#{display_name} #{person.display_name}"
     end
 
     def unload
-      hospital = nearest(Hospital.all)
+      hospital = nearest_hospital
       tick distance_to(hospital) + UNLOAD_TIME
-      @position = hospital.position
+      travel_to hospital.position
       @patients.each { |p| p.drop_at(hospital) }
       Logger.record "#{display_name} (#{hospital.to_coord.join(',')})"
       @patients = []
@@ -93,7 +94,7 @@ module Emergency
     end
 
     def pheromability(person)
-      distance_to(person) * person.time_left(time) * (rand(person.pherome + 1) + 1)
+      distance_to(person) * person.time_left(time) / (rand(edge_to(person.position).count) + 1)
     end
 
     def patient?(person)

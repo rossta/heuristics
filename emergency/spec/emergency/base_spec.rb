@@ -4,7 +4,7 @@ describe Emergency::Base do
 
   describe "Parser" do
     it "should create people, hospitals" do
-      parser = Emergency::Parser.new('doc/ambu2010')
+      parser = Emergency::Parser.new('doc/ambu10')
       people, hospitals = parser.parse
       people.size.should == 300
       hospitals.size.should == 5
