@@ -16,7 +16,6 @@ module Emergency
 
     def initialize(x, y, time)
       @position = Position.new(x, y)
-      @original_position = @position
       @time = time
       @saved = false
     end
@@ -36,14 +35,12 @@ module Emergency
     def drop_at(hospital)
       @saved = true
       @dropped = true
-      @position = hospital.position
       @hospital_distance = 0
     end
 
     def reset
       @saved = false
       @dropped = false
-      @position = @original_position
       @hospital_distance = nil
     end
 

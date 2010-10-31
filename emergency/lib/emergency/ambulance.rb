@@ -34,7 +34,8 @@ module Emergency
     end
 
     def save_cluster
-      people = nearest_hospital.cluster
+      other_hosps = (Hospital.all - [nearest_hospital])
+      people = nearest_hospital.cluster + other_hosps[rand(other_hosps.size)].cluster
       while person = next_saveable(people)
         pickup person
 

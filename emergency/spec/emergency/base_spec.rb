@@ -13,20 +13,11 @@ describe Emergency::Base do
   end
 
   describe "Grid" do
-    describe "create" do
-      it "should create a new grid from x, y lists" do
-        grid = Emergency::Grid.create([[1,6],[2,7],[3,8],[4,9],[5,10]])
-        grid.sw.x.should == 1
-        grid.sw.y.should == 6
-        grid.ne.x.should == 5
-        grid.ne.y.should == 10
-      end
-    end
 
     describe "cluster" do
       it "should return num of positions for given num of clusters" do
         grid = Emergency::Grid.create([
-          [1,6],[2,7],[3,8],[4,9],[5,10],[11,16],[12,17],[13,18],[14,19],[15,20]
+          [1,6,10],[2,7,11],[3,8,12],[4,9,13],[5,10,14],[11,16,15],[12,17,16],[13,18,17],[14,19,18],[15,20,19]
         ])
 
         centroids = grid.centroids(3)

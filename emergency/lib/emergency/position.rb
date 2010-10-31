@@ -64,7 +64,7 @@ module Emergency
     end
 
     def self.distance(point_1, point_2)
-      (point_1[0] - point_2[0]).abs + (point_1[1] - point_1[1]).abs
+      (point_1[0] - point_2[0]).abs + (point_1[1] - point_2[1]).abs
     end
 
     attr_accessor :x, :y, :edges
@@ -74,7 +74,7 @@ module Emergency
     end
 
     def distance_to(pos)
-      (@x.to_i - pos.x.to_i).abs + (self.y.to_i - pos.y.to_i).abs
+      (@x.to_i - pos.x.to_i).abs + (@y.to_i - pos.y.to_i).abs
     end
 
     def to_coord
@@ -82,7 +82,7 @@ module Emergency
     end
 
     def same?(pos)
-      @x == pos.x && @y = pos.y
+      @x == pos.x && @y == pos.y
     end
   end
 

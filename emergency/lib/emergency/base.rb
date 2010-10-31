@@ -54,13 +54,16 @@ module Emergency
 
       centroids = grid.centroids(@hospitals.size)
 
-      @hospitals.sort { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }.each_with_index do |h, i|
+      @hospitals.sort! { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }
+      @hospitals.each_with_index do |h, i|
         h.position  = centroids[i]
         h.reset_ambulances
       end
       @people.each do |p|
         p.nearest_hospital.cluster << p
       end
+      puts "Clusters: " + @hospitals.map{|h|h.cluster.size}.join(', ')
+
       Person.reset_all
       Edge.create_from(@people.map(&:position) + @hospitals.map(&:position))
     end
@@ -108,12 +111,13 @@ module Emergency
       @points = points
       x_list = points.map { |p| p[0] }
       y_list = points.map { |p| p[1] }
-      min_x = x_list.min
-      min_y = y_list.min
-      max_x = x_list.max
-      max_y = y_list.max
-      @sw = Position.new(min_x, min_y)
-      @ne = Position.new(max_x, max_y)
+      t_list = points.map { |p| p[2] }
+      @min_x = x_list.min
+      @min_y = y_list.min
+      @max_x = x_list.max
+      @max_y = y_list.max
+      @min_t = t_list.min
+      @max_t = t_list.max
     end
 
     def center
@@ -121,26 +125,37 @@ module Emergency
     end
 
     def width
-      @width ||= ne.x - sw.x
+      @width ||= @max_x - @min_x
     end
 
     def height
-      @height ||= ne.y - sw.y
+      @height ||= @max_y - @min_y
+    end
+
+    def time_range
+      @max_t - @min_t
+    end
+
+    def minimum_cluster_size(num)
+      @points.size / (num * 5)
     end
 
     def centroids(num)
       centroids = []
-      num.to_i.times { centroids << [rand(width), rand(height)] }
+      num.to_i.times { centroids << [] }
 
+      cents = []
+      centroids.map! { |c| [rand(width), rand(height), rand(time_range)] }
+      puts "Trying: #{centroids.map{|c| c.join(',')}.join('|')}"
       while true
         clusters = {}
         centroids.each { |c| clusters[c] = [c] }
         @points.each do |pt|
           min_cent = centroids.first
-          min_dist = Position.distance(pt, min_cent)
+          min_dist = Position.distance(pt, min_cent)# * pt[2]
           other_centroids = centroids - [min_cent]
           other_centroids.each do |cent|
-            dist = Position.distance(pt, cent)
+            dist = Position.distance(pt, cent)# * cent[2]
             if dist < min_dist
               min_dist = dist
               min_cent = cent
@@ -149,23 +164,32 @@ module Emergency
           clusters[min_cent] << pt
         end
 
-        cents = []
-
         clusters.each do |cent, cluster|
           unless cluster.empty?
             cent_x = (cluster.map { |p| p[0] }.inject(&:+) / cluster.size).to_i
             cent_y = (cluster.map { |p| p[1] }.inject(&:+) / cluster.size).to_i
+            cent_t = (cluster.map { |p| p[2] }.inject(&:+) / cluster.size).to_i
           else
             cent_x = cent[0]
             cent_y = cent[1]
+            cent_t = cent[2]
           end
-          cents << [cent_x, cent_y, cluster.size]
+          cents << [cent_x, cent_y, cent_t, cluster.size]
         end
-        cents.sort! { |c_1,c_2| c_2[2] <=> c_1[2] }
-        break if cents.sort == centroids.sort
-        centroids = cents
-      end
+        cents.sort! { |c_1,c_2| c_2[3] <=> c_1[3] }
+        puts "Clusters: #{cents.map{|c|c[3]}.join(',')}"
 
+        if cents.sort == centroids.sort
+          if centroids.all? { |c| c[3].to_i > minimum_cluster_size(num) }
+            break
+          else
+            centroids.map! { |c| [rand(width), rand(height), rand(time_range)] }
+          end
+        end
+
+        centroids = cents
+        cents = []
+      end
       centroids.map { |c| Position.new(c[0], c[1]) }
     end
 

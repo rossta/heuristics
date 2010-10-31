@@ -9,18 +9,6 @@ module Emergency
       @@all
     end
 
-    def self.find(a, b)
-      edge = @@all.detect { |e| e.matches?(a, b) }
-      edge = add(a,b) if edge.nil?
-      edge
-    end
-
-    def self.add(a, b)
-      edge = Edge.new(a, b)
-      @@all << edge
-      edge
-    end
-
     def self.counter
       @@counter ||= []
     end
@@ -30,6 +18,7 @@ module Emergency
     end
 
     def self.reset
+      counter.each { |e| e.wearoff }
       @@counter = []
     end
 
@@ -76,6 +65,10 @@ module Emergency
 
     def increment_count
       @count += 1
+    end
+    
+    def wearoff
+      @count * 0.9
     end
 
   end
