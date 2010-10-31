@@ -152,10 +152,10 @@ module Emergency
         centroids.each { |c| clusters[c] = [c] }
         @points.each do |pt|
           min_cent = centroids.first
-          min_dist = Position.distance(pt, min_cent)# * pt[2]
+          min_dist = Position.distance(pt, min_cent) * pt[2]
           other_centroids = centroids - [min_cent]
           other_centroids.each do |cent|
-            dist = Position.distance(pt, cent)# * cent[2]
+            dist = Position.distance(pt, cent) * cent[2]
             if dist < min_dist
               min_dist = dist
               min_cent = cent
