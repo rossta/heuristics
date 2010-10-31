@@ -33,7 +33,8 @@ module Emergency
       @available = true
     end
 
-    def save_all(people)
+    def save_cluster
+      people = nearest_hospital.cluster
       while person = next_saveable(people)
         pickup person
 
@@ -61,7 +62,6 @@ module Emergency
       saveables = people.select { |p|
           p.alive?(time) && !p.dropped? && !patient?(p) && time_to_save_person(p) <= p.time_left(time)
         }
-        saveables.first
       weighted_saveables = saveables.map { |s| Array.new((edge_to(s).count + 1), s) }.flatten
       weighted_saveables[rand(weighted_saveables.size)]
     end
@@ -92,10 +92,6 @@ module Emergency
 
     def viability(person)
       person.time_left(time) / distance_to(person)
-    end
-
-    def pheromability(person)
-       (distance_to(person) * person.time_left(time)) / (rand(edge_to(person).count) + 1)
     end
 
     def patient?(person)

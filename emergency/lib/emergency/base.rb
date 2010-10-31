@@ -55,8 +55,11 @@ module Emergency
       centroids = grid.centroids(@hospitals.size)
 
       @hospitals.sort { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }.each_with_index do |h, i|
-        h.position = centroids[i]
+        h.position  = centroids[i]
         h.reset_ambulances
+      end
+      @people.each do |p|
+        p.nearest_hospital.cluster << p
       end
       Person.reset_all
       Edge.create_from(@people.map(&:position) + @hospitals.map(&:position))
@@ -70,7 +73,7 @@ module Emergency
       Logger.record "Hospitals #{hospital_list}"
 
       while a = Ambulance.next do
-        a.save_all(@people)
+        a.save_cluster
       end
 
       Edge.increment_all

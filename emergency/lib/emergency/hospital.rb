@@ -17,6 +17,9 @@ module Emergency
       @ambulances.map(&:reset)
     end
 
+    def cluster
+      @cluster ||= []
+    end
   end
 
 end

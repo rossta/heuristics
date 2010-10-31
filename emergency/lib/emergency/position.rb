@@ -36,15 +36,13 @@ module Emergency
     end
 
     def nearest_hospital
-      @nearest_hospital ||= begin
-        Hospital.all.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
-      end
+      Hospital.all.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
     end
 
     def travel_to(new_position)
-      edge = Edge.find(position, new_position)
+      edge = edge_to(new_position)
       Edge.counter << edge
-      position = new_position
+      @position = new_position
     end
 
     def distance_to(pos)

@@ -13,14 +13,12 @@ module Emergency
     end
 
     attr_accessor :time, :name, :save_count
-    attr_reader :pherome
 
     def initialize(x, y, time)
       @position = Position.new(x, y)
       @original_position = @position
       @time = time
       @saved = false
-      @pherome = 0
     end
 
     def alive?(expired_time)
@@ -32,13 +30,12 @@ module Emergency
     end
 
     def hospital_distance
-      @hospital_distance ||= nearest(Hospital.all).distance_to(position)
+      @hospital_distance ||= nearest_hospital.distance_to(position)
     end
 
     def drop_at(hospital)
       @saved = true
       @dropped = true
-      @pherome += 1
       @position = hospital.position
       @hospital_distance = 0
     end
@@ -70,9 +67,5 @@ module Emergency
       "#{name} (#{description.join(',')})"
     end
 
-    def update_pherome(score)
-      @pherome = ((1 - (1/score)) * @pherome)
-    end
-    
   end
 end
