@@ -58,11 +58,12 @@ module Emergency
     end
 
     def next_saveable(people)
-      people.select { |p|
+      saveables = people.select { |p|
           p.alive?(time) && !p.dropped? && !patient?(p) && time_to_save_person(p) <= p.time_left(time)
-        }.sort { |p1, p2|
-          pheromability(p1) <=> pheromability(p2)
-        }.first
+        }
+        saveables.first
+      weighted_saveables = saveables.map { |s| Array.new((edge_to(s).count + 1), s) }.flatten
+      weighted_saveables[rand(weighted_saveables.size)]
     end
 
     def available?
@@ -90,11 +91,11 @@ module Emergency
     end
 
     def viability(person)
-      distance_to(person) * person.time_left(time)
+      person.time_left(time) / distance_to(person)
     end
 
     def pheromability(person)
-      distance_to(person) * person.time_left(time) / (rand(edge_to(person.position).count) + 1)
+       (distance_to(person) * person.time_left(time)) / (rand(edge_to(person).count) + 1)
     end
 
     def patient?(person)

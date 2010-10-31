@@ -50,12 +50,6 @@ module Emergency
       Person.all    = @people
       Ambulance.all = @ambulances
       @locations    = @people.map(&:description)
-    end
-
-    def respond_to_emergency!(iter)
-      puts "Attempt #{iter}"
-      Logger.log!(iter, @opts)
-
       grid = Grid.create(@locations)
 
       centroids = grid.centroids(@hospitals.size)
@@ -65,6 +59,12 @@ module Emergency
         h.reset_ambulances
       end
       Person.reset_all
+      Edge.create_from(@people.map(&:position) + @hospitals.map(&:position))
+    end
+
+    def respond_to_emergency!(iter)
+      puts "Attempt #{iter}"
+      Logger.log!(iter, @opts)
 
       hospital_list = @hospitals.map {|h| "#{h.name} (#{h.to_coord.join(',')})" }.join(" ")
       Logger.record "Hospitals #{hospital_list}"
@@ -73,12 +73,19 @@ module Emergency
         a.save_all(@people)
       end
 
+      Edge.increment_all
       saved = Person.saved.size
       puts " num of people saved      : #{saved}"
       if saved > @most_saved
         @most_saved = saved
         @best_run   = iter
-        @best_grid  = grid
+        Edge.increment_all
+      end
+
+      Person.reset_all
+      Edge.reset
+      @hospitals.each do |h|
+        h.reset_ambulances
       end
     end
 

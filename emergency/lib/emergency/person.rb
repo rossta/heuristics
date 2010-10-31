@@ -4,8 +4,6 @@ module Emergency
     include Positioning
     include ActsAsNamed
     
-    PHEROME_CONSTANT = 0.009
-    
     def self.reset_all
       all.map { |p| p.reset }
     end

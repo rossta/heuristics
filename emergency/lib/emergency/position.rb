@@ -26,29 +26,33 @@ module Emergency
     def to_coord
       position.to_coord
     end
+    
+    def edges
+      position.edges
+    end
 
     def nearest(positions)
       positions.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
     end
-    
+
     def nearest_hospital
       @nearest_hospital ||= begin
         Hospital.all.sort { |a, b| position.distance_to(a) <=> position.distance_to(b) }.first
       end
     end
-    
+
     def travel_to(new_position)
       edge = Edge.find(position, new_position)
-      edge.count += 1
+      Edge.counter << edge
       position = new_position
     end
 
     def distance_to(pos)
       position.distance_to pos
     end
-    
+
     def edge_to(pos)
-      Edge.find(position, pos)
+      position.edges.detect { |e| e.matches?(position, pos) }
     end
 
   end
@@ -60,24 +64,25 @@ module Emergency
       y = ((pos_1.y - pos_2.y) / 2).to_i + pos_2.y
       Position.new(x, y)
     end
-    
+
     def self.distance(point_1, point_2)
       (point_1[0] - point_2[0]).abs + (point_1[1] - point_1[1]).abs
     end
 
-    attr_accessor :x, :y
+    attr_accessor :x, :y, :edges
     def initialize(x = nil, y = nil)
       @x = x; @y = y
+      @edges = []
     end
 
     def distance_to(pos)
       (@x.to_i - pos.x.to_i).abs + (self.y.to_i - pos.y.to_i).abs
     end
-    
+
     def to_coord
       [x,y]
     end
-    
+
     def same?(pos)
       @x == pos.x && @y = pos.y
     end
