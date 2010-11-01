@@ -3,13 +3,21 @@ module Emergency
   class Person
     include Positioning
     include ActsAsNamed
-    
+
     def self.reset_all
       all.map { |p| p.reset }
     end
 
     def self.saved
       all.select {|p| p.saved? }
+    end
+
+    def self.max_time
+      @@max_time
+    end
+
+    def self.max_time=(max_time)
+      @@max_time = max_time
     end
 
     attr_accessor :time, :name, :save_count

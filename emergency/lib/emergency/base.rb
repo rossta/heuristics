@@ -51,7 +51,6 @@ module Emergency
       Ambulance.all = @ambulances
       @locations    = @people.map(&:description)
       grid = Grid.create(@locations)
-
       centroids = grid.centroids(@hospitals.size)
 
       @hospitals.sort! { |h_1, h_2| h_2.ambulances.size <=> h_1.ambulances.size }
@@ -62,6 +61,7 @@ module Emergency
       @people.each do |p|
         p.nearest_hospital.cluster << p
       end
+      Person.max_time = @people.map(&:time).max
       puts "Clusters: " + @hospitals.map{|h|h.cluster.size}.join(', ')
 
       Person.reset_all

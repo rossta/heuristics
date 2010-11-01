@@ -63,7 +63,11 @@ module Emergency
       saveables = people.select { |p|
           p.alive?(time) && !p.dropped? && !patient?(p) && time_to_save_person(p) <= p.time_left(time)
         }
-      weighted_saveables = saveables.map { |s| Array.new((edge_to(s).count + 1), s) }.flatten
+      weighted_saveables = saveables.map do |s|
+        score = edge_to(s).count + (Person.max_time/(s.time_left(time) + 1)).to_i
+        Array.new(score, s)
+      end
+      weighted_saveables.flatten!
       weighted_saveables[rand(weighted_saveables.size)]
     end
 
