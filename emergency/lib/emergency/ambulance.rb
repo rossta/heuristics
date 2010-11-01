@@ -34,12 +34,12 @@ module Emergency
     end
 
     def save_cluster
-      other_hosps = (Hospital.all - [nearest_hospital])
-      people = nearest_hospital.cluster + other_hosps[rand(other_hosps.size)].cluster
+      people = find_people
       while person = next_saveable(people)
         pickup person
 
         while @patients.size < MAX_LOAD do
+          people = find_people
           person = next_saveable(people)
           break if person.nil?
           if time_to_save_person(person) < time_left_for_patients?
@@ -109,6 +109,11 @@ module Emergency
 
     def tick(time)
       @time += time
+    end
+    
+    def find_people
+      other_hosps = (Hospital.all - [nearest_hospital])
+      nearest_hospital.cluster + other_hosps[rand(other_hosps.size)].cluster
     end
 
   end
