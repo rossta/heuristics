@@ -1,0 +1,11 @@
+Server
+- First response:
+  [turns] [player_count] [player_id]
+  7 2 1     # You have 7 moves, there are 2 players, your id is 1 of 2
+
+- Game state:
+  [x] [y] [player_id]
+  56 72 2   # Player 2 placed
+  
+- Requesting your move:
+  YOURMOVE

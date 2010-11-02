@@ -1,0 +1,34 @@
+
+Voronoi Game
+
+Dennis Shasha
+
+Omniheurist Course
+
+Computer Science
+
+ 
+Description
+
+Given a set of point-sized stones (which we will call ``stones'' for simplicity), a Voronoi diagram is a tesselation of a plane into polygons such (i) that every stone is in the interior of one polygon and (ii) for every point x in the polygon P associated with stone s, x is closer to s than it is to any other stone s'. Distance is based on Euclidean distance.
+
+The Voronoi game is a two person game that works as follows: you and I each start with N stones (should be a command line parameter throughout -- no magic numbers in your programs please). Yours are red and mine are blue. The first player places one stone, then the second player places one stone and play alternates with each player placing one stone until the second player places the last stone.
+
+As the game proceeds, the Voronoi diagram is computed with red polygons surrounding red stones and blue polygons surrounding blue stones. The display should make the stones darker than the other points in the polygon.
+
+It may help you to see this by looking at Chris Poultney's implementation and its use in a science fair in France
+
+http://cs.nyu.edu/~crispy/Voronoi/
+
+Your job is to find a strategy to play this game competitively on a one against one basis and as a melee in which several players compete. 
+
+Crispy's current thinking (fall, 2003): I think the best strategy involves a blend of offense (greedy algorithms that net the biggest polygon, like splitting the opponent's biggest polygon) and defense (dividing your own area into roughly equal-sized polygons to protect yourself against big losses). I think the stablest arrangement of points is roughly in a circle with one point in the middle, with each polygon having a roughly equal area; however, I'm not sure how this relates to actual game play.
+
+The winner of the 2007 competition Charlie Reich had this to suggest.
+
+For the two player game, we will take the sum of your scores as first player and second player.
+
+Architect
+
+The architect will accept move from one or more players and display them on the screen. The architect will also send board positions and keep track of time.
+
