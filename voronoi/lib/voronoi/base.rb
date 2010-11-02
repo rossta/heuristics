@@ -20,8 +20,13 @@ class NoTipping
   def play_game
     loop do
       response = @client.read
-      case response.first
-      when /^ADD/, /^REJECT/
+      case response
+      when /^(\d+) (\d+) (\d+)/
+        # game state
+        next_move = @player.next_move(response)
+        @client.echo("move made: #{response}")
+      when /^YOURTURN/
+        # game state
         next_move = @player.next_move(response)
         @client.call(next_move.to_s)
       else

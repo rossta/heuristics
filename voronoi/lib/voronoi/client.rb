@@ -120,13 +120,17 @@ module Voronoi
     def interpret(line)
       response = line.split("|")
       case response.first
-      when /^ADD/, /^REMOVE/
-        format_add_remove(line)
+      when /^(\d+) (\d+) (\d+)/
+        # Start game with [turns] [player_count] [player_id]
+        # Subsequent times [x] [y] [player_id]
+        raise "Respond to game state: #{line}"
+      when /^YOURTURN/
+        raise "Respond to request for move: #{line}"
       when /^WIN/
         echo "FTW!"
         disconnect
         response
-      when /^TIP/, /^LOSE/
+      when /^LOSE/
         echo "Waa Waa. I lose."
         disconnect
         response
@@ -139,18 +143,5 @@ module Voronoi
       end
     end
 
-    def format_add_remove(line)
-      command, position_str, torque_str = line.split("|")
-      positions = {}
-      torques = {}
-      position_str.split(" ").each { |move|
-        wt, loc = move.split(",")
-        positions[loc.to_i] = wt.to_i
-      }
-      in_eq, out_eq = torque_str.split(",")
-      torques[:right] = in_eq.split("=").last.to_f
-      torques[:left] = out_eq.split("=").last.to_f
-      [command, positions, torques]
-    end
   end
 end
