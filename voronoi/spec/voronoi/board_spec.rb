@@ -77,19 +77,20 @@ describe Voronoi::Board do
     it "should return 100% of board for first players move, 0 for other" do
       move = stub(Voronoi::Move, :to_coord => [5,6], :player_id => 1)
       @board.add_move(move)
-      @board.score(1).should == 400*400
+      @board.score(1).should == @board.zones.size
       @board.score(2).should == 0
     end
 
     it "should return estimate of score for area held by given player" do
       move_1 = stub(Voronoi::Move, :to_coord => [10,10], :player_id => 1)
-      move_2 = stub(Voronoi::Move, :to_coord => [30,30], :player_id => 2)
+      move_2 = stub(Voronoi::Move, :to_coord => [390,390], :player_id => 2)
       @board.add_move(move_1)
       @board.add_move(move_2)
+      total_score = @board.zones.size
       # check correctness
-      pending
-      @board.score(1).should == 1000
-      @board.score(2).should == (400*400 - 1000)
+      # pending
+      @board.score(1).should be_close(total_score/2, 10)
+      @board.score(2).should be_close(total_score/2, 10)
     end
   end
 end

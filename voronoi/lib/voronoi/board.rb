@@ -25,22 +25,36 @@ module Voronoi
     def score(player_id)
       all_moves = @moves.values.flatten
       return 0 if all_moves.empty?
+      if all_moves.size == 1
+        all_moves.first.player_id == player_id ? ZONING_DIMENSION ** 2 : 0
+      end
       player_zones = zones.select { |zone| zone.closest_move(all_moves).player_id == player_id }
-      player_zones.size * zone_score
+      player_zones.size
     end
-
-
+    
     class Zone
       attr_reader :x, :y, :width, :height
+
       def initialize(x, y, width, height)
         @x = x; @y = y; @width = width; @height = height
       end
+
       def center
         @center ||= [@x + (@width / 2), @y + (@height / 2)]
       end
+
       def closest_move(moves)
-        moves.min { |a, b| distance_to(a.to_coord) <=> distance_to(b.to_coord) }
+        moves.min { |a, b| 
+          dist_a = distance_to(a.to_coord)
+          dist_b = distance_to(b.to_coord) 
+          if dist_a != dist_b
+            dist_a <=> dist_b
+          else
+            (rand(2) == 1 ? 1 : -1) <=> 0
+          end
+        }
       end
+
       def distance_to(coord)
         Utils::Measure.euclidean_distance(center, coord)
       end
@@ -52,7 +66,7 @@ module Voronoi
       width, height = zone_dimensions
       width * height
     end
-    
+
     def zone_dimensions
       @zone_dimensions ||= @size.map {|dim| dim / ZONING_DIMENSION }
     end
