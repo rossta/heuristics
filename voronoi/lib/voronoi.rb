@@ -1,8 +1,7 @@
 $LOAD_PATH << File.expand_path(File.dirname(__FILE__)) + "/../../vendor/"
 require 'rubygems'
 require 'utils/measure'
-require 'socket'
-require 'voronoi/base'
+require 'voronoi/dispatch'
 require 'voronoi/client'
 require 'voronoi/game'
 require 'voronoi/player'

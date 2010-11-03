@@ -1,13 +1,13 @@
+require 'socket'
 module Voronoi
   class Client
-    attr_reader :host, :port, :timeout, :sock, :name
+    attr_reader :host, :port, :timeout, :sock
 
     def initialize(options = {})
-      @host = options[:host] || "localhost"
-      @port = (options[:port] || 4445).to_i
-      @timeout = (options[:timeout] || 5).to_i
-      @name = options[:name] || "Client"
-      @sock = nil
+      @host     = options[:host] || "localhost"
+      @port     = (options[:port] || 44444).to_i
+      @timeout  = (options[:timeout] || 5).to_i
+      @sock     = nil
     end
 
     def connect
@@ -83,11 +83,11 @@ module Voronoi
     end
 
     def echo(command)
-      puts "#{@name} >> #{command}"
+      puts "Client >> #{command}"
     end
 
     def hear(command)
-      puts "Game >> #{command}"
+      puts "Server >> #{command}"
     end
 
     protected
