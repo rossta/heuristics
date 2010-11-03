@@ -48,8 +48,8 @@ describe Voronoi::Board do
     end
     it "should record given move for given player id" do
       # move given as x, y, id
-      move_1 = stub(Voronoi::Move, :x => 5, :y => 6, :player_id => 1)
-      move_2 = stub(Voronoi::Move, :x => 3, :y => 4, :player_id => 2)
+      move_1 = Voronoi::Move.new(5,6,1)
+      move_2 = Voronoi::Move.new(3,4,2)
       @board.add_move(move_1)
       @board.moves[1].should == [move_1]
       @board.moves[2].should == []
@@ -60,7 +60,7 @@ describe Voronoi::Board do
     end
 
     it "should raise error if player not available" do
-      move = stub(Voronoi::Move, :x => 5, :y => 6, :player_id => 3)
+      move = Voronoi::Move.new(5,6,3)
       lambda { @board.add_move(move) }.should raise_error
     end
   end
@@ -75,15 +75,15 @@ describe Voronoi::Board do
     end
     
     it "should return 100% of board for first players move, 0 for other" do
-      move = stub(Voronoi::Move, :to_coord => [5,6], :player_id => 1)
+      move = Voronoi::Move.new(5,6,1)
       @board.add_move(move)
       @board.score(1).should == @board.zones.size
       @board.score(2).should == 0
     end
 
     it "should return estimate of score for area held by given player" do
-      move_1 = stub(Voronoi::Move, :to_coord => [10,10], :player_id => 1)
-      move_2 = stub(Voronoi::Move, :to_coord => [390,390], :player_id => 2)
+      move_1 = Voronoi::Move.new(10,10,1)
+      move_2 = Voronoi::Move.new(390,390,2)
       @board.add_move(move_1)
       @board.add_move(move_2)
       total_score = @board.zones.size
