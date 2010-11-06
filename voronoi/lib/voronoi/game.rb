@@ -8,12 +8,13 @@ module Voronoi
       @players    = players
       @player_id  = player_id
       @board      = Board.new({
-        :size => [size,size],
-        :players => 2
-      })
+                      :size => [size,size],
+                      :players => 2
+                    })
     end
     
-    def record_move(move)
+    def record_move(x, y, player_id)
+      move = Move.new(x, y, player_id)
       @board.add_move(move)
     end
   end

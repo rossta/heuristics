@@ -16,6 +16,7 @@ module Voronoi
       play_game
 
       @client.echo "Game over"
+      @client.disconnect
     end
 
     def play_game
@@ -30,9 +31,15 @@ module Voronoi
             size, moves, players, player_id = format_number_response(response)
             @game = Game.new(size, moves, players, player_id)
           end
+          @client.call("OK")
         when /^YOURTURN/
-          # game state
-          raise "Respond to request for move: #{line}"
+          @client.call("#{rand(400)} #{rand(400)}")
+        when /^WIN/
+          @client.call("I win! I AM THE GREATEST!")
+          break
+        when /^LOSE/
+          @client.call("I lost? Damn those confounded kids!")
+          break
         else
           response
         end

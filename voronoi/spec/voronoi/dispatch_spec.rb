@@ -19,7 +19,8 @@ describe Voronoi::Dispatch do
     end
   end
   describe "start!" do
-    describe "response format: \d+ \d+ \d+" do
+    
+    describe "response: \d+ \d+ \d+" do
       it "should create game on first response" do
         @client.stub!(:read).once.and_return("400 7 2 1")
         game = stub(Voronoi::Game)
@@ -33,6 +34,16 @@ describe Voronoi::Dispatch do
         subject.game.should_receive(:record_move).with(123, 234, 2)
         subject.start!
       end
+    end
+
+    describe "response: YOURTURN" do
+      it "should respond with two numbers: x y" do
+        
+      end
+    end
+    
+    describe "response: WIN/LOSE" do
+      
     end
   end
 end

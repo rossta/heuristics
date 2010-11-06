@@ -19,11 +19,12 @@ describe Voronoi::Game do
   end
   
   describe "record_move" do
-    it "should add move to board" do
+    it "should create move add to board" do
       game = Voronoi::Game.new(400, 7, 2, 1)
       move = stub(Voronoi::Move)
+      Voronoi::Move.should_receive(:new).with(180, 182, 2).and_return(move)
       game.board.should_receive(:add_move).with(move)
-      game.record_move(move)
+      game.record_move(180, 182, 2)
     end
   end
 end
