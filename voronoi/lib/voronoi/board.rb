@@ -20,6 +20,7 @@ module Voronoi
     def add_move(move)
       raise AddMoveError.new("Player #{move.player_id} not accounted for on board") if @moves[move.player_id].nil?
       @moves[move.player_id] << move
+      move
     end
 
     def score(player_id)

@@ -1,15 +1,19 @@
 #! /usr/bin/env ruby
 
+# ./play <host> <port>
+
 lib_path = File.expand_path(File.dirname(__FILE__)) + "/../lib"
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'voronoi'
 
 host = ARGV.shift
 port = ARGV.shift
+debug = ARGV.shift || "normal"
 
 voronoi = Voronoi::Dispatch.new({
   :host => host,
-  :port => port
+  :port => port,
+  :debug => (debug.downcase == "debug")
 })
 
 voronoi.start!

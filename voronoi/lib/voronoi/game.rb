@@ -16,6 +16,13 @@ module Voronoi
     def record_move(x, y, player_id)
       move = Move.new(x, y, player_id)
       @board.add_move(move)
+      move
+    end
+    
+    def find_and_record_next_move
+      move = Move.new(rand(@size), rand(@size), @player_id)
+      @board.add_move(move)
+      move
     end
   end
 end

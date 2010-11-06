@@ -8,6 +8,7 @@ module Voronoi
         :port => (opts[:port] || 44444).to_i
       })
       @game   = nil
+      self.class.debug   = opts[:debug] || false
     end
 
     def start!
@@ -16,6 +17,7 @@ module Voronoi
       play_game
 
       @client.echo "Game over"
+      sleep 4
       @client.disconnect
     end
 
@@ -33,12 +35,13 @@ module Voronoi
           end
           @client.call("OK")
         when /^YOURTURN/
-          @client.call("#{rand(400)} #{rand(400)}")
+          move = @game.find_and_record_next_move
+          @client.call(move.to_coord.join(" "))
         when /^WIN/
-          @client.call("I win! I AM THE GREATEST!")
+          @client.echo("I win! I AM THE GREATEST!")
           break
         when /^LOSE/
-          @client.call("I lost? Damn those confounded kids!")
+          @client.echo("I lost? Damn those confounded kids!")
           break
         else
           response
