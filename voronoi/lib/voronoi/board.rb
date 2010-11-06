@@ -6,10 +6,10 @@ module Voronoi
     ZONING_DIMENSION = 100
     SIZE = [400, 400]
 
-    attr_reader :size, :moves, :zones
+    attr_reader :size, :moves, :zones, :players
     def initialize(opts = {})
-      @size     = opts[:size] || SIZE
-      @players  = opts[:players] || 2
+      @size     = opts[:size]     || SIZE
+      @players  = opts[:players]  || 2
       @moves    = {}
 
       @players.times { |i| @moves[i+1] = [] }

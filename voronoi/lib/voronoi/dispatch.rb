@@ -27,13 +27,14 @@ module Voronoi
             x, y, player_id = format_number_response(response)
             @game.record_move(x, y, player_id)
           else
-            moves, players, player_id = format_number_response(response)
-            @game = Game.new(moves, players, player_id)
+            size, moves, players, player_id = format_number_response(response)
+            @game = Game.new(size, moves, players, player_id)
           end
         when /^YOURTURN/
           # game state
+          raise "Respond to request for move: #{line}"
         else
-          @client.echo("...waiting")
+          response
         end
         break if debug?
       end

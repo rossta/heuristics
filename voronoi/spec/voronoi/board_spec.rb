@@ -89,8 +89,8 @@ describe Voronoi::Board do
       total_score = @board.zones.size
       # check correctness
       # pending
-      @board.score(1).should be_close(total_score/2, 10)
-      @board.score(2).should be_close(total_score/2, 10)
+      @board.score(1).should be_close(total_score/2, 12)
+      @board.score(2).should be_close(total_score/2, 12)
     end
   end
 end

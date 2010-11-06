@@ -19,12 +19,11 @@ describe Voronoi::Dispatch do
     end
   end
   describe "start!" do
-    
     describe "response format: \d+ \d+ \d+" do
       it "should create game on first response" do
-        @client.stub!(:read).once.and_return("7 2 1")
+        @client.stub!(:read).once.and_return("400 7 2 1")
         game = stub(Voronoi::Game)
-        Voronoi::Game.should_receive(:new).with(7, 2, 1).and_return(game)
+        Voronoi::Game.should_receive(:new).with(400, 7, 2, 1).and_return(game)
         subject.start!
         subject.game.should == game
       end

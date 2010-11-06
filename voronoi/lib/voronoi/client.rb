@@ -52,7 +52,7 @@ module Voronoi
       raise Errno::ECONNRESET, "Connection lost" unless response
 
       hear response
-      interpret response
+      response
     end
 
     def process(command)
@@ -114,32 +114,6 @@ module Voronoi
         yield
       ensure
         # echo "%0.2fms" % ((Time.now - t1) * 1000)
-      end
-    end
-
-    def interpret(line)
-      response = line.split("|")
-      case response.first
-      when /^(\d+) (\d+) (\d+)/
-        # Start game with [turns] [player_count] [player_id]
-        # Subsequent times [x] [y] [player_id]
-        raise "Respond to game state: #{line}"
-      when /^YOURTURN/
-        raise "Respond to request for move: #{line}"
-      when /^WIN/
-        echo "FTW!"
-        disconnect
-        response
-      when /^LOSE/
-        echo "Waa Waa. I lose."
-        disconnect
-        response
-      when /^ACCEPT/, /^REJECT/
-        response
-      when /^TIMEOUT/
-        reconnect
-      else
-        response
       end
     end
 
