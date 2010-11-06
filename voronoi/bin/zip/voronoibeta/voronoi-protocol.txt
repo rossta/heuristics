@@ -1,0 +1,61 @@
+Overview:
+--------------
+Your program will connect to the architecture app via standard sockets. For simplicity, the architecture app will listen for connections on a separate port for each player. Your program should be able to work with ANY port/address (parameters please).
+
+Board Size:
+-----------------
+The board size will be 400 x 400.
+
+Communication:
+-----------------------
+1. Upon initial connection your program will be sent the following information separated by whitespace and terminated with a newline:
+  a. Number of turns [integer]
+  b. Number of players [integer]
+  c. Your player number (corresponds to whether you are first, second, third, etc.) [integer]
+
+  EXAMPLE:
+  10 2 1
+
+2. Moves are expressed as follows, separated by whitespace and terminated with a newline:
+  a. X Coordinate
+  b. Y Coordinate
+  c. Player Number (receive ONLY)
+
+The Player Number is only included in moves sent to you by the server. When making a move, you do not send this field - only X and Y coordinates are required. Players are numbered starting with 1 and  correspond to their playing order (player one moves first, player two moves second, etc).
+
+3. After receiving the initial data your program should wait until given the signal to move. If you are not first, during this time you will receive moves from other players. When it is your turn, you will receive the string YOURTURN followed by a newline and the architecture app will wait for you. You should then send your move and once again wait for moves from other players.
+
+4. When the game is over, the architecture app will send you one of the following strings terminated by a newline:
+  a. WIN
+  b. LOSE
+
+At this point your program should either:
+  a. Throw a loud, drunken toga party to celebrate its illustrious victory.
+  b. Go home crying to mommy because it is obviously worthless and inferior.
+
+
+Sample Game
+---------------------
+Here is sample communication you might expect to see during the a game with two players and only 2 turns.
+
+Player 1:
+[Receive]             [Send]
+400 2 2 1
+YOURTURN
+                      150 40
+200 100 2
+YOURTURN
+                      60 120
+1 25 2
+WIN
+
+Player 2:
+[Receive]             [Send]
+400 2 2 2
+150 40 1
+YOURTURN
+                      200 100
+60 120 1
+YOURTURN
+                       1 25
+LOSE

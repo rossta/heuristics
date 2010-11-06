@@ -1,0 +1,50 @@
+##################
+ Running the game
+##################
+
+To load the game, type the following at the command prompt:
+
+java -jar voronoi.jar
+
+An optional port number can also be passed on the command line:
+
+java -jar voronoi.jar 999
+
+This will force the game to listen on TCP port 999 for connections from computer players. If no port is specified, the game will listen on port 20000.
+
+If everything worked, you will see two windows: the main game and a score 
+board.
+
+
+######################
+ Controlling the game
+######################
+
+1. Choose the settings you desire as far as human players, stones, and time limit. (do this first as during selection ports are closed and again reset)
+
+2. Connect all computer players
+
+3. Click on Start when ready
+
+4. Reset, well, resets it. 
+
+
+################################
+ Using the sample player client
+################################
+
+If you would like to see a sample game played by the computer (using a
+totally random strategy), a player client is included. It requires
+Python 2.0+ in order to run. It is configured to connect to port 20000 on
+the local host so if you are using a different setup for the game, you will 
+have to modify the PORT and HOST variables at the top of the file.
+
+Once you've got it set the way you need it, just run:
+
+python voronoi-player.py
+
+This will connect to the game and wait for it to start. You can connect up to
+10 players currently this way. Once you've got 2 or more connected, hit Start and watch the fun!
+
+You can also play against the computer this way by setting Human Players to 1
+and connecting only a single instance of the client.
