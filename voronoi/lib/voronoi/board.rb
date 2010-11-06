@@ -11,10 +11,7 @@ module Voronoi
       @size     = opts[:size]     || SIZE
       @players  = opts[:players]  || 2
       @moves    = {}
-
       @players.times { |i| @moves[i+1] = [] }
-
-      @zones    = build_zones
     end
 
     def add_move(move)
@@ -23,16 +20,21 @@ module Voronoi
       move
     end
 
-    def score(player_id)
-      all_moves = @moves.values.flatten
-      return 0 if all_moves.empty?
-      if all_moves.size == 1
-        all_moves.first.player_id == player_id ? ZONING_DIMENSION ** 2 : 0
+    def score(player_id, opts = {})
+      moves     = opts[:moves] || all_moves
+      zones     = opts[:zones] || build_zones(ZONING_DIMENSION)
+      return 0 if moves.empty?
+      if moves.size == 1
+        moves.first.player_id == player_id ? 1.0 : 0.0
       end
-      player_zones = zones.select { |zone| zone.closest_move(all_moves).player_id == player_id }
-      player_zones.size
+      player_zones = zones.select { |zone| zone.closest_move(moves).player_id == player_id }
+      player_zones.size.to_f / zones.size.to_f
     end
-    
+
+    def all_moves
+      @moves.values.flatten
+    end
+
     class Zone
       attr_reader :x, :y, :width, :height
 
@@ -45,9 +47,9 @@ module Voronoi
       end
 
       def closest_move(moves)
-        moves.min { |a, b| 
+        moves.min { |a, b|
           dist_a = distance_to(a.to_coord)
-          dist_b = distance_to(b.to_coord) 
+          dist_b = distance_to(b.to_coord)
           if dist_a != dist_b
             dist_a <=> dist_b
           else
@@ -61,20 +63,8 @@ module Voronoi
       end
     end
 
-    protected
-
-    def zone_score
-      width, height = zone_dimensions
-      width * height
-    end
-
-    def zone_dimensions
-      @zone_dimensions ||= @size.map {|dim| dim / ZONING_DIMENSION }
-    end
-
-    def build_zones
-      count = ZONING_DIMENSION
-      width, height = zone_dimensions
+    def build_zones(count = ZONING_DIMENSION)
+      width, height = zone_dimensions(count)
       [].tap do |zones|
         x = 0
         y = 0
@@ -88,5 +78,12 @@ module Voronoi
         end
       end
     end
+
+    protected
+
+    def zone_dimensions(dim = ZONING_DIMENSION)
+      @size.map {|side| side / dim }
+    end
+
   end
 end

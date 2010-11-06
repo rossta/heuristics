@@ -21,7 +21,7 @@ describe Voronoi::Game do
   
   describe "record_move" do
     it "should create move add to board" do
-      move = stub(Voronoi::Move)
+      move = stub(Voronoi::Move, :player_id => 2)
       Voronoi::Move.should_receive(:new).with(180, 182, 2).and_return(move)
       @game.board.should_receive(:add_move).with(move)
       @game.record_move(180, 182, 2)
@@ -31,12 +31,6 @@ describe Voronoi::Game do
   describe "find_and_record_next_move" do
     it "should return a move" do
       @game.find_and_record_next_move.should be_a(Voronoi::Move)
-    end
-    it "should return a move" do
-      move = stub(Voronoi::Move)
-      Voronoi::Move.should_receive(:new).and_return(move)
-      @game.board.should_receive(:add_move).with(move)
-      @game.find_and_record_next_move
     end
   end
 end

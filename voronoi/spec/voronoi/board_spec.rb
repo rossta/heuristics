@@ -28,12 +28,12 @@ describe Voronoi::Board do
 
     it "should initialize 10000 scoring zones squares" do
       board = Voronoi::Board.new
-      board.zones.size.should == 100 * 100
+      board.build_zones.size.should == 100 * 100
     end
     
     it "should build zones 4x4 with centers" do
       board = Voronoi::Board.new
-      zone_1 = board.zones.first
+      zone_1 = board.build_zones.first
       zone_1.x.should == 0
       zone_1.y.should == 0
       zone_1.center.should == [2,2]
@@ -77,7 +77,7 @@ describe Voronoi::Board do
     it "should return 100% of board for first players move, 0 for other" do
       move = Voronoi::Move.new(5,6,1)
       @board.add_move(move)
-      @board.score(1).should == @board.zones.size
+      @board.score(1).should == 1.0
       @board.score(2).should == 0
     end
 
@@ -86,11 +86,23 @@ describe Voronoi::Board do
       move_2 = Voronoi::Move.new(390,390,2)
       @board.add_move(move_1)
       @board.add_move(move_2)
-      total_score = @board.zones.size
       # check correctness
       # pending
-      @board.score(1).should be_close(total_score/2, 12)
-      @board.score(2).should be_close(total_score/2, 12)
+      @board.score(1).should be_close(0.5, 0.05)
+      @board.score(2).should be_close(0.5, 0.05)
+    end
+    
+    describe "given moves" do
+      before(:each) do
+        @first_move = Voronoi::Move.new(5,6,1)
+        @board.add_move(@first_move)
+      end
+      it "should return 0 if given no moves" do
+        @board.score(1, :moves => []).should == 0
+      end
+      it "should return 100% if given only player 1 moves" do
+        @board.score(1, :moves => @board.all_moves + [Voronoi::Move.new(150,160,1)]).should == 1.0
+      end
     end
   end
 end
