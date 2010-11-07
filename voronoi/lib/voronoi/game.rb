@@ -24,13 +24,13 @@ module Voronoi
       all_zones = @board.build_zones(50)
       best_move   = nil
       best_score  = 0
-      100.times do
+      25.times do
         move  = Move.new(rand(@size), rand(@size), @player_id)
         score = @board.score(@player_id, {
           :moves => (all_moves + [move]),
           :zones => all_zones
         })
-        # puts "Move: #{move.to_coord.to_s}, score: #{score}"
+        puts "Move: #{move.to_coord.to_s}, score: #{score}"
         if score > best_score
           best_move = move
           best_score = score
@@ -39,5 +39,11 @@ module Voronoi
       @board.add_move(best_move)
       best_move
     end
+  end
+  
+  protected
+  
+  def zone_dimension(num_moves)
+    
   end
 end

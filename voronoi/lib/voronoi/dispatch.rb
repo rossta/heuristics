@@ -33,7 +33,7 @@ module Voronoi
             size, moves, players, player_id = format_number_response(response)
             @game = Game.new(size, moves, players, player_id)
           end
-          @client.call("OK")
+          # @client.call("OK")
         when /^YOURTURN/
           move = @game.find_and_record_next_move
           @client.call(move.to_coord.join(" "))
