@@ -64,6 +64,36 @@ describe Voronoi::Board do
       lambda { @board.add_move(move) }.should raise_error
     end
   end
+  
+  describe "moves" do
+    before(:each) do
+      @board = Voronoi::Board.new
+    end
+    describe "all_moves" do
+      it "should return all recorded moves" do
+        # move given as x, y, id
+        move_1 = Voronoi::Move.new(5,6,1)
+        move_2 = Voronoi::Move.new(3,4,2)
+        @board.add_move(move_1)
+        @board.add_move(move_2)
+        @board.all_moves.size.should == 2
+        @board.all_moves.should include(move_1)
+        @board.all_moves.should include(move_2)
+      end
+    end
+    describe "moves_by" do
+      it "should return all recorded moves by given player id" do
+        # move given as x, y, id
+        move_1 = Voronoi::Move.new(5,6,1)
+        move_2 = Voronoi::Move.new(3,4,2)
+        @board.add_move(move_1)
+        @board.add_move(move_2)
+        @board.moves_by(1).size.should == 1
+        @board.moves_by(1).should include(move_1)
+        @board.moves_by(1).should_not include(move_2)
+      end
+    end
+  end
 
   describe "score" do
     before(:each) do

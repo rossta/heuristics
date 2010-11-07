@@ -7,18 +7,18 @@ describe Voronoi::Game do
   describe "initialize" do
     it "should set moves, players, and player_id" do
       @game.size.should == 400
-      @game.moves.should == 7
+      @game.move_count.should == 7
       @game.players.should == 2
       @game.player_id.should == 1
     end
-    
+
     it "should set up the board" do
-      board = @game.board 
+      board = @game.board
       board.size.should == [400,400]
       board.players.should == 2
     end
   end
-  
+
   describe "record_move" do
     it "should create move add to board" do
       move = stub(Voronoi::Move, :player_id => 2)
@@ -27,10 +27,28 @@ describe Voronoi::Game do
       @game.record_move(180, 182, 2)
     end
   end
-  
+
   describe "find_and_record_next_move" do
     it "should return a move" do
       @game.find_and_record_next_move.should be_a(Voronoi::Move)
+    end
+    it "should add move to board a move" do
+      move = @game.find_and_record_next_move
+      @game.board.all_moves.should include(move)
+    end
+
+    describe "player 1" do
+      describe "strategy" do
+        it "should return a greedy result first move and third moves" do
+          move_1 = @game.find_and_record_next_move
+          move_1.score.should == 1.0
+
+          @game.record_move(1,1,2)
+
+          move_2 = @game.find_and_record_next_move
+          move_2.score.should > 0.9
+        end
+      end
     end
   end
 end

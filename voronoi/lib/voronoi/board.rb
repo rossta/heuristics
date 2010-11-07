@@ -34,6 +34,10 @@ module Voronoi
     def all_moves
       @moves.values.flatten
     end
+    
+    def moves_by(player_id)
+      @moves[player_id]
+    end
 
     class Zone
       attr_reader :x, :y, :width, :height
