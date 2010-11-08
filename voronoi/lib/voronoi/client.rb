@@ -1,6 +1,8 @@
 require 'socket'
 module Voronoi
   class Client
+    include Utils::Timer
+
     attr_reader :host, :port, :timeout, :sock
 
     def initialize(options = {})
@@ -62,23 +64,6 @@ module Voronoi
           @sock.flush
           yield if block_given?
         end
-      end
-    end
-
-    begin
-      require "system_timer"
-
-      def with_timeout(seconds, &block)
-        SystemTimer.timeout_after(seconds, &block)
-      end
-
-    rescue LoadError
-      warn "WARNING: using the built-in Timeout class" unless RUBY_VERSION >= "1.9" || RUBY_PLATFORM =~ /java/
-
-      require "timeout"
-
-      def with_timeout(seconds, &block)
-        Timeout.timeout(seconds, &block)
       end
     end
 

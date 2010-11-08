@@ -1,9 +1,14 @@
 module Voronoi
 
   class Game
+    include Utils::Timer
+
     GREEDY_MIN = 0.9
+    BEST_GREEDY_MIN = 0.9
     DEFENSE_MIN = 0.5
+    BEST_DEFENSE_MIN = 0.525
     DEFENSE_MAX = 0.55
+    TOTAL_TIME_LIMIT = 120
 
     attr_reader :board, :size, :move_count, :players, :player_id
     def initialize(size, move_count, players, player_id)
@@ -37,17 +42,25 @@ module Voronoi
 
       best_move = Move.worst_move
       moves = [].tap do |saved_moves|
-        20.times do
-          move  = Move.new(rand(@size), rand(@size), @player_id)
-          move.score = @board.score(@player_id, {
-            :moves => (all_moves + [move]),
-            :zones => all_zones
-          })
-          puts "Move: #{move.to_coord.to_s}, score: #{move.score}"
-          saved_moves << move
-          if move.score > best_move.score
-            best_move   = move
+        begin
+          iter = 0
+          with_timeout time_limit do
+            250.times do |i|
+              move  = Move.new(rand(@size), rand(@size), @player_id)
+              move.score = @board.score(@player_id, {
+                :moves => (all_moves + [move]),
+                :zones => all_zones
+              })
+              # puts "Move: #{move.to_coord.to_s}, score: #{move.score}"
+              saved_moves << move
+              if move.score > best_move.score
+                best_move   = move
+              end
+              iter = i
+            end
           end
+        rescue Timeout::Error
+          puts "Timeout! selecting best move after #{iter + 1} choices"
         end
       end
 
@@ -64,8 +77,8 @@ module Voronoi
     protected
 
     def select_weighted_move(moves, best_score)
-      greedy_range = (GREEDY_MIN*best_score)..best_score
-      defensive_range = DEFENSE_MIN*best_score..DEFENSE_MAX*best_score
+      greedy_range = (BEST_GREEDY_MIN*best_score)..best_score
+      defensive_range = BEST_DEFENSE_MIN*best_score..DEFENSE_MAX*best_score
       greedy_weight, defensive_weight = move_weights
       weighted_moves = moves.map { |move|
         weight = case move.score
@@ -86,7 +99,7 @@ module Voronoi
       when 1
         case player_moves.size
         when 0..2
-          [4,1]
+          [1,0]
         when 3..4
           [2,1]
         when 5..6
@@ -97,7 +110,7 @@ module Voronoi
       else
         case player_moves.size
         when 0..3
-          [4,1]
+          [1,0]
         when 4..5
           [2,1]
         else
@@ -129,6 +142,15 @@ module Voronoi
       return 40 if player_move_count < 6
       return 50 if player_move_count < 8
       100
+    end
+
+    def time_limit
+      @time_limits ||= begin
+        buffer = move_count
+        increment = (TOTAL_TIME_LIMIT-move_count)/(1..move_count).inject(&:+)
+        (1..move_count).map { |i| i*increment }
+      end
+      @time_limits[player_moves.size + 1]
     end
 
   end
