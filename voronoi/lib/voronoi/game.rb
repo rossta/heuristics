@@ -100,21 +100,21 @@ module Voronoi
       case player_id
       when 1
         case player_moves.size
-        when 0..2
+        when 0..game_qtr
           [1,0]
-        when 3..4
+        when (game_qtr + 1)..(2*game_qtr)
           [2,1]
-        when 5..6
+        when (2*game_qtr + 1)..(3*game_qtr)
           [1,2]
         else
           [1,4]
         end
       else
         case player_moves.size
-        when 0..3
+        when 0..(game_qtr*2 - 1)
           [1,0]
-        when 4..5
-          [3,1]
+        when (game_qtr*2)..(game_qtr*3 - 1)
+          [2,1]
         else
           [1,0]
         end
@@ -131,11 +131,11 @@ module Voronoi
       defensive = defensive_min < score && score <= defensive_max && defensive_prob
       case player_id
       when 1
-        return greedy if player_moves.size < 3
+        return greedy if player_moves.size < game_qtr + 1
         return greedy || defensive
       when 2
-        return greedy if player_moves.size < 3
-        return (greedy || defensive) if player_moves.size < 6
+        return greedy if player_moves.size < game_qtr + 1
+        return (greedy || defensive) if player_moves.size < (game_qtr * 3)
         return greedy
       else
         return greedy
@@ -158,6 +158,13 @@ module Voronoi
         (1..move_count).map { |i| i*increment }
       end
       @time_limits[player_moves.size + 1]
+    end
+    
+    def game_qtr
+      @game_qtr ||= begin
+        count   = move_count.odd? ? move_count + 1 : move_count
+        count / 4
+      end
     end
 
   end
