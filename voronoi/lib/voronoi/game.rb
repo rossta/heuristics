@@ -2,7 +2,8 @@ module Voronoi
 
   class Game
     include Utils::Timer
-
+    
+    MAX_SCORE = 1.0
     GREEDY_MIN = 0.9
     BEST_GREEDY_MIN = 0.9
     DEFENSE_MIN = 0.5
@@ -51,7 +52,7 @@ module Voronoi
                 :moves => (all_moves + [move]),
                 :zones => all_zones
               })
-              # puts "Move: #{move.to_coord.to_s}, score: #{move.score}"
+              puts "Move: #{move.to_coord.join(' ')}, score: #{move.score}"
               saved_moves << move
               if move.score > best_move.score
                 best_move   = move
@@ -59,8 +60,9 @@ module Voronoi
               iter = i
             end
           end
+          puts "Done! selecting best move #{best_move.to_coord.join(' ')} after #{iter + 1} choices"
         rescue Timeout::Error
-          puts "Timeout! selecting best move after #{iter + 1} choices"
+          puts "Timeout! selecting best move #{best_move.to_coord.join(' ')} after #{iter + 1} choices"
         end
       end
 
@@ -112,16 +114,21 @@ module Voronoi
         when 0..3
           [1,0]
         when 4..5
-          [2,1]
+          [3,1]
         else
-          [4,1]
+          [1,0]
         end
       end
     end
 
     def filter_move?(score, best_score)
-      greedy    = (GREEDY_MIN * best_score) < score
-      defensive = ((DEFENSE_MIN*best_score) < score && score <= (DEFENSE_MAX*best_score))
+      greedy_min    = GREEDY_MIN * best_score
+      defensive_min = DEFENSE_MIN*best_score
+      defensive_max = DEFENSE_MAX*best_score
+      greedy_prob   = rand(score - greedy_min) > rand(best_score - score)
+      defensive_prob = rand(score - defensive_min) > rand(defensive_max - score)
+      greedy    = greedy_min < score && greedy_prob
+      defensive = defensive_min < score && score <= defensive_max && defensive_prob
       case player_id
       when 1
         return greedy if player_moves.size < 3
