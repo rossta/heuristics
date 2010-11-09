@@ -44,9 +44,10 @@ module Voronoi
       best_move = Move.worst_move
       moves = [].tap do |saved_moves|
         begin
+          
           iter = 0
           with_timeout time_limit do
-            1000.times do |i|
+            250.times do |i|
               move  = Move.new(rand(@size), rand(@size), @player_id)
               move.score = @board.score(@player_id, {
                 :moves => (all_moves + [move]),
