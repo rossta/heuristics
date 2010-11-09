@@ -46,7 +46,7 @@ module Voronoi
         begin
           iter = 0
           with_timeout time_limit do
-            250.times do |i|
+            10000.times do |i|
               move  = Move.new(rand(@size), rand(@size), @player_id)
               move.score = @board.score(@player_id, {
                 :moves => (all_moves + [move]),
