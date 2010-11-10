@@ -5,6 +5,6 @@ require 'rubygems'
 require 'echo/server'
 
 host = ARGV.shift
-port = ARGV.shift
+port = (ARGV.shift || 23000)
 server  = Echo::Server.new(host, port)
 server.start!
