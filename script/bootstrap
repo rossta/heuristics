@@ -3,7 +3,7 @@
 raise "Usage: ./boostrap [project name]" if ARGV.length == 0
 
 project_name = ARGV[0].to_s.downcase
-dirs = %w|lib spec doc|
+dirs = %w|lib spec doc script|
 
 system "mkdir #{project_name}"
 system "cd #{project_name}; mkdir #{dirs.join(" ")}"

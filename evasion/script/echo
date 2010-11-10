@@ -1,0 +1,10 @@
+#! /usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path(File.dirname(__FILE__)) + "/../../vendor/"
+require 'rubygems'
+require 'echo/server'
+
+host = ARGV.shift
+port = ARGV.shift
+server  = Echo::Server.new(host, port)
+server.start!
