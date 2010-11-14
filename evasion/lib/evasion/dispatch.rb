@@ -1,7 +1,7 @@
 module Evasion
   attr_writer :debug
   class Dispatch
-    attr_accessor :client, :game
+    attr_accessor :client, :game, :name
     def initialize(opts = {})
       @client = Connection::Client.new({
         # access.cims.nyu.edu:23000
@@ -53,13 +53,15 @@ module Evasion
             prey_match    = response.match(/P\(([^\)]+)\)/)[1]
             wall_match    = response.match(/W\[([^\]]+)\]/)[1]
             p[:round]  = response.match(/YOURTURN (\d+)/)[1].to_i
-            p[:hunter] = hunter_match.gsub(" ", "").split(",").map { |v| v =~ /\d+/ ? v.to_i : v }
-            p[:prey]   = prey_match.gsub(" ", "").split(",").map(&:to_i)
-            # params[:walls]  = wall_match.
+            p[:hunter] = hunter_match.scan(/\w+/).map { |v| v =~ /\d+/ ? v.to_i : v }
+            p[:prey]   = prey_match.scan(/\d+/).map(&:to_i)
+            p[:walls]  = wall_match.scan(/\(.*\)/).map { |w| w.scan(/\d+/).map(&:to_i) }
           end
           @game.turn = params[:round]
           @game.update_hunter(*params[:hunter])
           @game.update_prey(*params[:prey])
+          @game.update_walls(*params[:walls])
+
           # Hunter Requests
           # PASS
           # ADD _WALL_ID_ (x1, y1), (x2, y2)  : create wall

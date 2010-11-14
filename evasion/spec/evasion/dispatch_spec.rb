@@ -21,6 +21,14 @@ describe Evasion::Dispatch do
     end
   end
   describe "start!" do
+    
+    describe "joining game" do
+      it "should call client JOIN @name" do
+        @dispatch.name = "Rossta"
+        @client.should_receive(:call).with("JOIN Rossta")
+        @dispatch.start!
+      end
+    end
 
     describe "response: ACCEPTED" do
       it "should create game with hunter on first response" do
