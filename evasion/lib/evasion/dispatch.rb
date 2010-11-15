@@ -60,7 +60,7 @@ module Evasion
           @game.turn = params[:round]
           @game.update_hunter(*params[:hunter])
           @game.update_prey(*params[:prey])
-          @game.update_walls(*params[:walls]) unless @game.role == HUNTER
+          @game.update_walls(*params[:walls]) #unless @game.role == HUNTER
 
           next_move = @game.next_move
 
