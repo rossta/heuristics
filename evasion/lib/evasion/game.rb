@@ -85,7 +85,7 @@ module Evasion
       #
       # N | S | E | W | NW | NE | SE | SW
       if role == PREY
-        position = Position.new(@hunter.clone, @prey.clone)
+        position = Position.new(@hunter.clone, @prey.clone, all_walls)
         best_score, best_move = alpha_beta(position, 8)
         best_move
       else
@@ -107,7 +107,7 @@ module Evasion
         available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) || (@hunter.y > @prey.y))
       elsif count < 5
         available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) && (@hunter.y > @prey.y))
-      else 
+      else
         available_moves(@hunter).include?(ADD)
       end
     end
@@ -160,15 +160,15 @@ module Evasion
 
     def best_wall
       name = next_wall_name
-      
+
       max_x = [@prey.x, @hunter.x].max
       min_x = [@prey.x, @hunter.x].min
       max_y = [@prey.y, @hunter.y].max
       min_y = [@prey.y, @hunter.y].min
-      
+
       h_walls = all_walls.select { |w| w.orientation == :horizontal }
       v_walls = all_walls.select { |w| w.orientation == :vertical }
-      
+
       n_wall = h_walls.select { |w| w.y_1 > max_y }.map(&:y_1).min
       e_wall = v_walls.select { |w| w.x_1 > max_x }.map(&:x_1).min
       s_wall = h_walls.select { |w| w.y_1 <= min_y }.map(&:y_1).max
@@ -233,10 +233,63 @@ module Evasion
 
   class Position
     attr_accessor :prey, :hunter, :move
-    def initialize(hunter, prey)
+    def initialize(hunter, prey, walls)
       @hunter = hunter
       @prey   = prey
+      @walls  = walls
       @move   = PASS
+    end
+
+    def max_x
+      [@hunter.x, @prey.x].max
+    end
+
+    def max_y
+      [@hunter.y, @prey.y].max
+    end
+
+    def min_x
+      [@hunter.x, @prey.x].min
+    end
+
+    def min_y
+      [@hunter.y, @prey.y].min
+    end
+
+    def h_walls
+      @h_walls ||= @walls.select { |w| w.orientation == :horizontal }
+    end
+
+    def v_walls
+      @v_walls ||= @walls.select { |w| w.orientation == :vertical }
+    end
+
+    def n_wall
+      h_walls.select { |w| w.y_1 > max_y }.map(&:y_1).min
+    end
+
+    def s_wall
+      h_walls.select { |w| w.y_1 <= min_y }.map(&:y_1).max
+    end
+
+    def e_wall
+      v_walls.select { |w| w.x_1 > max_x }.map(&:x_1).min
+    end
+
+    def w_wall
+      v_walls.select { |w| w.x_1 <= min_x }.map(&:x_1).max
+    end
+
+    def wall_dx
+      dist_1 = [(e_wall - @prey.to_coord[0]).abs, (w_wall - @prey.to_coord[0]).abs].min
+      dist_2 = [(e_wall - @prey.next_coord[0]).abs, (w_wall - @prey.next_coord[0]).abs].min
+      dist_2 - dist_1
+    end
+
+    def wall_dy
+      dist_1 = [(n_wall - @prey.to_coord[1]).abs, (s_wall - @prey.to_coord[1]).abs].min
+      dist_2 = [(n_wall - @prey.next_coord[1]).abs, (s_wall - @prey.next_coord[1]).abs].min
+      dist_2 - dist_1
     end
 
     def score(player)
@@ -247,7 +300,7 @@ module Evasion
       when HUNTER
         -diff
       when PREY
-        diff
+        diff + wall_dx + wall_dy
       end
     end
 

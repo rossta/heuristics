@@ -20,7 +20,6 @@ module Evasion
 
       play_game
 
-      @client.echo "Game over"
       @client.disconnect
     end
 
@@ -69,8 +68,12 @@ module Evasion
           # GAMEOVER _ROUNDNUMBER_ WINNER _ROLE_ _REASON_
           # or
           # GAMEOVER _ROUNDNUMBER_ LOSER _ROLE_ _REASON_
-          @client.echo response
-          @client.disconnect
+          if response =~ /WINNER/
+            @client.echo "Booya! I win!"
+          else
+            @client.echo "Waa waa. I lose."
+          end
+          break
         else
         end
 
