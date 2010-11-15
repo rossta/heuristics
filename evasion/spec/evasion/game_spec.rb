@@ -190,6 +190,8 @@ describe Evasion::Position do
     end
 
     it "should return a wall" do
+      @game.update_hunter(25, 25, 0, "NE")
+
       best_wall = @game.best_wall
       best_wall.should be_a(Evasion::Wall)
 
@@ -201,15 +203,41 @@ describe Evasion::Position do
 
       @game.walls << best_wall
 
-      best_wall = @game.best_wall
-      best_wall.should be_a(Evasion::Wall)
+      best_wall_2 = @game.best_wall
+      best_wall_2.should be_a(Evasion::Wall)
 
-      best_wall.name.should == "2"
+      best_wall_2.name.should == "2"
       
-      best_wall.x_1.should == 331
-      best_wall.y_1.should == 1
-      best_wall.x_2.should == 331
-      best_wall.y_2.should == 200
+      best_wall_2.x_1.should == 331
+      best_wall_2.y_1.should == 1
+      best_wall_2.x_2.should == 331
+      best_wall_2.y_2.should == 200
+
+      @game.walls << best_wall_2
+
+      @game.update_hunter(100, 100, 0, "NE")
+      
+      best_wall_3 = @game.best_wall
+      best_wall_3.should be_a(Evasion::Wall)
+
+      best_wall_3.name.should == "3"
+      
+      best_wall_3.x_1.should == 1
+      best_wall_3.y_1.should == 99
+      best_wall_3.x_2.should == 330
+      best_wall_3.y_2.should == 99
+
+      @game.walls << best_wall_3
+
+      best_wall_4 = @game.best_wall
+      best_wall_4.should be_a(Evasion::Wall)
+                
+      best_wall_4.name.should == "4"
+                
+      best_wall_4.x_1.should == 99
+      best_wall_4.y_1.should == 100
+      best_wall_4.x_2.should == 99
+      best_wall_4.y_2.should == 200
     end
 
   end

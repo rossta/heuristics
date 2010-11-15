@@ -98,16 +98,17 @@ module Evasion
         end
       end
     end
-    
+
     def should_add_wall?
       count = @walls.size
-      third = @wall_count / 3
-      if count < third
-        available_moves(@hunter).include? ADD
-      elsif count <= third * 2
-        (@hunter.x > @prey.x) || (@hunter.y > @prey.y)
-      else
-        available_moves(@hunter).include? ADD
+      if count < 2
+        available_moves(@hunter).include?(ADD)
+      elsif count < 4
+        available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) || (@hunter.y > @prey.y))
+      elsif count < 5
+        available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) && (@hunter.y > @prey.y))
+      else 
+        available_moves(@hunter).include?(ADD)
       end
     end
 
@@ -159,24 +160,43 @@ module Evasion
 
     def best_wall
       name = next_wall_name
+      
       max_x = [@prey.x, @hunter.x].max
+      min_x = [@prey.x, @hunter.x].min
       max_y = [@prey.y, @hunter.y].max
+      min_y = [@prey.y, @hunter.y].min
+      
+      h_walls = all_walls.select { |w| w.orientation == :horizontal }
+      v_walls = all_walls.select { |w| w.orientation == :vertical }
+      
+      n_wall = h_walls.select { |w| w.y_1 > max_y }.map(&:y_1).min
+      e_wall = v_walls.select { |w| w.x_1 > max_x }.map(&:x_1).min
+      s_wall = h_walls.select { |w| w.y_1 <= min_y }.map(&:y_1).max
+      w_wall = v_walls.select { |w| w.x_1 <= min_x }.map(&:x_1).max
 
-      h_walls = (all_walls - [@south]).select { |w| w.orientation == :horizontal }
-      v_walls = (all_walls - [@west]).select { |w| w.orientation == :vertical }
-
-      min_h = h_walls.map(&:y_1).min
-      min_v = v_walls.map(&:x_1).min
-
-      x = [max_x + 1, min_v - 1].min
-      y = [max_y + 1, min_h - 1].min
+      e_dx = e_wall - max_x
+      w_dx = min_x - w_wall
+      n_dx = n_wall - max_y
+      s_dx = min_y - s_wall
 
       if h_walls.size > v_walls.size
         # make vert wall
-        Wall.new(name.to_s, x, 1, x, min_h - 1)
+        if e_dx > w_dx
+          # make east wall
+          Wall.new name.to_s, max_x + 1, s_wall + 1, max_x + 1, n_wall - 1
+        else
+          Wall.new name.to_s, min_x - 1, s_wall + 1, min_x - 1, n_wall - 1
+          # make west wall
+        end
       else
-        # make horz wal
-        Wall.new(name.to_s, 1, y, min_v - 1, y)
+        # make horz wall
+        if n_dx > s_dx
+          # make north wall
+          Wall.new name.to_s, w_wall + 1, max_y + 1, e_wall - 1, max_y + 1
+        else
+          # make south wall
+          Wall.new name.to_s, w_wall + 1, min_y - 1, e_wall - 1, min_y - 1
+        end
       end
     end
 
