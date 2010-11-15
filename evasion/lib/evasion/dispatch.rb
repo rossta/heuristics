@@ -30,16 +30,16 @@ module Evasion
         case response
         when /ACCEPTED/
           role = response.chomp.upcase.split[1]
-          @game = Game.new(:role => role)
+          @game = Game.new(:role => role.downcase.to_sym)
           # determines HUNTER or PREY
         when /\(\d+, \d+\) \d+, \d+, \d+/
           # game parameters
           # (xDimension, yDimension) wallCount, wallCooldown, preyCooldown
           # Example: (500,500) _TBD_, _TBD25-50_, 1
           params = match_game_params(response)
-          @game.width         = params[:width]        
-          @game.height        = params[:height]       
-          @game.wall_count    = params[:wall_count]   
+          @game.width         = params[:width]
+          @game.height        = params[:height]
+          @game.wall_count    = params[:wall_count]
           @game.wall_cooldown = params[:wall_cooldown]
           @game.prey_cooldown = params[:prey_cooldown]
 
@@ -51,35 +51,29 @@ module Evasion
           params = {}.tap do |p|
             hunter_match  = response.match(/H\(([^\)]+)\)/)[1]
             prey_match    = response.match(/P\(([^\)]+)\)/)[1]
-            wall_match    = response.match(/W\[([^\]]+)\]/)[1]
+            wall_match    = response.match(/W\[([^\]]+)\]/)
             p[:round]  = response.match(/YOURTURN (\d+)/)[1].to_i
             p[:hunter] = hunter_match.scan(/\w+/).map { |v| v =~ /\d+/ ? v.to_i : v }
             p[:prey]   = prey_match.scan(/\d+/).map(&:to_i)
-            p[:walls]  = wall_match.scan(/\(.*\)/).map { |w| w.scan(/\d+/).map(&:to_i) }
+            p[:walls]  = wall_match[1].scan(/\([^\)]*\)/).map { |w| w.scan(/\d+/).map(&:to_i) } unless wall_match.nil?
           end
           @game.turn = params[:round]
           @game.update_hunter(*params[:hunter])
           @game.update_prey(*params[:prey])
-          @game.update_walls(*params[:walls])
+          @game.update_walls(*params[:walls]) unless @game.role == HUNTER
 
-          # Hunter Requests
-          # PASS
-          # ADD _WALL_ID_ (x1, y1), (x2, y2)  : create wall
-          # REMOVE _WALL_ID_                  : remove wall
+          next_move = @game.next_move
 
-          # Prey Requests
-          # PASS
-          # N | S | E | W | NW | NE | SE | SW   : move on a vector
-          # X, Y                                : new coords
-
+          @client.call next_move
         when /GAMEOVER/
           # GAMEOVER _ROUNDNUMBER_ WINNER _ROLE_ _REASON_
           # or
           # GAMEOVER _ROUNDNUMBER_ LOSER _ROLE_ _REASON_
-          break
+          @client.echo response
+          @client.disconnect
         else
         end
-        @client.call "You said: #{response}"
+
         break if debug?
       end
     end
@@ -87,9 +81,9 @@ module Evasion
     def debug?
       @debug
     end
-    
+
     protected
-    
+
     def match_game_params(response)
       matches = response.chomp.match(/\((\d+),\s+(\d+)\)\s+(\d+),\s+(\d+),\s+(\d+)/)
       {}.tap do |params|

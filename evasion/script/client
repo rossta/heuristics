@@ -1,0 +1,25 @@
+#! /usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path(File.dirname(__FILE__)) + "/../../vendor/"
+require 'rubygems'
+require 'utils/timer'
+require 'connection/client'
+
+name = ARGV.shift
+host = ARGV.shift
+port = ARGV.shift
+
+client = Connection::Client.new({
+  :host => host,
+  :port => port
+})
+
+client.connect
+client.call(name)
+puts client.read
+
+loop do
+  input = STDIN.gets
+  client.call(input)
+  puts client.read
+end
