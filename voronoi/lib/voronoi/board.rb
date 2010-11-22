@@ -12,6 +12,7 @@ module Voronoi
       @players  = opts[:players]  || 2
       @moves    = {}
       @players.times { |i| @moves[i+1] = [] }
+      @zones    = {}
     end
 
     def add_move(move)
@@ -23,7 +24,7 @@ module Voronoi
     def score(player_id, opts = {})
       moves     = opts[:moves] || all_moves
       zones     = opts[:zones] || build_zones(ZONING_DIMENSION)
-      return 0 if moves.empty?
+      return 0.0 if moves.empty?
       if moves.size == 1
         moves.first.player_id == player_id ? 1.0 : 0.0
       end
@@ -51,7 +52,7 @@ module Voronoi
       end
 
       def closest_move(moves)
-        moves.min { |a, b|
+        move = moves.min { |a, b|
           dist_a = distance_to(a.to_coord)
           dist_b = distance_to(b.to_coord)
           if dist_a != dist_b
@@ -60,6 +61,8 @@ module Voronoi
             (rand(2) == 1 ? 1 : -1) <=> 0
           end
         }
+        move.zones << self
+        move
       end
 
       def distance_to(coord)
@@ -68,8 +71,9 @@ module Voronoi
     end
 
     def build_zones(count = ZONING_DIMENSION)
+      return @zones[count] unless @zones[count].nil?
       width, height = zone_dimensions(count)
-      [].tap do |zones|
+      zone_set = [].tap do |zones|
         x = 0
         y = 0
         count.times do |i|
@@ -81,6 +85,8 @@ module Voronoi
           y += height
         end
       end
+      @zones[count] = zone_set
+      zone_set
     end
 
     protected

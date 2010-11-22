@@ -118,8 +118,8 @@ describe Voronoi::Board do
       @board.add_move(move_2)
       # check correctness
       # pending
-      @board.score(1).should be_close(0.5, 0.05)
-      @board.score(2).should be_close(0.5, 0.05)
+      @board.score(1).should be_within(0.05).of(0.5)
+      @board.score(2).should be_within(0.05).of(0.5)
     end
     
     describe "given moves" do

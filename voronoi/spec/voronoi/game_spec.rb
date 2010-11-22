@@ -39,14 +39,32 @@ describe Voronoi::Game do
 
     describe "player 1" do
       describe "strategy" do
-        it "should return a greedy result first move and third moves" do
+        it "should return a greedy result, then conservative" do
           move_1 = @game.find_and_record_next_move
           move_1.score.should == 1.0
 
           @game.record_move(1,1,2)
 
           move_2 = @game.find_and_record_next_move
-          move_2.score.should > 0.9
+          move_2.score.should > 0.5
+          move_2.score.should < 0.6
+        end
+      end
+    end
+    describe "player 2" do
+      describe "strategy" do
+        it "should return a conservative moves" do
+          @game.player_id = 2
+          @game.record_move(200,200,1)
+          move_1 = @game.find_and_record_next_move
+          move_1.score.should > 0.5
+          move_1.score.should < 0.6
+
+          @game.record_move(1,1,2)
+
+          move_2 = @game.find_and_record_next_move
+          move_2.score.should > 0.5
+          move_2.score.should < 0.6
         end
       end
     end
