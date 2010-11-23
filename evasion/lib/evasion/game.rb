@@ -102,11 +102,11 @@ module Evasion
     def should_add_wall?
       count = @walls.size
       if count < 2
-        available_moves(@hunter).include?(ADD)
+        available_moves(@hunter).include?(ADD)        
       elsif count < 4
-        available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) || (@hunter.y > @prey.y))
+        available_moves(@hunter).include?(ADD) && ((@hunter.x >= @prey.x - 5) || (@hunter.y >= @prey.y - 5))
       elsif count < 5
-        available_moves(@hunter).include?(ADD) && ((@hunter.x > @prey.x) && (@hunter.y > @prey.y))
+        available_moves(@hunter).include?(ADD) && ((@hunter.x <= @prey.x - 5) && (@hunter.y <= @prey.y - 5))
       else
         available_moves(@hunter).include?(ADD)
       end
@@ -300,7 +300,7 @@ module Evasion
       when HUNTER
         -diff
       when PREY
-        diff + wall_dx + wall_dy
+        diff
       end
     end
 
