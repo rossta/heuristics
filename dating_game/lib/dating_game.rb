@@ -8,3 +8,7 @@ require 'dating_game/dispatch'
 require 'dating_game/person'
 require 'dating_game/matchmaker'
 require 'dating_game/candidate'
+
+module DatingGame
+  DELIM = ":"
+end

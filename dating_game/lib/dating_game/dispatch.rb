@@ -36,9 +36,10 @@ module DatingGame
     def play_game
       case @name
       when PERSON
-        @player = Person.new
+        @person = Person.new
         play_person
       when MATCHMAKER
+        @matchmaker = Matchmaker.new
         play_matchmaker
       end
     end
@@ -50,8 +51,8 @@ module DatingGame
         when /#{PERSON}/
           # accepted connection
         when /N:\s*\d+/
-          label, count = response.split(":")
-          file_name = @player.generate_person_file(count)
+          label, count = response.split(DELIM)
+          file_name = @person.generate_person_file(count)
           @client.call file_name
         when /VALID ATTRIBUTES/
           break
@@ -64,10 +65,19 @@ module DatingGame
         response = @client.read
         case response
         when /#{MATCHMAKER}/
+          # accepted coppected
         when /N:\s*\d+/
-          file_name = File.expand_path(File.dirname(__FILE__)) + "/../../data/Person.txt"
-          @client.call file_name
-        when /VALID ATTRIBUTES/
+          label, count = response.split(DELIM)
+          @matchmaker.attr_count = count
+          # @client.call @matchmaker.next_candidate
+        when /^\-?\d+\.\d+\:/
+          @matchmaker.parse_candidate(*response.split(DELIM))
+        # when /SCORE\:0\:0\:0/
+        when /^SCORE/
+          @client.call @matchmaker.next_candidate.to_msg
+        when /^FINAL SCORE/
+          @client.echo response
+        when /DISCONNECT/
           break
         end
       end
