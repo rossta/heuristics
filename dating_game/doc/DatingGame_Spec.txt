@@ -1,0 +1,69 @@
+Protocol
+--------
+
+Run server: java Server
+
+Client input		Server 
+
+Player 1:
+java Client Person	
+Person	
+			N:100 
+./filename		
+			VALID ATTRIBUTES/INVALID ATTRIBUTES
+			DISCONNECT
+
+NOTE: Player 1 connects with ID 'Person'. Server sends the value of N and waits for
+the client to send the Person's attribute file name. Server verifies the
+Person's attribute values. 
+
+Player2:
+java Client Matchmaker
+Matchmaker
+			N:100
+			SCORE1:v1:v2: ... :vn
+			SCORE2:v1:v2: ... :vn
+			.
+			.
+			.
+			SCORE20:v1:v2: ... :vn
+
+			SCORE:0:0:0
+v1:v2: ... :vn
+			SCORE:PREVIOUS CANDIDATE'S SCORE:TOTAL SCORE:# OF CANDIDATES USED
+v1:v2: ... :vn
+			SCORE:PREVIOUS CANDIDATE'S SCORE:TOTAL SCORE:# OF CANDIDATES USED
+
+			.
+			.
+			.
+			.
+			
+			IDEAL CANDIDATE FOUND/NO MORE CANDIDATES
+			FINAL SCORE:PREVIOUS CANDIDATE'S SCORE:TOTAL SCORE:# OF CANDIDATES USED
+			DISCONNECT
+			(or)
+			TIME OUT
+
+NOTE: Player 2 connects with ID 'Matchmaker'. Server sends the value of N and 20
+randomly generated candidates. This is followed by the initial SCORE:0:0:0
+(see format above). Server reads in the client's candidate vector. Computes
+the score and returns the updated 'SCORE'. This process loops until the ideal
+candidate is found or the client is done generating 20 candidates or the
+client times out.
+
+
+Attribute Value Format
+----------------------
+Person attribute values - File format: One line for each value 
+			- w1 ... wn should be a value between 1 and -1
+			- Sum of positive weights should equal 1
+			- Sum of negative weights should equal -1
+
+Candidate values (v1 ... vn) - 	Value between 0 (inclusive) and 1 (inclusive)
+			     - 	Decimal value having at most 2 digits to the right of the decimal point
+			     -	Score of each candidate: Dot product of vectors W and V
+
+
+
+	
