@@ -1,19 +1,22 @@
 #! /usr/bin/env ruby
 
 # ./play <host> <port>
+root = File.expand_path(File.dirname(__FILE__)) + "/.."
 
-lib_path = File.expand_path(File.dirname(__FILE__)) + "/../lib"
+lib_path = File.join(root, "lib")
 $LOAD_PATH << lib_path unless $LOAD_PATH.include? lib_path
 require 'dating_game'
 
 name = ARGV.shift
+path = ARGV.shift || File.join(root, "data")
 host = ARGV.shift
 port = ARGV.shift
 
 dating_game = DatingGame::Dispatch.new({
   :name => name,
   :host => host,
-  :port => port
+  :port => port,
+  :path => path
 })
 
 dating_game.start!

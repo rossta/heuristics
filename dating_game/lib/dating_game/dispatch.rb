@@ -16,6 +16,7 @@ module DatingGame
         :host => opts[:host] || 'localhost',
         :port => (opts[:port] || 20000).to_i
       })
+      @path   = opts[:path]
       @name   = opts[:name] || 'Person'
       if !VALID_PLAYERS.include? @name
         raise InvalidPlayerNameError.new("#{@name} given; must use #{VALID_PLAYERS.join(' or ')}")
@@ -37,6 +38,7 @@ module DatingGame
       case @name
       when PERSON
         @person = Person.new
+        @person.path = @path
         play_person
       when MATCHMAKER
         @matchmaker = Matchmaker.new

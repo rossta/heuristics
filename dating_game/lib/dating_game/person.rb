@@ -1,11 +1,11 @@
 module DatingGame
   class Person
+    attr_accessor :path
     def generate_person_file(count)
       @count = count.to_i
-      file_desc = "PersonX.txt"
-      file_path = File.expand_path(File.dirname(__FILE__)) + "/../../data/"
-      file = File.open(file_path + file_desc, "w+")
-      
+      file_desc = "Ross-Person.txt"
+      file = File.open(File.join(@path, file_desc), "w+")
+
       up = @count / 2
       dn = @count - up
       weights = up_weights(up) + down_weights(dn)
@@ -15,10 +15,10 @@ module DatingGame
         file.puts weight
       end
       file.close
-      
-      "./../data/#{file_desc}"
+
+      File.join(@path, file_desc)
     end
-    
+
     def up_weights(count)
       ups = [].tap { |arr| count.times { arr << rand(100) } }
       sum = ups.inject(&:+)
@@ -36,7 +36,7 @@ module DatingGame
       end
       ups.map { |v| v.to_f / 100 }
     end
-    
+
     def down_weights(count)
       downs = [].tap { |arr| count.times { arr << -rand(100) } }
       sum = downs.inject(&:+)
@@ -54,6 +54,6 @@ module DatingGame
       end
       downs.map { |v| v.to_f / 100 }
     end
-    
+
   end
 end
