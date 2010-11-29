@@ -68,13 +68,19 @@ module DatingGame
           # accepted coppected
         when /N:\s*\d+/
           label, count = response.split(DELIM)
-          @matchmaker.attr_count = count
+          @matchmaker.attr_count = count.to_i
           # @client.call @matchmaker.next_candidate
         when /^\-?\d+\.\d+\:/
           @matchmaker.parse_candidate(*response.split(DELIM))
-        # when /SCORE\:0\:0\:0/
-        when /^SCORE/
-          @client.call @matchmaker.next_candidate.to_msg
+        when /SCORE:0:0:0/
+          require "ruby-debug"; debugger
+          can = @matchmaker.next_candidate
+          @client.call can.to_msg
+        when /SCORE/
+          label, last_score, total_score, attempts = response.split(DELIM)
+          @matchmaker.candidates.last.score = last_score.to_f
+          can = @matchmaker.next_candidate
+          @client.call can.to_msg
         when /^FINAL SCORE/
           @client.echo response
         when /DISCONNECT/

@@ -19,4 +19,14 @@ describe DatingGame::Matchmaker do
       subject.parse_candidate(*response.split(":"))
     end
   end
+  
+  describe "next_candidate" do
+    it "should return a candidate" do
+      subject.attr_count = 5
+      subject.parse_candidate *("0.23:0.76:0.06:0.78:0.13:0.57").split(":")
+      subject.parse_candidate *("0.45:0.99:0.79:0.30:0.00:0.24").split(":")
+      subject.parse_candidate *("0.58:0.82:0.38:0.48:0.93:0.25").split(":")
+      subject.next_candidate.should be_a(DatingGame::Candidate)
+    end
+  end
 end
