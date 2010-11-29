@@ -73,7 +73,6 @@ module DatingGame
         when /^\-?\d+\.\d+\:/
           @matchmaker.parse_candidate(*response.split(DELIM))
         when /SCORE:0:0:0/
-          require "ruby-debug"; debugger
           can = @matchmaker.next_candidate
           @client.call can.to_msg
         when /SCORE/
@@ -88,6 +87,6 @@ module DatingGame
         end
       end
     end
-    
+
   end
 end
