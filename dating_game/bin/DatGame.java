@@ -13,7 +13,7 @@ public class DatGame implements Runnable
 	private static Vector<Double> person = new Vector<Double>();
 	private Vector<Double> randomCandidate = new Vector<Double>();
 	private Vector<Double> clientCandidate = new Vector<Double>();
-	private int N = 5;
+	private int N = 30;
 	private boolean ready = false;
 
 	public DatGame(Socket socket)

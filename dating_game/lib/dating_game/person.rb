@@ -19,16 +19,22 @@ module DatingGame
     end
 
     def up_weights(count)
-      ups = [].tap { |arr| count.times { arr << rand(100) } }
+      i = 1
+      ups = [].tap { |arr| 
+        count.times { arr << i; i += 0.5 } 
+      }
       sum = ups.inject(&:+)
+      puts " UPS___________________________________________ "
       while (sum != 100)
-        index = rand(ups.size)
+        puts sum
+        puts ups.join " "
+        index = ups.size-1
         val = ups[index]
         if sum > 100
-          val = val - 1
+          val = val - 0.5
           ups[index] = val if val > 1 && !ups.include?(val)
         else
-          val = val + 1
+          val = val + 0.5
           ups[index] = val if val < 100 && !ups.include?(val)
         end
         sum = ups.inject(&:+)
@@ -37,16 +43,21 @@ module DatingGame
     end
 
     def down_weights(count)
-      downs = [].tap { |arr| count.times { arr << -rand(100) } }
+      i = -1
+      downs = [].tap { |arr| 
+        count.times { arr << i; i -= 0.5 } 
+      }
       sum = downs.inject(&:+)
+      puts " DOWNS___________________________________________ "
       while (sum != -100)
+        puts downs.join " "
         index = rand(downs.size)
         val = downs[index]
         if sum > -100
-          val = val - 1
+          val = val - 0.5
           downs[index] = val if val > -100 && !downs.include?(val)
         else
-          val = val + 1
+          val = val + 0.5
           downs[index] = val if val < 1 && !downs.include?(val)
         end
         sum = downs.inject(&:+)
