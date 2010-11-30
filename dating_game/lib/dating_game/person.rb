@@ -3,8 +3,7 @@ module DatingGame
     attr_accessor :path
     def generate_person_file(count)
       @count = count.to_i
-      file_desc = "Ross-Person.txt"
-      file = File.open(File.join(@path, file_desc), "w+")
+      file = File.open(File.join(@path), "w+")
 
       up = @count / 2
       dn = @count - up
@@ -16,7 +15,7 @@ module DatingGame
       end
       file.close
 
-      File.join(@path, file_desc)
+      File.join(@path)
     end
 
     def up_weights(count)
